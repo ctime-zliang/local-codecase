@@ -1,0 +1,28 @@
+{
+	"name": "local-webcase",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"directories": {
+		"doc": "docs"
+	},
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"prettier:write-all": "prettier --write .",
+		"prettier:check-all": "prettier --check ."
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/ctime-zliang/local-webcase.git"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/ctime-zliang/local-webcase/issues"
+	},
+	"homepage": "https://github.com/ctime-zliang/local-webcase#readme",
+	"devDependencies": {
+		"prettier": "^2.8.8"
+	}
+}

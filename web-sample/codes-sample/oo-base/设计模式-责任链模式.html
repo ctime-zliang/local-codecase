@@ -1,0 +1,125 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>Code Case</title>
+	</head>
+
+	<body>
+		<div class="container"></div>
+	</body>
+	<script type="text/javascript" src="./script/Biological.js"></script>
+	<script type="text/javascript" src="./script/base.js"></script>
+	<script>
+		console.log('%c=> 设计模式-责任链模式', 'color: #ff0000;')
+
+		/*
+    将请求数据的接收者连接成一条链, 顺着这条链传递该请求, 直到找到能处理该请求的对象
+ */
+
+		{
+			console.log(`\n-> 案例一: 购买商品(促销)`)
+
+			/* 
+    某电商针对已付过定金的用户有优惠政策
+    在正式购买后, 已经支付过 500 元定金的用户会收到 100 元的优惠券, 200 元定金的用户可以收到 50 元优惠券, 没有支付过定金的用户只能正常购买
+
+    orderType: 订单类型
+        1 - 500 元定金用户
+        2 - 200 元定金用户
+        3 - 普通购买用户
+    pay: 用户是否已经支付定金
+        true - 已支付
+        false - 未支付
+    stock: 库存量
+ */
+
+			const NEXT_GOING_TAG = 'nextHandler'
+
+			const orderIn500 = (orderType, pay, stock) => {
+				if (orderType !== 1 || !pay) {
+					return NEXT_GOING_TAG
+				}
+				console.log(`500 元定金预购成功, 已收到 100 元优惠券.`)
+				return true
+			}
+
+			const orderIn200 = (orderType, pay, stock) => {
+				if (orderType !== 2 || !pay) {
+					return NEXT_GOING_TAG
+				}
+				console.log(`200 元定金预购成功, 已收到 50 元优惠券.`)
+				return true
+			}
+
+			const orderInCommon = (orderType, pay, stock) => {
+				if (stock > 0) {
+					console.log(`通过普通方式购买.`)
+					return true
+				}
+				console.log(`库存不足, 购买失败.`)
+				return true
+			}
+
+			/* 
+    责任链 
+        实际上是该链条上节点类
+        包含对当前处理逻辑的句柄持有和可设置的下一个处理逻辑的句柄持有
+*/
+			class Chain {
+				constructor(nowHandler) {
+					this._nowHandler = nowHandler
+					this._nextInstance = null
+				}
+
+				set nextInstance(instance) {
+					this._nextInstance = instance
+				}
+
+				get nextInstance() {
+					return this._nextInstance
+				}
+
+				start() {
+					const nowResult = this._nowHandler.apply(this, arguments)
+					if (nowResult === NEXT_GOING_TAG) {
+						this._nextInstance?.start.apply(this._nextInstance, arguments)
+					}
+				}
+			}
+
+			Function.prototype.after = function (fn) {
+				const self = this
+				return function () {
+					const nowResult = self.apply(self, arguments)
+					if (nowResult === NEXT_GOING_TAG) {
+						return fn.apply(self, arguments)
+					}
+				}
+			}
+
+			/* 实例化处理节点 */
+			const orderIn500Node = new Chain(orderIn500)
+			const orderIn200Node = new Chain(orderIn200)
+			const orderInCommonNode = new Chain(orderInCommon)
+
+			/* 链接各节点 */
+			orderIn500Node.nextInstance = orderIn200Node
+			orderIn200Node.nextInstance = orderInCommonNode
+
+			orderIn500Node.start(1, true, 3000)
+
+			console.log('---------------------------------------------')
+			const order1 = orderIn500.after(orderIn200)
+			const order2 = order1.after(orderInCommon)
+			/* 
+    const order = orderIn500.after(orderIn200).after(orderInCommon)
+    order(1, true, 3000)
+ */
+			order2(1, true, 3000)
+		}
+	</script>
+</html>

@@ -1,0 +1,82 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>Code Case</title>
+	</head>
+
+	<body>
+		<div class="container"></div>
+	</body>
+	<script type="text/javascript" src="./script/Biological.js"></script>
+	<script type="text/javascript" src="./script/base.js"></script>
+	<script>
+		console.log('%c=> 设计模式-观察者模式', 'color: #ff0000;')
+
+		{
+			console.log(`\n-> 案例一: 订阅发布`)
+
+			/* 主题类 */
+			class Subject {
+				constructor(initState) {
+					this.state = initState
+					this.observers = []
+				}
+
+				set state(value) {
+					this._state = value
+				}
+
+				get state() {
+					return this._state
+				}
+
+				addObserver(observer) {
+					this.observers.push(observer)
+				}
+
+				notify() {
+					const state = this._state
+					for (let observer of this.observers) {
+						observer.update(state)
+					}
+				}
+			}
+
+			/* 观察者类 */
+			class Observer {
+				constructor(name) {
+					this._name = name
+				}
+
+				set name(value) {
+					this._name = value
+				}
+
+				get name() {
+					return this._name
+				}
+
+				update(state) {
+					console.log(`I am is observer name is ${this._name}, got data:`, state)
+				}
+			}
+
+			const subject = new Subject('yellow')
+			/*
+    添加观察者
+ */
+			subject.addObserver(new Observer(`alex`))
+			subject.addObserver(new Observer(`jane`))
+
+			subject.state = `blue`
+			/*
+    向所有观察者发布更新通知
+ */
+			subject.notify()
+		}
+	</script>
+</html>

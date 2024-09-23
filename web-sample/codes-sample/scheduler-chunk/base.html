@@ -1,0 +1,50 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" type="text/css" href="./style/base.css" />
+		<title>Code Case</title>
+	</head>
+
+	<body>
+		<div class="ball ball-animation"></div>
+		<section id="raskTest1" style="transform: translate3d(0, 0, 10px); user-select: none">
+			<button class="btn append-dom-task-btn0">Scheduler While Sync</button>
+			<button class="btn append-dom-task-btn1">Scheduler While SetTimeout</button>
+			<button class="btn append-dom-task-btn2">Scheduler While RequestAnimationFrame</button>
+			<button class="btn append-dom-task-btn3">Scheduler While RequestIdleCallback</button>
+			<div>DOM: appendTargetContainer Child Count: <span class="append-target-container-childcount"></span></div>
+			<div class="append-target-container"></div>
+		</section>
+		<section id="raskTest2" style="transform: translate3d(0, 0, 10px); user-select: none">
+			<button class="btn append-dom-task-btn0">Scheduler Generator Sync</button>
+			<button class="btn append-dom-task-btn1">Scheduler Generator SetTimeout</button>
+			<button class="btn append-dom-task-btn2">Scheduler Generator RequestAnimationFrame</button>
+			<button class="btn append-dom-task-btn3">Scheduler Generator RequestIdleCallback</button>
+			<div>DOM: appendTargetContainer Child Count: <span class="append-target-container-childcount"></span></div>
+			<div class="append-target-container"></div>
+		</section>
+		<section id="raskTest3" style="transform: translate3d(0, 0, 10px); user-select: none">
+			<button class="btn append-dom-task-btn">Append DOM Task</button>
+			<div class="append-target-container"></div>
+		</section>
+		<section id="raskTest4" style="transform: translate3d(0, 0, 10px); user-select: none">
+			<button class="btn append-dom-task-btn1">Bubble Sort Task 1</button>
+			<button class="btn append-dom-task-btn2">Bubble Sort Task 2</button>
+			<button class="btn append-dom-task-btn3">Bubble Sort Task 3</button>
+			<div class="append-target-container"></div>
+		</section>
+	</body>
+	<script type="text/javascript" src="../../../$vendor/utils/utils.js"></script>
+	<script type="text/javascript" src="../../../$vendor/algorithm/Array/arraySort.js"></script>
+	<script type="text/javascript" src="../../../$vendor/utils/schedulerTask.js"></script>
+	<script type="text/javascript" src="../../../$vendor/utils/SchedulerChunk.js"></script>
+	<script type="text/javascript" src="./script/task1.js"></script>
+	<script type="text/javascript" src="./script/task2.js"></script>
+	<script type="text/javascript" src="./script/task3.js"></script>
+	<script type="text/javascript" src="./script/task4.js"></script>
+	<script type="text/javascript" src="./script/base.js"></script>
+</html>

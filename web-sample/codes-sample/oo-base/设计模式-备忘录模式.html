@@ -1,0 +1,102 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Code Case</title>
+	</head>
+
+	<body>
+		<div class="container"></div>
+	</body>
+	<script type="text/javascript" src="./script/Biological.js"></script>
+	<script type="text/javascript" src="./script/base.js"></script>
+	<script>
+		console.log('%c=> 设计模式-备忘录模式', 'color: #ff0000;')
+
+		{
+			console.log(`\n-> 案例一: 状态回滚`)
+
+			/* 备忘录类 */
+			class Memento {
+				constructor(state) {
+					this._state = state
+				}
+
+				set state(value) {
+					this._state = value
+				}
+
+				get state() {
+					return this._state
+				}
+			}
+
+			/* 备忘录管理类 */
+			class MementoManager {
+				constructor() {
+					this._memento = {}
+				}
+
+				createMemento(state) {
+					return new Memento(state)
+				}
+
+				saveMemento(id, state) {
+					this._memento[id] = state
+				}
+
+				fetchMemento(id) {
+					return this._memento[id] || null
+				}
+
+				getMementoRecordList() {
+					return Object.keys(this._memento)
+				}
+			}
+
+			const mementoManager = new MementoManager()
+
+			/* 使用者 */
+			class Editor {
+				constructor() {
+					this._data = null
+				}
+
+				set data(value) {
+					this._data = value
+				}
+
+				get data() {
+					return this._data
+				}
+
+				saveRecord(id) {
+					const memento = mementoManager.createMemento(this._data)
+					mementoManager.saveMemento(id, memento)
+					return mementoManager.getMementoRecordList()
+				}
+
+				loadRecord(id) {
+					const memento = mementoManager.fetchMemento(id)
+					this._data = memento.state
+				}
+			}
+
+			/* 创建使用者 */
+			const editor = new Editor()
+			/* 多次编辑后存档 */
+			editor.data = 'modify 1'
+			editor.data = 'modify 2'
+			editor.saveRecord('r-001')
+			editor.data = 'modify 3'
+			editor.saveRecord('r-002')
+			console.log(mementoManager.getMementoRecordList())
+			console.log(editor.data)
+			console.log('%c===>>>> 恢复记录 r-001', 'color: #ff6600;')
+			editor.loadRecord('r-001')
+			console.log(editor.data)
+		}
+	</script>
+</html>

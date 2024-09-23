@@ -1,0 +1,16 @@
+const setWebGLRenderClickedStatus = (control) => {
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+    gl.clearColor(Program1.profile.clearColor.r / 255, Program1.profile.clearColor.g / 255, Program1.profile.clearColor.b / 255, 1.0)
+    gl.uniform1i(u_Clicked, 1)
+    Program1.modelInstances.forEach((modelInstanceItem, index) => {
+        drawLightModel(modelInstanceItem, Program1.glControl)
+    })
+}
+const setWebGLRenderNormalStatus = (control) => {
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+    gl.clearColor(Program1.profile.clearColor.r / 255, Program1.profile.clearColor.g / 255, Program1.profile.clearColor.b / 255, 1.0)
+    gl.uniform1i(u_Clicked, 0)
+    Program1.modelInstances.forEach((modelInstanceItem, index) => {
+        drawLightModel(modelInstanceItem, Program1.glControl)
+    })
+}

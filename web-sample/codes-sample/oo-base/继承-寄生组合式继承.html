@@ -1,0 +1,80 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>Code Case</title>
+	</head>
+
+	<body>
+		<div class="container"></div>
+	</body>
+	<script type="text/javascript" src="./script/Biological.js"></script>
+	<script type="text/javascript" src="./script/base.js"></script>
+	<script>
+		console.log('%c=> 继承-寄生组合式继承', 'color: #ff0000;')
+
+		/* 
+    继承-寄生组合式继承
+        1. 无法继承父类的本地属性和本地方法(需要在子类中以 call 方式执行父类)
+        2. 子类实例对继承自父类 prototype 上的引用属性做修改时将影响到子类和父类的实例
+*/
+
+		{
+			function Human(name) {
+				Biological.call(this, 'human')
+				this.name = name
+				this.hobbies = []
+			}
+			Human.prototype.work = function () {
+				return `${this.name} is working.`
+			}
+
+			function classExtends(Child, Parent) {
+				const prototype = createBridgingInstance(Parent.prototype)
+				// const prototype = Object.create(Parent.prototype)
+				Child.prototype = prototype
+				Child.prototype.constructor = Child
+			}
+			function createBridgingInstance(reference) {
+				function Bridging() {}
+				Bridging.prototype = reference
+				Bridging.prototype.constructor = Bridging
+				return new Bridging()
+			}
+
+			function Human(name) {
+				Biological.call(this, 'human')
+				this.name = name
+				this.hobbies = []
+			}
+			classExtends(Human, Biological)
+			Human.prototype.work = function () {
+				return `${this.name} is working.`
+			}
+
+			const dog = new Biological('dog')
+			console.log(`\n··· dog >>>`)
+			console.log(dog)
+			console.log(dog.eat())
+			dog.features.push(`fly`)
+
+			const alex = new Human('alex')
+			console.log(`\n··· alex >>>`)
+			console.log(alex)
+			console.log(alex.eat())
+			console.log(alex.work())
+			alex.phyComposition.push(`kidney*3`)
+
+			const json = new Human('json')
+			json.features.push(`swim`)
+			json.hobbies.push(`read`)
+			console.log(`\n··· json >>>`)
+			console.log(json)
+			console.log(json.eat())
+			console.log(json.work())
+		}
+	</script>
+</html>

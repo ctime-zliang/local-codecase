@@ -1,0 +1,455 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta data-tag-name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<link rel="stylesheet" type="text/css" href="../../../../$vendor/css/comm.preset.css" />
+		<title>Code Case</title>
+		<style>
+			* {
+				box-sizing: border-box;
+			}
+		</style>
+	</head>
+
+	<body style="display: flex; justify-content: space-between; flex-wrap: wrap; background-color: rgba(200, 200, 200, 1)">
+		<div
+			id="appContainer1"
+			class="app-container"
+			style="
+				height: fit-content;
+				display: flex;
+				padding: 5px 0 15px 0;
+				border-bottom: 2px dashed #444444;
+				border-top: 2px dashed #444444;
+				margin: 5px 0;
+			"
+		>
+			<div data-tagitem="profile-panel" style="width: 600px; height: inherit; overflow: hidden; padding: 5px 5px">
+				<div
+					style="
+						width: fit-content;
+						font-size: 12px;
+						display: flex;
+						flex-wrap: nowrap;
+						align-items: center;
+						align-content: center;
+						padding: 3px 0;
+					"
+				>
+					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">Model: </label>
+					<select data-tag-name="modelPresetListSelector" value="model1" style="width: 300px; cursor: pointer">
+						<option value="model1|program1">Test Model 1</option>
+						<option value="model2|program2">Test Model 2</option>
+						<option value="model3|program3">Test Model 3</option>
+					</select>
+				</div>
+				<div
+					style="
+						width: fit-content;
+						font-size: 12px;
+						display: flex;
+						flex-wrap: nowrap;
+						align-items: center;
+						align-content: center;
+						padding: 3px 0;
+					"
+				>
+					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">Model Rotation X: </label>
+					<span>-360</span>
+					<input
+						type="range"
+						value="0"
+						data-tag-name="modelRotationRangeX"
+						min="-360"
+						max="360"
+						step="1"
+						style="width: 300px; cursor: pointer"
+					/>
+					<span>360</span>
+					<strong>&nbsp;(<span data-tag-name="modelRotationRangeXShow">0</span>)</strong>
+				</div>
+				<div
+					style="
+						width: fit-content;
+						font-size: 12px;
+						display: flex;
+						flex-wrap: nowrap;
+						align-items: center;
+						align-content: center;
+						padding: 3px 0;
+					"
+				>
+					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">Model Rotation Y: </label>
+					<span>-360</span>
+					<input
+						type="range"
+						value="0"
+						data-tag-name="modelRotationRangeY"
+						min="-360"
+						max="360"
+						step="1"
+						style="width: 300px; cursor: pointer"
+					/>
+					<span>360</span>
+					<strong>&nbsp;(<span data-tag-name="modelRotationRangeYShow">0</span>)</strong>
+				</div>
+				<div
+					style="
+						width: fit-content;
+						font-size: 12px;
+						display: flex;
+						flex-wrap: nowrap;
+						align-items: center;
+						align-content: center;
+						padding: 3px 0;
+					"
+				>
+					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">Model Rotation Z: </label>
+					<span>-360</span>
+					<input
+						type="range"
+						value="0"
+						data-tag-name="modelRotationRangeZ"
+						min="-360"
+						max="360"
+						step="1"
+						style="width: 300px; cursor: pointer"
+					/>
+					<span>360</span>
+					<strong>&nbsp;(<span data-tag-name="modelRotationRangeZShow">0</span>)</strong>
+				</div>
+				<div
+					style="
+						width: fit-content;
+						font-size: 12px;
+						display: flex;
+						flex-wrap: nowrap;
+						align-items: center;
+						align-content: center;
+						padding: 3px 0;
+					"
+				>
+					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">Model Offset X: </label>
+					<span>-100</span>
+					<input
+						type="range"
+						value="0"
+						data-tag-name="modelOffsetRangeX"
+						min="-100"
+						max="100"
+						step="0.1"
+						style="width: 300px; cursor: pointer"
+					/>
+					<span>100</span>
+					<strong>&nbsp;(<span data-tag-name="modelOffsetRangeXShow">0</span>)</strong>
+				</div>
+				<div
+					style="
+						width: fit-content;
+						font-size: 12px;
+						display: flex;
+						flex-wrap: nowrap;
+						align-items: center;
+						align-content: center;
+						padding: 3px 0;
+					"
+				>
+					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">Model Offset Y: </label>
+					<span>-100</span>
+					<input
+						type="range"
+						value="0"
+						data-tag-name="modelOffsetRangeY"
+						min="-100"
+						max="100"
+						step="0.1"
+						style="width: 300px; cursor: pointer"
+					/>
+					<span>100</span>
+					<strong>&nbsp;(<span data-tag-name="modelOffsetRangeYShow">0</span>)</strong>
+				</div>
+				<div
+					style="
+						width: fit-content;
+						font-size: 12px;
+						display: flex;
+						flex-wrap: nowrap;
+						align-items: center;
+						align-content: center;
+						padding: 3px 0;
+					"
+				>
+					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">Model Offset Z: </label>
+					<span>-100</span>
+					<input
+						type="range"
+						value="0"
+						data-tag-name="modelOffsetRangeZ"
+						min="-100"
+						max="100"
+						step="0.1"
+						style="width: 300px; cursor: pointer"
+					/>
+					<span>100</span>
+					<strong>&nbsp;(<span data-tag-name="modelOffsetRangeZShow">0</span>)</strong>
+				</div>
+				<div
+					style="
+						width: fit-content;
+						font-size: 12px;
+						display: flex;
+						flex-wrap: nowrap;
+						align-items: center;
+						align-content: center;
+						padding: 3px 0;
+					"
+				>
+					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">Model Scale: </label>
+					<span>0.01</span>
+					<input
+						type="range"
+						value="0"
+						data-tag-name="modelScaleRange"
+						min="0.01"
+						max="10"
+						step="0.1"
+						style="width: 300px; cursor: pointer"
+					/>
+					<span>10</span>
+					<strong>&nbsp;(<span data-tag-name="modelScaleRangeShow">0</span>)</strong>
+				</div>
+				<br />
+				<div
+					style="
+						width: fit-content;
+						font-size: 12px;
+						display: flex;
+						flex-wrap: nowrap;
+						align-items: center;
+						align-content: center;
+						padding: 3px 0;
+					"
+				>
+					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">LookAt-EyePosition X: </label>
+					<span>-100</span>
+					<input
+						type="range"
+						data-tag-name="lookAtMatrix4EyePositionX"
+						min="-100"
+						max="100"
+						step="0.1"
+						style="width: 300px; cursor: pointer"
+					/>
+					<span>100</span>
+					<strong>&nbsp;(<span data-tag-name="lookAtMatrix4EyePositionXShow">0</span>)</strong>
+				</div>
+				<div
+					style="
+						width: fit-content;
+						font-size: 12px;
+						display: flex;
+						flex-wrap: nowrap;
+						align-items: center;
+						align-content: center;
+						padding: 3px 0;
+					"
+				>
+					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">LookAt-EyePosition Y: </label>
+					<span>-100</span>
+					<input
+						type="range"
+						data-tag-name="lookAtMatrix4EyePositionY"
+						min="-100"
+						max="100"
+						step="0.1"
+						style="width: 300px; cursor: pointer"
+					/>
+					<span>100</span>
+					<strong>&nbsp;(<span data-tag-name="lookAtMatrix4EyePositionYShow">0</span>)</strong>
+				</div>
+				<div
+					style="
+						width: fit-content;
+						font-size: 12px;
+						display: flex;
+						flex-wrap: nowrap;
+						align-items: center;
+						align-content: center;
+						padding: 3px 0;
+					"
+				>
+					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">LookAt-EyePosition Z: </label>
+					<span>-100</span>
+					<input
+						type="range"
+						data-tag-name="lookAtMatrix4EyePositionZ"
+						min="-100"
+						max="100"
+						step="0.1"
+						style="width: 300px; cursor: pointer"
+					/>
+					<span>100</span>
+					<strong>&nbsp;(<span data-tag-name="lookAtMatrix4EyePositionZShow">0</span>)</strong>
+				</div>
+				<div
+					style="
+						width: fit-content;
+						font-size: 12px;
+						display: flex;
+						flex-wrap: nowrap;
+						align-items: center;
+						align-content: center;
+						padding: 3px 0;
+					"
+				>
+					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">LookAt-AtPosition X: </label>
+					<span>-100</span>
+					<input
+						type="range"
+						data-tag-name="lookAtMatrix4AtPositionX"
+						min="-100"
+						max="100"
+						step="0.1"
+						style="width: 300px; cursor: pointer"
+					/>
+					<span>100</span>
+					<strong>&nbsp;(<span data-tag-name="lookAtMatrix4AtPositionXShow">0</span>)</strong>
+				</div>
+				<div
+					style="
+						width: fit-content;
+						font-size: 12px;
+						display: flex;
+						flex-wrap: nowrap;
+						align-items: center;
+						align-content: center;
+						padding: 3px 0;
+					"
+				>
+					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">LookAt-AtPosition Y: </label>
+					<span>-100</span>
+					<input
+						type="range"
+						data-tag-name="lookAtMatrix4AtPositionY"
+						min="-100"
+						max="100"
+						step="0.1"
+						style="width: 300px; cursor: pointer"
+					/>
+					<span>100</span>
+					<strong>&nbsp;(<span data-tag-name="lookAtMatrix4AtPositionYShow">0</span>)</strong>
+				</div>
+				<div
+					style="
+						width: fit-content;
+						font-size: 12px;
+						display: flex;
+						flex-wrap: nowrap;
+						align-items: center;
+						align-content: center;
+						padding: 3px 0;
+					"
+				>
+					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">LookAt-AtPosition Z: </label>
+					<span>-100</span>
+					<input
+						type="range"
+						data-tag-name="lookAtMatrix4AtPositionZ"
+						min="-100"
+						max="100"
+						step="0.1"
+						style="width: 300px; cursor: pointer"
+					/>
+					<span>100</span>
+					<strong>&nbsp;(<span data-tag-name="lookAtMatrix4AtPositionZShow">0</span>)</strong>
+				</div>
+				<br />
+				<div
+					style="
+						width: fit-content;
+						font-size: 12px;
+						display: flex;
+						flex-wrap: nowrap;
+						align-items: center;
+						align-content: center;
+						padding: 3px 0;
+					"
+				>
+					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">Ortho Projection Near: </label>
+					<span>1</span>
+					<input
+						type="range"
+						value="0"
+						data-tag-name="orthoProjectionNear"
+						min="1"
+						max="1000"
+						step="1"
+						style="width: 300px; cursor: pointer"
+					/>
+					<span>1000</span>
+					<strong>&nbsp;(<span data-tag-name="orthoProjectionNearShow">0</span>)</strong>
+				</div>
+				<div
+					style="
+						width: fit-content;
+						font-size: 12px;
+						display: flex;
+						flex-wrap: nowrap;
+						align-items: center;
+						align-content: center;
+						padding: 3px 0;
+					"
+				>
+					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">Ortho Projection Far: </label>
+					<span>1</span>
+					<input
+						type="range"
+						value="0"
+						data-tag-name="orthoProjectionFar"
+						min="1"
+						max="1000"
+						step="1"
+						style="width: 300px; cursor: pointer"
+					/>
+					<span>1000</span>
+					<strong>&nbsp;(<span data-tag-name="orthoProjectionFarShow">0</span>)</strong>
+				</div>
+			</div>
+			<div style="position: relative; width: 512px; height: 512px">
+				<canvas width="512" height="512" style="background-color: transparent; border: 1px dashed #888888"></canvas>
+				<div
+					style="position: absolute; left: 0; top: 256px; width: 512px; height: 0; border-top: 1px dashed #aaaaaa; pointer-events: none"
+				></div>
+				<div
+					style="position: absolute; left: 256px; top: 0; width: 0; height: 512px; border-left: 1px dashed #aaaaaa; pointer-events: none"
+				></div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../../../$vendor/utils/utils.js"></script>
+	<script type="text/javascript" src="../../../../$vendor/utils/color.js"></script>
+	<script type="text/javascript" src="../../../../$vendor/utils/StepControl.js"></script>
+	<script type="text/javascript" src="../../../../$vendor/utils/webgl.utils.js"></script>
+	<script type="text/javascript" src="../../../../$vendor/algorithm/common/Decimals.js"></script>
+	<script type="text/javascript" src="../../../../$vendor/algorithm/common/DoubleKit.js"></script>
+	<script type="text/javascript" src="../../../../$vendor/algorithm/common/Math.js"></script>
+	<script type="text/javascript" src="../../../../$vendor/algorithm/common/Angles.js"></script>
+	<script type="text/javascript" src="../../../../$vendor/algorithm/Matrix/Matrix.js"></script>
+	<script type="text/javascript" src="../../../../$vendor/algorithm/Matrix/Matrix4.js"></script>
+	<script type="text/javascript" src="../../../../$vendor/algorithm/Matrix/CanvasMatrix4.js"></script>
+	<script type="text/javascript" src="../../../../$vendor/algorithm/Vector/Vector.js"></script>
+	<script type="text/javascript" src="../../../../$vendor/algorithm/Vector/Vector3.js"></script>
+	<!-- ... -->
+	<script type="text/javascript" src="../common/constant.js"></script>
+	<script type="text/javascript" src="../common/utils/webgl-matrix.js"></script>
+	<script type="text/javascript" src="../common/utils/createCubeDatas.js"></script>
+	<script type="text/javascript" src="../common/utils/createShereDatas.js"></script>
+	<!-- ... -->
+	<script type="text/javascript" src="./script/init.js"></script>
+	<script type="text/javascript" src="./script/model.js"></script>
+	<script type="text/javascript" src="./script/program.js"></script>
+	<script type="text/javascript" src="./script/draw.js"></script>
+	<script type="text/javascript" src="./script/base.js"></script>
+</html>

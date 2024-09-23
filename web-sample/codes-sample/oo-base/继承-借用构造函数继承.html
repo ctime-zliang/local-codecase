@@ -1,0 +1,59 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>Code Case</title>
+	</head>
+
+	<body>
+		<div class="container"></div>
+	</body>
+	<script type="text/javascript" src="./script/Biological.js"></script>
+	<script type="text/javascript" src="./script/base.js"></script>
+	<script>
+		console.log('%c=> 继承-借用构造函数继承', 'color: #ff0000;')
+
+		/* 
+    继承-借用构造函数继承 
+        缺点:
+            1. 无法继承父类上被定义在父类 prototype 上的属性和方法
+*/
+
+		{
+			function Human(name) {
+				Biological.call(this, 'human')
+				this.name = name
+				this.hobbies = []
+			}
+			Human.prototype.work = function () {
+				return `${this.name} is working.`
+			}
+
+			const dog = new Biological('dog')
+			console.log(`\n··· dog >>>`)
+			console.log(dog)
+			console.log(dog.eat())
+			dog.features.push(`fly`)
+
+			const alex = new Human('alex')
+			console.log(`\n··· alex >>>`)
+			console.log(alex)
+			alex.phyComposition.push(`kidney*3`)
+			// console.log(alex.eat())  // alex.eat is not a function
+			console.log(alex.work())
+			console.log(alex instanceof Human, alex instanceof Biological)
+
+			const json = new Human(`json`)
+			json.features.push(`swim`)
+			json.hobbies.push(`read`)
+			console.log(`\n··· json >>>`)
+			console.log(json)
+			// console.log(json.eat())  // json.eat is not a function
+			console.log(json.work())
+			console.log(json instanceof Human, json instanceof Biological)
+		}
+	</script>
+</html>

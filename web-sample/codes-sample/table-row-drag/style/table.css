@@ -1,0 +1,62 @@
+table.table {
+	padding: 0;
+	margin: 0;
+	outline: 0;
+	box-sizing: border-box;
+	background-color: #ffffff;
+	border-collapse: collapse;
+}
+table.main-table {
+	margin: 10px 10px;
+}
+table.table thead {
+	background-color: rgba(229, 229, 229, 1);
+}
+table.table tr {
+	min-height: 20px;
+}
+table.table tbody tr {
+	background-color: #ffffff;
+}
+table.main-table tbody tr[draggable='true'] {
+	cursor: move;
+}
+/* table.table tbody tr:nth-child(even) {
+	background-color: rgba(245, 245, 245, 1);
+} */
+table.main-table tbody tr:hover {
+	background-color: rgba(239, 239, 239, 1);
+}
+table.main-table tr.status-tr:hover {
+	background-color: #ffffff;
+}
+table.main-table tbody tr.dragmoving {
+	background-color: rgba(255, 0, 0);
+	cursor: move;
+}
+table.table th {
+	font-size: 16px;
+	font-weight: bolder;
+	line-height: 18px;
+}
+table.table td {
+	font-size: 14px;
+	line-height: 16px;
+}
+table.table th,
+table.table td {
+	padding: 10px 10px;
+	text-align: center;
+	border: 1px solid #dcdcdc;
+	box-sizing: border-box;
+}
+
+table.suspension-table {
+	pointer-events: none;
+	position: fixed;
+	left: 0;
+	top: 0;
+	z-index: 9999;
+	font-weight: bolder;
+	box-shadow: rgba(0, 0, 0, 0.5) 2px 2px 15px;
+}

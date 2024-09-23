@@ -1,0 +1,114 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>Code Case</title>
+	</head>
+
+	<body>
+		<div class="container"></div>
+	</body>
+	<script type="text/javascript" src="./script/Biological.js"></script>
+	<script type="text/javascript" src="./script/base.js"></script>
+	<script>
+		console.log('%c=> 设计模式-访问者模式', 'color: #ff0000;')
+
+		/*
+    使用一个访问者类, 改变元素类的执行算法
+    通过此种方式, 元素的执行算法可以随着访问者改变而改变
+
+    可以使数据结构与数据操作分离
+ */
+
+		{
+			console.log(`\n-> 各科老师查看学生对应科目成绩`)
+
+			class Student {
+				constructor(name) {
+					this._name = name
+					this.init()
+				}
+
+				init() {
+					this._chinese = 0
+					this._math = 0
+					this._english = 0
+				}
+
+				set chinese(value) {
+					this._chinese = value
+				}
+
+				get chinese() {
+					return this._chinese
+				}
+
+				set math(value) {
+					this._math = value
+				}
+
+				get math() {
+					return this._math
+				}
+
+				set english(value) {
+					this._english = value
+				}
+
+				get english() {
+					return this._english
+				}
+
+				accept(visitor) {
+					visitor.visit(this)
+				}
+			}
+
+			class ChineseTeacher {
+				constructor(name) {
+					this._name = name
+				}
+
+				visit(studentInstance) {
+					console.log(`Chinese Subject Achievement: ${studentInstance.chinese}`)
+				}
+			}
+
+			class MathTeacher {
+				constructor(name) {
+					this._name = name
+				}
+
+				visit(studentInstance) {
+					console.log(`Math Subject Achievement: ${studentInstance.math}`)
+				}
+			}
+
+			class EnglishTeacher {
+				constructor(name) {
+					this._name = name
+				}
+
+				visit(studentInstance) {
+					console.log(`English Subject Achievement: ${studentInstance.english}`)
+				}
+			}
+
+			const xiaoming = new Student('xiaoming')
+			const chineseTeacher = new ChineseTeacher('zhanglaoshi')
+			const mathTeacher = new MathTeacher('wanglaoshi')
+			const englishTeacher = new EnglishTeacher('lilaoshi')
+
+			xiaoming.chinese = 95
+			xiaoming.math = 98
+			xiaoming.english = 92
+
+			xiaoming.accept(chineseTeacher)
+			xiaoming.accept(mathTeacher)
+			xiaoming.accept(englishTeacher)
+		}
+	</script>
+</html>

@@ -1,0 +1,50 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta data-tag-name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<link rel="stylesheet" type="text/css" href="../../../../$vendor/css/comm.preset.css" />
+		<title>Code Case</title>
+		<style></style>
+	</head>
+
+	<body style="display: flex; justify-content: space-between; flex-wrap: wrap">
+		<div id="appContainer1" class="app-container" style="position: relative">
+			<canvas width="512" height="512" style="background-color: transparent; border: 1px dashed #888888"></canvas>
+			<div style="position: absolute; left: 0; top: 256px; width: 512px; height: 0; border-top: 1px dashed #aaaaaa; pointer-events: none"></div>
+			<div
+				style="position: absolute; left: 256px; top: 0; width: 0; height: 512px; border-left: 1px dashed #aaaaaa; pointer-events: none"
+			></div>
+		</div>
+		<div id="appContainer2" class="app-container" style="position: relative">
+			<canvas width="512" height="512" style="background-color: transparent; border: 1px dashed #888888"></canvas>
+			<div style="position: absolute; left: 0; top: 256px; width: 512px; height: 0; border-top: 1px dashed #aaaaaa; pointer-events: none"></div>
+			<div
+				style="position: absolute; left: 256px; top: 0; width: 0; height: 512px; border-left: 1px dashed #aaaaaa; pointer-events: none"
+			></div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../../../$vendor/utils/utils.js"></script>
+	<script type="text/javascript" src="../../../../$vendor/utils/color.js"></script>
+	<script type="text/javascript" src="../../../../$vendor/utils/StepControl.js"></script>
+	<script type="text/javascript" src="../../../../$vendor/utils/webgl.utils.js"></script>
+	<script type="text/javascript" src="../../../../$vendor/algorithm/common/Decimals.js"></script>
+	<script type="text/javascript" src="../../../../$vendor/algorithm/common/DoubleKit.js"></script>
+	<script type="text/javascript" src="../../../../$vendor/algorithm/common/Math.js"></script>
+	<script type="text/javascript" src="../../../../$vendor/algorithm/common/Angles.js"></script>
+	<script type="text/javascript" src="../../../../$vendor/algorithm/Matrix/Matrix.js"></script>
+	<script type="text/javascript" src="../../../../$vendor/algorithm/Matrix/Matrix4.js"></script>
+	<script type="text/javascript" src="../../../../$vendor/algorithm/Matrix/CanvasMatrix4.js"></script>
+	<script type="text/javascript" src="../../../../$vendor/algorithm/Vector/Vector.js"></script>
+	<script type="text/javascript" src="../../../../$vendor/algorithm/Vector/Vector3.js"></script>
+	<!-- ... -->
+	<script type="text/javascript" src="../common/constant.js"></script>
+	<script type="text/javascript" src="../common/utils/webgl-matrix.js"></script>
+	<script type="text/javascript" src="../common/utils/createCubeDatas.js"></script>
+	<script type="text/javascript" src="../common/utils/createShereDatas.js"></script>
+	<!-- ... -->
+	<script type="text/javascript" src="./script/draw1.js"></script>
+	<script type="text/javascript" src="./script/draw2.js"></script>
+	<script type="text/javascript" src="./script/base.js"></script>
+</html>

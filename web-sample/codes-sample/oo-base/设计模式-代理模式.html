@@ -1,0 +1,210 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>Code Case</title>
+	</head>
+
+	<body>
+		<div class="container"></div>
+	</body>
+	<script type="text/javascript" src="./script/Biological.js"></script>
+	<script type="text/javascript" src="./script/base.js"></script>
+	<script>
+		console.log('%c=> 设计模式-代理模式', 'color: #ff0000;')
+
+		class Phone {
+			constructor(name) {
+				this._name = name
+			}
+
+			set name(value) {
+				this._name = value
+			}
+
+			get name() {
+				return this._name
+			}
+		}
+
+		class Person {
+			constructor(name) {
+				this._name = name
+			}
+
+			set name(value) {
+				this._name = value
+			}
+
+			get name() {
+				return this._name
+			}
+		}
+
+		/************************************************************/
+		/************************************************************/
+		/************************************************************/
+
+		{
+			console.log(`\n-> 不使用代理, 直接调用`)
+
+			class Star extends Person {
+				constructor(name) {
+					super(name)
+				}
+
+				purchasePhone(phone) {
+					console.log(`${this.name} has purchased a phone what name is ${phone.getName()}.`)
+				}
+			}
+
+			class Assistant extends Person {
+				constructor(name) {
+					super(name)
+				}
+			}
+
+			/*
+    作为明星的 xiaoming 直接自己去购买手机
+ */
+			const xiaoming = new Star(`Xiaoming`)
+			xiaoming.purchasePhone(new Phone(`iPhone 8 Plus`))
+		}
+
+		/************************************************************/
+		/************************************************************/
+		/************************************************************/
+
+		{
+			console.log(`\n-> 简单代理`)
+
+			class Star extends Person {
+				constructor(name) {
+					super(name)
+				}
+
+				purchasePhone(phone) {
+					console.log(`${this.name} has purchased a phone what name is ${phone.getName()}.`)
+				}
+			}
+
+			class Assistant extends Person {
+				constructor(name) {
+					super(name)
+					this._star = null
+				}
+
+				set star(value) {
+					this._star = value
+				}
+
+				purchasePhone(phone) {
+					console.log(`agent execution.`)
+					this.star.purchasePhone(phone)
+				}
+			}
+
+			/*
+    作为明星的 xiaoming 绑定了一个助手(也可以说该助手绑定了 xiaoming)为其购买手机
+ */
+			const xiaoming = new Star(`Xiaoming`)
+			const wang = new Assistant(`WangDaye`)
+
+			wang.star = xiaoming
+			wang.purchasePhone(new Phone(`iPhone 8 Plus`))
+		}
+
+		/************************************************************/
+		/************************************************************/
+		/************************************************************/
+
+		{
+			console.log(`\n-> 保护代理`)
+
+			/* 合作商类 */
+			class Partner extends Person {
+				constructor(name) {
+					super(name)
+					this._price = 0
+				}
+
+				set price(value) {
+					this._price = value
+				}
+
+				get price() {
+					return this._price
+				}
+			}
+
+			/* 明星类 */
+			class Star extends Person {
+				constructor(name) {
+					super(name)
+				}
+
+				/* 接受代言 */
+				acceptEndorsement() {
+					console.log(`Accept endorsement.`)
+				}
+
+				/* 拒接代言 */
+				refuseEndorsement() {
+					console.log(`Refuse endorsement.`)
+				}
+			}
+
+			/* 助理类 */
+			class Assistant extends Person {
+				constructor(name) {
+					super(name)
+					this._star = null
+					this._threshold = 10000
+				}
+
+				set star(value) {
+					this._star = value
+				}
+
+				get star() {
+					return this._star
+				}
+
+				set threshold(value) {
+					this._threshold = value
+				}
+
+				get threshold() {
+					return this._threshold
+				}
+
+				/* 代言洽谈 */
+				businessNgotiation(partner) {
+					const price = partner.getPrice()
+					if (price < this.threshold) {
+						this.star.refuseEndorsement()
+						return
+					}
+					this.star.acceptEndorsement()
+				}
+			}
+
+			const xiaoming = new Star(`Xiaoming`)
+			const wang = new Assistant(`WangDaye`)
+
+			wang.star = xiaoming
+
+			const carer = new Partner(`Carer`)
+			const jane = new Partner(`Jane`)
+
+			carer.price = 9000
+			jane.price = 12000
+
+			wang.businessNgotiation(carer)
+			wang.businessNgotiation(jane)
+		}
+	</script>
+</html>

@@ -1,0 +1,92 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>Code Case</title>
+	</head>
+
+	<body>
+		<div class="container"></div>
+	</body>
+	<script type="text/javascript" src="./script/Biological.js"></script>
+	<script type="text/javascript" src="./script/base.js"></script>
+	<script>
+		console.log('%c=> 设计模式-桥接模式', 'color: #ff0000;')
+
+		/*
+    抽象部分与它的实现部分分离, 使它们都可以独立地变化
+ */
+
+		{
+			console.log(`\n-> 案例一: 方法(函数)封装`)
+
+			/* 
+    each 作为封装函数, 也是一个抽象
+    callback 则充当具体的功能实现
+ */
+
+			function each(array, callback) {
+				for (let i = 0; i < array.length; i++) {
+					const val = array[i]
+					if (callback.call(undefined, val, i, array)) {
+						return false
+					}
+				}
+			}
+
+			const array = ['a', 'b', 'c']
+			each(array, (value, index, array) => {
+				console.log(value, index, array)
+			})
+		}
+
+		/************************************************************/
+		/************************************************************/
+		/************************************************************/
+
+		{
+			console.log(`\n-> 案例二: 类组合(拼接)`)
+
+			class Color {
+				constructor(color) {
+					this._color = color
+				}
+
+				set color(value) {
+					this._color = value
+				}
+
+				get color() {
+					return this._color
+				}
+			}
+
+			class Shape {
+				constructor(shape) {
+					this._shape = shape
+				}
+
+				set shape(value) {
+					this._shape = value
+				}
+
+				get shape() {
+					return this._shape
+				}
+			}
+
+			class Tennis {
+				constructor(color, shape) {
+					this._color = color
+					this._shape = shape
+				}
+			}
+
+			const tableTenis = new Tennis(new Color('orange'), new Shape('ball'))
+			console.log(tableTenis)
+		}
+	</script>
+</html>

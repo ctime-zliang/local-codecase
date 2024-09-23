@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>Code Case</title>
+	</head>
+
+	<body>
+		<div class="container"></div>
+	</body>
+	<script type="text/javascript" src="./script/Biological.js"></script>
+	<script type="text/javascript" src="./script/base.js"></script>
+	<script>
+		console.log('%c=> 设计模式-原型模式', 'color: #ff0000;')
+
+		{
+			console.log(`\n-> 原型模式一`)
+
+			class Dog extends Biological {
+				constructor() {
+					super('dog')
+				}
+
+				guard() {
+					return `A(n) ${this.type} his name is ${this.getName()} is guarding.`
+				}
+			}
+
+			const dog = new Dog()
+			dog.setOriginalName(`ndog`)
+			console.log(dog.guard())
+		}
+
+		/************************************************************/
+		/************************************************************/
+		/************************************************************/
+
+		{
+			console.log(`\n-> 原型模式其他: 参考 JS 各类继承设计`)
+		}
+	</script>
+</html>

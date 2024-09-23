@@ -1,0 +1,30 @@
+{
+	"manifest_version": 3,
+	"name": "FPS Count",
+	"version": "1.0.0",
+	"description": "Web Page FPS Count",
+	"icons": {
+		"16": "icons/fps240-01.png",
+		"48": "icons/fps240-01.png",
+		"128": "icons/fps240-01.png"
+	},
+	"background": {
+		"service_worker": "scripts/background.js"
+	},
+	"action": {
+		"default_icon": "icons/fps240-01.png",
+		"default_title": "FPS Count",
+		"default_popup": "popup.html"
+	},
+	"content_scripts": [
+		{
+			"matches": ["<all_urls>"],
+			"js": ["scripts/fps.js"],
+			"css": [],
+			"run_at": "document_start"
+		}
+	],
+	"host_permissions": ["http://*/*", "https://*/*"],
+	"web_accessible_resources": [],
+	"default_locale": "zh_CN"
+}

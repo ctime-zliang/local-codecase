@@ -1,0 +1,163 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>Code Case</title>
+	</head>
+
+	<body>
+		<div class="container">
+			<div>
+				<fieldset>
+					<legend>案例一: 红绿灯:</legend>
+					<button id="modifyTrafficLight">toggle light state</button>
+					<div>Traffic Light Output: <span id="trafficLightOutput" style="background-color: rgb(10, 5, 5)"></span></div>
+				</fieldset>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="./script/Biological.js"></script>
+	<script type="text/javascript" src="./script/base.js"></script>
+	<script>
+		console.log('%c=> 设计模式-状态模式', 'color: #ff0000;')
+
+		/*
+    允许一个对象在其内部状态改变时来改变它的行为
+        把事物的每种状态都封装成单独的类
+        跟此种状态有关的行为都被封装在这个类的内部
+        只需要在状态类的管理类中, 把某个请求委托给当前的状态对象即可, 该状态对象会负责渲染它自身的行为
+ */
+
+		{
+			console.log(`\n-> 案例一: 红绿灯`)
+
+			/*
+    状态管理类
+ */
+			class TrafficLight {
+				constructor() {
+					this._states = []
+					this._currentState = null
+				}
+
+				set states(value) {
+					this._states = value
+				}
+
+				get states() {
+					return this._states
+				}
+
+				set currentState(value) {
+					this._currentState = value
+				}
+
+				get currentState() {
+					return this._currentState
+				}
+
+				addState(stateInstance) {
+					this._states.push(stateInstance)
+				}
+
+				toggle() {
+					const currentStateIndex = this._states.findIndex(state => {
+						return state === this._currentState
+					})
+					if (typeof currentStateIndex === 'undefined') {
+						return
+					}
+					if (currentStateIndex + 1 < this._states.length) {
+						this.setCurrentState(this._states[currentStateIndex + 1])
+						return
+					}
+					this.setCurrentState(this._states[0])
+				}
+
+				render(callback) {
+					const result = this._currentState.view()
+					callback && callback(result)
+					console.log(result)
+				}
+			}
+
+			/*
+    状态类
+ */
+			class Light {
+				constructor(light) {
+					this.light = light
+				}
+
+				set light(value) {
+					this._light = value
+				}
+
+				get light() {
+					return this._light
+				}
+			}
+			class RedLight extends Light {
+				constructor() {
+					super(`red`)
+				}
+
+				view() {
+					return {
+						msg: `Now is ${this.light} and STOP.`,
+						state: this.light,
+					}
+				}
+			}
+			class YellowLight extends Light {
+				constructor() {
+					super(`yellow`)
+				}
+
+				view() {
+					return {
+						msg: `Now is ${this.light} and STEADY.`,
+						state: this.light,
+					}
+				}
+			}
+			class GreenLight extends Light {
+				constructor() {
+					super(`green`)
+				}
+
+				view() {
+					return {
+						msg: `Now is ${this.light} and GO.`,
+						state: this.light,
+					}
+				}
+			}
+
+			const trafficLight = new TrafficLight()
+			const redLight = new RedLight()
+			const yellowLight = new YellowLight()
+			const greenLight = new GreenLight()
+
+			trafficLight.addState(redLight)
+			trafficLight.addState(yellowLight)
+			trafficLight.addState(greenLight)
+			trafficLight.setCurrentState(redLight)
+			trafficLight.render(result => {
+				trafficLightOutput.textContent = result.msg
+				trafficLightOutput.style.color = result.state
+			})
+
+			modifyTrafficLight.addEventListener(`click`, function () {
+				trafficLight.toggle()
+				trafficLight.render(result => {
+					trafficLightOutput.textContent = result.msg
+					trafficLightOutput.style.color = result.state
+				})
+			})
+		}
+	</script>
+</html>

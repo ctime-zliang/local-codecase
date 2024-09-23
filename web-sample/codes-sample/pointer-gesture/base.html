@@ -1,0 +1,395 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" type="text/css" href="../../../$vendor/component/alert/style/alert.css" />
+		<link rel="stylesheet" type="text/css" href="./style/reset.css" />
+		<link rel="stylesheet" type="text/css" href="./style/case.css" />
+		<title>Code Case</title>
+		<style></style>
+		<script>
+			;(function () {
+				function __resetFontSizeClac() {
+					const _fontSize = document.documentElement.clientWidth / 3.75
+					return _fontSize > 100 ? 100 : _fontSize
+				}
+				document.documentElement.style.fontSize = __resetFontSizeClac() + 'px'
+				window.onresize = function () {
+					document.documentElement.style.fontSize = __resetFontSizeClac() + 'px'
+				}
+			})()
+		</script>
+	</head>
+
+	<body>
+		<div id="appContainer" class="page-container">
+			<section class="page-header">
+				<div class="view-title">Web Page Gesture</div>
+			</section>
+			<section class="page-content">
+				<div class="content-description">
+					<div class="text-line">一个 web page 手势库: gesture.js</div>
+					<div class="text-line" style="font-size: 0.14rem">(打开控制台查看事件详情输出)</div>
+				</div>
+				<!-- Pointer Down -->
+				<div class="view-subject" style="margin-top: 0" data-tagitem="pointerdown">
+					<div class="view-subject-title">Pointer down 事件</div>
+					<div class="view-subject-content">
+						<div class="gesture-interactive" data-tagitem="gesture">
+							<div class="gesture-interactive-content">
+								<span>触发 pointerdown 事件: </span>
+								<em data-tagitem="event-count">0</em>
+								<span>次</span>
+								<span>(</span>
+								<em data-tagitem="event-absolute-x">0</em>, <em data-tagitem="event-absolute-y">0</em>
+								<span>)</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- /Pointer Down -->
+				<!-- Pointer Up -->
+				<div class="view-subject" style="margin-top: 0" data-tagitem="pointerup">
+					<div class="view-subject-title">Pointer up 事件</div>
+					<div class="view-subject-content">
+						<div class="gesture-interactive" data-tagitem="gesture">
+							<div class="gesture-interactive-content">
+								<span>触发 pointerup 事件: </span>
+								<em data-tagitem="event-count">0</em>
+								<span>次</span>
+								<span>(</span>
+								<em data-tagitem="event-absolute-x">0</em>, <em data-tagitem="event-absolute-y">0</em>
+								<span>)</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- /Pointer Up -->
+				<!-- Pointer Move -->
+				<div class="view-subject" style="margin-top: 0" data-tagitem="pointermove">
+					<div class="view-subject-title">Pointer move 事件</div>
+					<div class="view-subject-content">
+						<div class="gesture-interactive" data-tagitem="gesture">
+							<div class="gesture-interactive-content" style="height: 125px">
+								<span style="line-height: 0.2rem">触发 pointermove 事件</span>
+								<div style="line-height: 0.2rem">
+									<span>当前绝对坐标: </span>
+									<em data-tagitem="absolute-x">0</em>, <em data-tagitem="absolute-y">0</em>
+								</div>
+								<div style="line-height: 0.2rem">
+									<span>当前相对坐标: </span>
+									<em data-tagitem="relative-x">0</em>, <em data-tagitem="relative-y">0</em>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- /Pointer Move -->
+				<!-- Tap -->
+				<div class="view-subject" style="margin-top: 0" data-tagitem="tap">
+					<div class="view-subject-title">Tap 事件</div>
+					<div class="view-subject-content">
+						<div class="gesture-interactive" data-tagitem="gesture" style="position: relative">
+							<div class="gesture-interactive-content" style="position: relative; z-index: 100">
+								<span>触发 tap 事件: </span>
+								<em data-tagitem="event-count">0</em>
+								<span>次</span>
+								<span>(</span>
+								<em data-tagitem="event-absolute-x">0</em>, <em data-tagitem="event-absolute-y">0</em>
+								<span>)</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- /Tap -->
+				<!-- Long Tap -->
+				<div class="view-subject" style="margin-top: 0" data-tagitem="longtap">
+					<div class="view-subject-title">Long Tap 事件</div>
+					<div class="view-subject-content">
+						<div class="gesture-interactive" data-tagitem="gesture">
+							<div class="gesture-interactive-content">
+								<span>触发 longtap 事件: </span>
+								<em data-tagitem="event-count">0</em>
+								<span>次</span>
+								<span>(</span>
+								<em data-tagitem="event-absolute-x">0</em>, <em data-tagitem="event-absolute-y">0</em>
+								<span>)</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- /Long Tap -->
+				<!-- Double Tap -->
+				<div class="view-subject" style="margin-top: 0" data-tagitem="doubletap">
+					<div class="view-subject-title">Double Tap 事件</div>
+					<div class="view-subject-content">
+						<div class="gesture-interactive" data-tagitem="gesture">
+							<div class="gesture-interactive-content">
+								<span>触发 doubletap 事件: </span>
+								<em data-tagitem="event-count">0</em>
+								<span>次</span>
+								<span>(</span>
+								<em data-tagitem="event-absolute-x">0</em>, <em data-tagitem="event-absolute-y">0</em>
+								<span>)</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- /Double Tap -->
+				<!-- Drag Move -->
+				<div class="view-subject" style="margin-top: 0" data-tagitem="dragmove">
+					<div class="view-subject-title">Drag move 事件</div>
+					<div class="view-subject-content">
+						<div class="gesture-interactive" data-tagitem="gesture">
+							<div class="gesture-interactive-content" style="height: 180px">
+								<span style="line-height: 0.2rem">触发 dragmove 事件</span>
+								<div style="line-height: 0.2rem">
+									<span>当前移动步长(速度): </span>
+									<em data-tagitem="speed-x">0</em>, <em data-tagitem="speed-y">0</em>
+								</div>
+								<div style="line-height: 0.2rem">
+									<span>当前移动方位/方向: </span>
+									<em data-tagitem="move-position">-</em>/<em data-tagitem="move-direction">-</em>
+								</div>
+								<div style="line-height: 0.2rem">
+									<span>当前绝对坐标: </span>
+									<em data-tagitem="absolute-x">0</em>, <em data-tagitem="absolute-y">0</em>
+								</div>
+								<div style="line-height: 0.2rem">
+									<span>当前相对坐标: </span>
+									<em data-tagitem="relative-x">0</em>, <em data-tagitem="relative-y">0</em>
+								</div>
+								<div style="line-height: 0.2rem">
+									<span>当前移动距离: </span>
+									<em data-tagitem="dist-x">0</em>, <em data-tagitem="dist-y">0</em>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- /Drag Move -->
+				<!-- Swipe -->
+				<div class="view-subject" style="margin-top: 0" data-tagitem="swipe">
+					<div class="view-subject-title">Swipe 事件</div>
+					<div class="view-subject-content">
+						<div class="gesture-interactive" data-tagitem="gesture">
+							<div class="gesture-interactive-content">
+								<div class="swiper-container">
+									<div class="swiper-wrapper">
+										<div class="swiper-item">
+											<div class="list-content">这是一条列表, 向左滑动试一试, 会有一些东西</div>
+											<div class="list-extend">
+												<button class="list-btn list-readed-setting">设为已读</button>
+												<button class="list-btn list-delete-setting">删除</button>
+											</div>
+										</div>
+										<div class="swiper-item">
+											<div class="list-content">这是一条列表, 向左滑动试一试, 会有一些东西</div>
+											<div class="list-extend">
+												<button class="list-btn list-readed-setting">设为已读</button>
+												<button class="list-btn list-delete-setting">删除</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- /Swipe -->
+				<!-- Wheel -->
+				<div class="view-subject" style="margin-top: 0" data-tagitem="wheel">
+					<div class="view-subject-title">Wheel 事件</div>
+					<div class="view-subject-content">
+						<div class="gesture-interactive" data-tagitem="gesture" style="padding: 0">
+							<div class="gesture-interactive-content image-wrapper" data-tagitem="target-image-wrapper" style="border: 0; padding: 0">
+								<div
+									class="image-viewitem image-thumb-background image-viewitem-boxshadow"
+									style="width: 50%; height: 200px"
+									data-tagitem="target-image"
+								></div>
+							</div>
+						</div>
+						<div class="gesture-interactive">
+							<div class="gesture-interactive-content">
+								<span style="line-height: 0.2rem">触发 wheel 事件</span>
+								<div style="line-height: 0.2rem">
+									<span>当前缩放倍率: </span>
+									<em data-tagitem="scale-value">0</em>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- /Wheel -->
+				<!-- Pinch -->
+				<div class="view-subject" style="margin-top: 0" data-tagitem="pinch">
+					<div class="view-subject-title">Pinch 事件</div>
+					<div class="view-subject-content">
+						<div class="gesture-interactive" data-tagitem="gesture" style="padding: 0">
+							<div
+								class="gesture-interactive-content image-wrapper"
+								data-tagitem="target-image-wrapper"
+								style="border: 0; padding: 0; min-height: 250px"
+							>
+								<div
+									class="image-viewitem image-thumb-background image-viewitem-boxshadow"
+									style="width: 50%; height: 150px"
+									data-tagitem="target-image"
+								></div>
+							</div>
+						</div>
+						<div class="gesture-interactive">
+							<div class="gesture-interactive-content">
+								<span style="line-height: 0.2rem">触发 pinch 事件</span>
+								<div style="line-height: 0.2rem">
+									<span>当前缩放倍率: </span>
+									<em data-tagitem="pinch-value">0</em>
+								</div>
+								<div style="line-height: 0.2rem">
+									<span>当前多指中心坐标: </span>
+									<em data-tagitem="center-x">0</em>, <em data-tagitem="center-y">0</em>
+								</div>
+								<div style="line-height: 0.2rem">
+									<span>指针 1 坐标: </span>
+									<em data-tagitem="pointer1-x">0</em>, <em data-tagitem="pointer1-y">0</em>
+								</div>
+								<div style="line-height: 0.2rem">
+									<span>指针 2 坐标: </span>
+									<em data-tagitem="pointer2-x">0</em>, <em data-tagitem="pointer2-y">0</em>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- /Pinch -->
+				<!-- Rotate -->
+				<div class="view-subject" style="margin-top: 0" data-tagitem="rotate">
+					<div class="view-subject-title">Rotate 事件</div>
+					<div class="view-subject-content">
+						<div class="gesture-interactive" data-tagitem="gesture" style="padding: 0">
+							<div
+								class="gesture-interactive-content image-wrapper"
+								data-tagitem="target-image-wrapper"
+								style="border: 0; padding: 0; min-height: 250px"
+							>
+								<div
+									class="image-viewitem image-thumb-background image-viewitem-boxshadow"
+									style="width: 50%; height: 150px"
+									data-tagitem="target-image"
+								></div>
+							</div>
+						</div>
+						<div class="gesture-interactive">
+							<div class="gesture-interactive-content">
+								<span style="line-height: 0.2rem">触发 rotate 事件</span>
+								<div style="line-height: 0.2rem">
+									<span>当前旋转角度(角度): </span>
+									<em data-tagitem="rotate-value">0</em>
+								</div>
+								<div style="line-height: 0.2rem">
+									<span>当前多指中心坐标: </span>
+									<em data-tagitem="center-x">0</em>, <em data-tagitem="center-y">0</em>
+								</div>
+								<div style="line-height: 0.2rem">
+									<span>指针 1 坐标: </span>
+									<em data-tagitem="pointer1-x">0</em>, <em data-tagitem="pointer1-y">0</em>
+								</div>
+								<div style="line-height: 0.2rem">
+									<span>指针 2 坐标: </span>
+									<em data-tagitem="pointer2-x">0</em>, <em data-tagitem="pointer2-y">0</em>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- /Rotate -->
+				<!-- Bottom Extend button -->
+				<div class="view-subject" style="margin-top: 0" data-tagitem="pointerup">
+					<div class="view-subject-content" style="padding: 0 18px">
+						<button class="view-btn" data-tagitem="fullcase-btn">查看综合案例</button>
+					</div>
+				</div>
+				<!-- /Bottom Extend button -->
+			</section>
+			<section class="fullcase-container" data-tagitem="fullcaseContainer" style="display: none">
+				<div class="fullcase-wrapper">
+					<div class="image-view-container" data-tagitem="imageViewContainer"></div>
+					<div class="log-container">
+						<div class="log-item">
+							<span>Viewport: </span>
+							<strong style="font-weight: 100" data-tagitem="viewport-rect">-</strong>
+						</div>
+						<div class="log-item">
+							<span>Image(natural): </span>
+							<strong style="font-weight: 100" data-tagitem="image-natural-rect">-</strong>
+						</div>
+						<div class="log-item">
+							<span>Image(scale): </span>
+							<strong style="font-weight: 100" data-tagitem="image-scale-rect">-</strong>
+						</div>
+						<div class="log-item">
+							<span>Pointers: </span>
+							<strong style="font-weight: 100" data-tagitem="pointer-list">-</strong>
+						</div>
+						<div class="log-item"><span>Transform: </span><span data-tagitem="transform-value">-</span><span></span></div>
+					</div>
+					<div class="close-btn-container">
+						<div class="close-btn-wrapper" data-tagitem="exit-fullcase-btn">
+							<?xml version="1.0" standalone="no"?>
+							<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+							<svg
+								t="1661396967227"
+								class="icon"
+								viewBox="0 0 1024 1024"
+								version="1.1"
+								xmlns="http://www.w3.org/2000/svg"
+								p-id="2337"
+								data-spm-anchor-id="a313x.7781069.0.i0"
+								xmlns:xlink="http://www.w3.org/1999/xlink"
+								width="200"
+								height="200"
+							>
+								<defs>
+									<style type="text/css">
+										@font-face {
+											font-family: feedback-iconfont;
+											src: url('//at.alicdn.com/t/font_1031158_u69w8yhxdu.woff2?t=1630033759944') format('woff2'),
+												url('//at.alicdn.com/t/font_1031158_u69w8yhxdu.woff?t=1630033759944') format('woff'),
+												url('//at.alicdn.com/t/font_1031158_u69w8yhxdu.ttf?t=1630033759944') format('truetype');
+										}
+									</style>
+								</defs>
+								<path
+									d="M512 960c-247.039484 0-448-200.960516-448-448S264.960516 64 512 64 960 264.960516 960 512 759.039484 960 512 960zM512 128.287273c-211.584464 0-383.712727 172.128262-383.712727 383.712727 0 211.551781 172.128262 383.712727 383.712727 383.712727 211.551781 0 383.712727-172.159226 383.712727-383.712727C895.712727 300.415536 723.551781 128.287273 512 128.287273z"
+									p-id="2338"
+								></path>
+								<path
+									d="M557.05545 513.376159l138.367639-136.864185c12.576374-12.416396 12.672705-32.671738 0.25631-45.248112s-32.704421-12.672705-45.248112-0.25631l-138.560301 137.024163-136.447897-136.864185c-12.512727-12.512727-32.735385-12.576374-45.248112-0.063647-12.512727 12.480043-12.54369 32.735385-0.063647 45.248112l136.255235 136.671523-137.376804 135.904314c-12.576374 12.447359-12.672705 32.671738-0.25631 45.248112 6.271845 6.335493 14.496116 9.504099 22.751351 9.504099 8.12794 0 16.25588-3.103239 22.496761-9.247789l137.567746-136.064292 138.687596 139.136568c6.240882 6.271845 14.432469 9.407768 22.65674 9.407768 8.191587 0 16.352211-3.135923 22.591372-9.34412 12.512727-12.480043 12.54369-32.704421 0.063647-45.248112L557.05545 513.376159z"
+									p-id="2339"
+								></path>
+							</svg>
+						</div>
+					</div>
+				</div>
+			</section>
+			<section class="page-footer">
+				<div style="text-align: center; font-size: 0.12rem; color: #777777">提示: 双击页头/脚可快速滚动页面</div>
+			</section>
+		</div>
+		<img
+			id="fullcaseImageAnchor"
+			data-src="./images/demo3.jpg"
+			style="width: 0; height: 0; border: 0; outline: 0; position: absolute; left: 0; top: 0; z-index: -1"
+		/>
+	</body>
+	<script type="text/javascript" src="../../../$vendor/utils/utils.js"></script>
+	<script type="text/javascript" src="../../../$vendor/component/alert/script/alert.js"></script>
+	<script type="text/javascript" src="../../../$vendor/utils/gesture.js"></script>
+	<script type="text/javascript" src="./jscripts/init.js"></script>
+	<script type="text/javascript" src="./script/itemCase.js"></script>
+	<script type="text/javascript" src="./script/compreCase.js"></script>
+</html>

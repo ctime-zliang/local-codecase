@@ -1,0 +1,202 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>Code Case</title>
+	</head>
+
+	<body>
+		<div class="container"></div>
+	</body>
+	<script type="text/javascript" src="./script/Biological.js"></script>
+	<script type="text/javascript" src="./script/base.js"></script>
+	<script>
+		console.log('%c=> 设计模式-组合模式', 'color: #ff0000;')
+
+		/*
+    将对象组合成"树"结构, 以表示"部分-整体"的层次结构, 类似"树-叶型"结构
+    通过对象的多态表现, 使得外部对单个对象或组合对象的使用具有一致性
+        一致操作性, 树叶对象对外接口保存一致
+        组合模式除了要求组合对象和子对象拥有相同的接口之外, 还要求对一组子对象的操作必须具有一致性
+    自上而下的的请求流向, 从树对象传递给叶对象
+    调用顶层对象, 会自行遍历其下的叶对象执行
+ */
+
+		{
+			console.log(`\n-> 案例一: 命令执行`)
+
+			class Command {
+				add() {
+					throw new Error(`无法调用此方法.`)
+				}
+
+				doTask() {
+					throw new Error(`无法调用此方法.`)
+				}
+			}
+
+			/* 命令管理类 */
+			class MacroCommand extends Command {
+				constructor(name) {
+					super()
+					this._name = name
+					this._cmds = []
+				}
+
+				set name(value) {
+					this._name = value
+				}
+
+				get name() {
+					return this._name
+				}
+
+				set cmds(value) {
+					this._cmds = value
+				}
+
+				get cmds() {
+					return this._cmds
+				}
+
+				add(cmdInstance) {
+					this._cmds.push(cmdInstance)
+				}
+
+				doTask() {
+					console.log(`正在执行组合命令: ${this._name}.`)
+					for (let i = 0; i < this._cmds.length; i++) {
+						if (this._cmds[i].doTask) {
+							this._cmds[i].doTask()
+						}
+					}
+				}
+			}
+
+			class Television extends Command {
+				constructor() {
+					super()
+					this.name = 'Color Television'
+				}
+
+				set name(value) {
+					this._name = value
+				}
+
+				get name() {
+					return this._name
+				}
+
+				doTask() {
+					console.log(`- ${this.name}: Play TV.`)
+				}
+			}
+
+			class Radio extends Command {
+				constructor() {
+					super()
+					this.name = 'Old Radio'
+				}
+
+				set name(value) {
+					this._name = value
+				}
+
+				get name() {
+					return this._name
+				}
+
+				doTask() {
+					console.log(`- ${this._name}: Play Broadcast.`)
+				}
+			}
+
+			const macroCommand = new MacroCommand('组合命令')
+			const television = new Television()
+			const radio = new Radio()
+			macroCommand.add(television)
+			macroCommand.add(radio)
+			macroCommand.doTask()
+
+			console.log(`----------------------------------`)
+
+			const supperMacroCommand = new MacroCommand('超级组合命令')
+			supperMacroCommand.add(radio)
+			supperMacroCommand.add(macroCommand)
+			supperMacroCommand.doTask()
+			console.log(supperMacroCommand)
+		}
+
+		/************************************************************/
+		/************************************************************/
+		/************************************************************/
+
+		{
+			console.log(`\n-> 案例二: 目录扫描`)
+
+			class BaseFile {
+				constructor(name) {
+					this.name = name
+					this.parent = null
+				}
+
+				setParent(parent) {
+					this.parent = parent
+				}
+			}
+
+			class Folder extends BaseFile {
+				constructor(name) {
+					super(name)
+					this.files = []
+				}
+
+				add(file) {
+					file.setParent(this)
+					this.files.push(file)
+				}
+
+				scan() {
+					console.log(`正在扫描文件夹: ${this.name}.`)
+					for (let i = 0; i < this.files.length; i++) {
+						this.files[i].scan()
+					}
+				}
+			}
+
+			class File extends BaseFile {
+				constructor(name) {
+					super(name)
+					/* ... */
+				}
+
+				add(file) {
+					throw new Error(`不能向文件中添加文件.`)
+				}
+
+				scan() {
+					console.log(`- 扫描到文件: ${this.name}.`)
+				}
+			}
+
+			const documentFolder = new Folder(`Document`)
+			const yuwen = new File(`Yu Wen`)
+			const shuxue = new File(`Shu Xue`)
+
+			documentFolder.add(yuwen)
+			documentFolder.add(shuxue)
+
+			const tipsFolder = new Folder(`Tips`)
+			const note = new File(`Note`)
+
+			tipsFolder.add(note)
+			documentFolder.add(tipsFolder)
+
+			documentFolder.scan()
+			console.log(documentFolder)
+		}
+	</script>
+</html>

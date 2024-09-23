@@ -1,0 +1,18 @@
+@keyframes move1 {
+	to {
+		left: 700px;
+	}
+}
+
+.ball {
+	width: 100px;
+	height: 100px;
+	background: #f40;
+	border-radius: 50%;
+	margin: 30px;
+}
+.ball-animation {
+	position: absolute;
+	left: 0;
+	animation: move1 3s alternate infinite linear;
+}

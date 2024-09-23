@@ -1,0 +1,111 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>Code Case</title>
+	</head>
+
+	<body>
+		<div class="container"></div>
+	</body>
+	<script type="text/javascript" src="./script/Biological.js"></script>
+	<script type="text/javascript" src="./script/base.js"></script>
+	<script>
+		console.log('%c=> 设计模式-享元模式', 'color: #ff0000;')
+
+		/*
+    共享细粒度对象
+ */
+
+		{
+			console.log(`\n-> 案例一: 图书馆借书管理`)
+
+			/* 管理内部状态(属性)的 类 */
+			class Book {
+				constructor(isbn, name, author) {
+					this._isbn = isbn
+					this._name = name
+					this._author = author
+				}
+
+				set isbn(value) {
+					this._isbn = value
+				}
+
+				get isbn() {
+					return this._isbn
+				}
+
+				set name(value) {
+					this._name = value
+				}
+
+				get name() {
+					return this._name
+				}
+
+				set author(value) {
+					this._author = value
+				}
+
+				get author() {
+					return this._author
+				}
+			}
+
+			/* 静态工厂类, 依据 isbn 管理生产唯一的实例 */
+			class BookManager {
+				static books = {}
+
+				static createBook(isbn, name, author) {
+					if (this.books[isbn]) {
+						return this.books[isbn]
+					}
+					const book = new Book(isbn, name, author)
+					this.books[isbn] = book
+					return book
+				}
+			}
+
+			/* 出借管理类 */
+			class BookLendManager {
+				static records = {}
+
+				static addRecord(bookItem, borrower, borrowingDate, borrowingDuration) {
+					if (this.isLend(bookItem.isbn)) {
+						console.warn(`${borrower} 借阅书籍失败: ${bookItem.name}; 该书已被登记借阅.`)
+						return
+					}
+					this.records[bookItem.isbn] = {
+						book: bookItem,
+						borrower,
+						borrowingDate,
+						borrowingDuration,
+					}
+					console.warn(`${borrower} 借阅书籍成功: ${bookItem.name}, 借阅时长: ${borrowingDuration}d.`)
+				}
+
+				static isLend(isbn) {
+					if (typeof this.records[isbn] !== 'undefined') {
+						return true
+					}
+					return false
+				}
+			}
+
+			/* 创建图书 */
+			const bookEconomicManagement = BookManager.createBook(20201215, '经济学管理', 'alex')
+			const bookTheRenaissance = BookManager.createBook(20190308, '文艺复兴', 'ada')
+
+			console.log(bookEconomicManagement)
+
+			/* 借书 */
+			BookLendManager.addRecord(bookEconomicManagement, 'zhangsan', new Date(), 7)
+			BookLendManager.addRecord(bookEconomicManagement, 'lisi', new Date(), 7)
+			BookLendManager.addRecord(bookTheRenaissance, 'lisi', new Date(), 5)
+		}
+	</script>
+</html>

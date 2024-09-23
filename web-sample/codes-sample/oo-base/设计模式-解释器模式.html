@@ -1,0 +1,101 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>Code Case</title>
+	</head>
+
+	<body>
+		<div class="container"></div>
+	</body>
+	<script type="text/javascript" src="./script/Biological.js"></script>
+	<script type="text/javascript" src="./script/base.js"></script>
+	<script>
+		console.log('%c=> 设计模式-解释器模式', 'color: #ff0000;')
+
+		/* 
+    解释器模式提供了对语言或语法的的一些判断方式
+ */
+
+		{
+			console.log(`\n-> 筛选目标`)
+
+			class Condition {
+				constructor() {
+					/* ... */
+				}
+			}
+
+			/* 校验器 */
+			class AgeCondidtion extends Condition {
+				constructor(age) {
+					super()
+					this._age = age
+				}
+
+				expression(target) {
+					if (target.age >= this._age) {
+						return { ret: 0, msg: `` }
+					}
+					return { ret: -1, msg: `目标 ${target.name} 不满足条件: 年龄必须大于等于 ${this._age}, 当前 ${target.age}.` }
+				}
+			}
+
+			/* 校验器 */
+			class EduCondition extends Condition {
+				constructor(eduLevel) {
+					super()
+					this._eduLevel = eduLevel
+				}
+
+				expression(target) {
+					if (target.edu >= this._eduLevel) {
+						return { ret: 0, msg: `` }
+					}
+					return { ret: -1, msg: `目标 ${target.name} 不满足条件: 学历水平必须大于等于 ${this._eduLevel}, 当前 ${target.edu}.` }
+				}
+			}
+
+			class AndArithmeticLogic {
+				constructor() {
+					this._conditions = []
+				}
+
+				addConditon(condition) {
+					this._conditions.push(condition)
+				}
+
+				expression(target) {
+					let pass = true
+					let msg = ``
+					for (let i = 0; i < this._conditions.length; i++) {
+						const res = this._conditions[i].expression(target)
+						if (res.ret !== 0) {
+							pass = false
+							msg = res.msg
+							break
+						}
+					}
+					!pass && console.warn(msg)
+					return pass
+				}
+			}
+
+			const eduCondition = new EduCondition(20)
+			const ageCondidtion = new AgeCondidtion(18)
+			const andModeArithmeticLogic = new AndArithmeticLogic()
+
+			andModeArithmeticLogic.addConditon(eduCondition)
+			andModeArithmeticLogic.addConditon(ageCondidtion)
+
+			const xiaoming = { name: 'xiaoming', age: 22, edu: 21 }
+			const xiaowang = { name: 'xiaowang', age: 18, edu: 17 }
+
+			console.log(andModeArithmeticLogic.expression(xiaoming))
+			console.log(andModeArithmeticLogic.expression(xiaowang))
+		}
+	</script>
+</html>

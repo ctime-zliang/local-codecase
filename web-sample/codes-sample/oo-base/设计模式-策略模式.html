@@ -1,0 +1,100 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>Code Case</title>
+	</head>
+
+	<body>
+		<div class="container"></div>
+	</body>
+	<script type="text/javascript" src="./script/Biological.js"></script>
+	<script type="text/javascript" src="./script/base.js"></script>
+	<script>
+		console.log('%c=> 设计模式-策略模式', 'color: #ff0000;')
+
+		/*
+    定义一系列的算法, 把它们一个个封装起来, 并且使它们可以相互替换
+ */
+
+		{
+			console.log(`\n-> 案例一: 奖金计算`)
+
+			/* 策略类(组) */
+			class BonusStrategyA {
+				constructor() {
+					/* ... */
+				}
+
+				calculate(salary) {
+					return salary * 2 + 5000
+				}
+			}
+
+			class BonusStrategyB {
+				constructor() {
+					/* ... */
+				}
+
+				calculate(salary) {
+					return salary * 4
+				}
+			}
+
+			class BonusStrategyC {
+				constructor() {
+					/* ... */
+				}
+
+				calculate(salary) {
+					return salary * 5
+				}
+			}
+
+			/* 环境类 */
+			class Bouns {
+				constructor(salary) {
+					this._salary = salary
+					this._strategy = null
+				}
+
+				set salary(value) {
+					this._salary = value
+				}
+
+				get salary() {
+					return this._salary
+				}
+
+				calculate() {
+					if (!this._strategy) {
+						throw new Error(`无法计算奖金, 因为缺少对应的策略.`)
+					}
+					return this._strategy.calculate(this._salary)
+				}
+			}
+
+			const salary = 10000
+			const staff = new Bouns(salary)
+
+			// 策略修改并计算
+			staff.salary = new BonusStrategyA()
+			console.log(staff.calculate())
+			staff.salary = new BonusStrategyA()
+			console.log(staff.calculate())
+
+			/* 
+    使用一个"等级"到"计算方法"的哈希表来实现, 也是一种策略模式
+ */
+			// const Strategy = {
+			//     A: (salary) => {
+			//         return salary * 2 + 5000
+			//     }
+			// }
+			// const bouns = Strategy[`A`/* level 参数 */](salary)
+		}
+	</script>
+</html>

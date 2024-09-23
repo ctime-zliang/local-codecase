@@ -1,0 +1,106 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>Code Case</title>
+	</head>
+
+	<body>
+		<div class="container"></div>
+	</body>
+	<script type="text/javascript" src="./script/Biological.js"></script>
+	<script type="text/javascript" src="./script/base.js"></script>
+	<script>
+		console.log('%c=> 设计模式-模板(方法)模式', 'color: #ff0000;')
+
+		/*
+    在父类中定义抽象方法和逻辑框架, 在子类中定义具体的实现
+    需要子类拥有相同或相似的处理逻辑, 即具有相似的形状
+ */
+
+		{
+			console.log(`\n-> 案例一: 面试流程`)
+
+			/* 包含抽象方法和逻辑框架的父类 */
+			class Interview {
+				constructor(companyName) {
+					this._companyName = companyName
+				}
+
+				set companyName(value) {
+					this._companyName = value
+				}
+
+				get companyName() {
+					return this._companyName
+				}
+
+				/*
+        start 作为模板方法, 定义了子类具体的处理逻辑 
+     */
+				start() {
+					this.writtenTest()
+					this.technicalInterview()
+					this.leaderInterview()
+					this.waitNotice()
+				}
+
+				writtenTest() {
+					throw new Error(`Written Test: 必须在子类实现该方法.`)
+				}
+
+				technicalInterview() {
+					throw new Error(`Technical Interview: 必须在子类实现该方法.`)
+				}
+
+				leaderInterview() {
+					throw new Error(`Leader Interview: 必须在子类实现该方法.`)
+				}
+
+				waitNotice() {
+					throw new Error(`Wait Notice: 必须在子类实现该方法.`)
+				}
+			}
+
+			/* 子类 */
+			/* 某具体公司的面试 */
+			class BaiduInterview extends Interview {
+				constructor() {
+					super(`Baidu`)
+					this._candidateName
+				}
+
+				set candidateName(value) {
+					this._candidateName = value
+				}
+
+				get candidateName() {
+					return this._candidateName
+				}
+
+				writtenTest() {
+					console.log(`${this.companyName} 正在对候选: ${this._candidateName} 执行笔试.`)
+				}
+
+				technicalInterview() {
+					console.log(`${this.companyName} 正在对候选: ${this._candidateName} 执行技术面试.`)
+				}
+
+				leaderInterview() {
+					console.log(`${this.companyName} 正在对候选: ${this._candidateName} 执行领导面试.`)
+				}
+
+				waitNotice() {
+					console.log(`候选人: ${this._candidateName} 已完成 ${this.companyName} 公司的初选面试, 正在等候结果通知.`)
+				}
+			}
+
+			const baiduInterview = new BaiduInterview()
+			baiduInterview.candidateName = 'zhangsan'
+			baiduInterview.start()
+		}
+	</script>
+</html>

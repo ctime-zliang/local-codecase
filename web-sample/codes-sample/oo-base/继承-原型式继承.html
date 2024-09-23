@@ -1,0 +1,61 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>Code Case</title>
+	</head>
+
+	<body>
+		<div class="container"></div>
+	</body>
+	<script type="text/javascript" src="./script/Biological.js"></script>
+	<script type="text/javascript" src="./script/base.js"></script>
+	<script>
+		console.log('%c=> 继承-原型式继承', 'color: #ff0000;')
+
+		/* 
+    继承-原型式继承
+        实际上是将"原型链继承"方式包装成"工厂函数"形式
+        缺点:
+            1. 子类的实例将共享父类中 prototype 所有引用属性/方法
+            2. 子类实例对继承自父类 prototype 上的引用属性做修改时将影响到子类和父类的实例
+*/
+
+		{
+			function createChildInstance(ParentInstance, name) {
+				function Child() {
+					this.name = name
+					this.hobbies = []
+				}
+				Child.prototype = ParentInstance
+				Child.prototype.constructor = Child
+				Child.prototype.work = function () {
+					return `${this.name} is working.`
+				}
+				return new Child()
+			}
+
+			const dog = new Biological('dog')
+			console.log(`\n··· dog >>>`)
+			console.log(dog)
+			console.log(dog.eat())
+			dog.features.push(`fly`)
+
+			const alex = createChildInstance(new Biological('human'), 'alex')
+			console.log(`\n··· alex >>>`)
+			console.log(alex)
+			console.log(alex.eat())
+			alex.phyComposition.push(`kidney*3`)
+
+			const json = createChildInstance(new Biological('human'), 'json')
+			json.features.push(`swim`)
+			json.hobbies.push(`read`)
+			console.log(`\n··· json >>>`)
+			console.log(json)
+			console.log(json.eat())
+		}
+	</script>
+</html>
