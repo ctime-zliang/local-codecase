@@ -437,6 +437,8 @@ function drawCanvas1(containerElement) {
 				Program1.profile.orthoProjection.near,
 				Program1.profile.orthoProjection.far
 			)
+			gl.uniformMatrix4fv(glUniforms.u_ProjMatrix, false, new Float32Array(orthoMatrix4.data))
+
 			/**
 			 * 创建视图矩阵
 			 */
@@ -445,9 +447,7 @@ function drawCanvas1(containerElement) {
 				new Ven$Vector3(Program1.profile.lookAt.atPosition.x, Program1.profile.lookAt.atPosition.y, Program1.profile.lookAt.atPosition.z),
 				new Ven$Vector3(0, 1, 0)
 			)
-
 			gl.uniformMatrix4fv(glUniforms.u_ViewMatrix, false, new Float32Array(lookAtMatrix4.data))
-			gl.uniformMatrix4fv(glUniforms.u_ProjMatrix, false, new Float32Array(orthoMatrix4.data))
 		},
 		render(gl, vertexFeatureSize, modelInstances, itemProgramControl) {
 			modelInstances.forEach(modelInstanceItem => {

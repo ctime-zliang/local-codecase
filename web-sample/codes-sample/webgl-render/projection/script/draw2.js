@@ -457,6 +457,8 @@ function drawCanvas2(containerElement) {
 				Program2.profile.persProjection.near,
 				Program2.profile.persProjection.far
 			)
+			gl.uniformMatrix4fv(glUniforms.u_ProjMatrix, false, new Float32Array(projectionMatrix4.data))
+
 			/**
 			 * 创建视图矩阵
 			 */
@@ -465,9 +467,7 @@ function drawCanvas2(containerElement) {
 				new Ven$Vector3(Program2.profile.lookAt.atPosition.x, Program2.profile.lookAt.atPosition.y, Program2.profile.lookAt.atPosition.z),
 				new Ven$Vector3(0, 1, 0)
 			)
-
 			gl.uniformMatrix4fv(glUniforms.u_ViewMatrix, false, new Float32Array(lookAtMatrix4.data))
-			gl.uniformMatrix4fv(glUniforms.u_ProjMatrix, false, new Float32Array(projectionMatrix4.data))
 		},
 		render(gl, vertexFeatureSize, modelInstances, itemProgramControl) {
 			modelInstances.forEach(modelInstanceItem => {
