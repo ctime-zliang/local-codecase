@@ -1,4 +1,4 @@
-class AsyncAnimator {
+class Ven$AsyncAnimator {
 	constructor(duration, update, easing) {
 		this._duration = duration
 		this._update = update
@@ -14,20 +14,20 @@ class AsyncAnimator {
 			let qId = 0
 			const step = timestamp => {
 				startTime2 = startTime2 || timestamp
-				const p = Math.min(1.0, (timestamp - startTime2) / duration)
-				update.call(self, easing ? easing(p) : p, p)
-				if (p < 1.0) {
-					qId = requestAnimationFrame(step)
+				const progress = Math.min(1.0, (timestamp - startTime2) / duration)
+				update.call(this, easing ? easing(progress) : progress, progress)
+				if (progress < 1.0) {
+					qId = window.requestAnimationFrame(step)
 				} else {
 					resolve(startTime2 + duration)
 				}
 			}
-			self.cancel = function () {
-				cancelAnimationFrame(qId)
-				update.call(self, 0, 0)
+			this.cancel = () => {
+				window.cancelAnimationFrame(qId)
+				update.call(this, 0, 0)
 				resolve(startTime2 + duration)
 			}
-			qId = requestAnimationFrame(step)
+			qId = window.requestAnimationFrame(step)
 		})
 	}
 
