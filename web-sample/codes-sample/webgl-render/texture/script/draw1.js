@@ -415,9 +415,11 @@ function drawCanvas1(containerElement) {
 	const COMMON_VERTEX_SHADER = `
 		precision mediump float;
 		varying vec4 v_Color;
+		varying vec2 v_TextureCoord;
 		// 顶点配置(组)
 		attribute vec3 a_ObjPosition;
 		attribute vec4 a_Color;
+		attribute vec2 a_textureCoord;
 		// 变换矩阵(组)
 		uniform mat4 u_ModelMatrix;
 		uniform mat4 u_ViewMatrix;
@@ -425,14 +427,40 @@ function drawCanvas1(containerElement) {
 		void main() {
 			gl_Position = u_ProjMatrix * u_ViewMatrix * u_ModelMatrix * vec4(a_ObjPosition, 1.0);
 			v_Color = a_Color;
-			gl_PointSize = 5.0;
+			v_TextureCoord = a_textureCoord;
 		}
 	`
 	const COMMON_FRAGMENT_SHADER = `
 		precision mediump float;
 		varying vec4 v_Color;
+		varying vec2 v_TextureCoord;
+		// 纹理参数(组)
+		uniform sampler2D u_texture;
 		void main() {
 			gl_FragColor = v_Color;
+			vec2 uv = v_TextureCoord;
+			vec4 color = texture2D(u_texture, uv);
+			vec2 xy = gl_FragCoord.xy * 1.0;
+			vec3 rgb = color.rgb;
+			float dot_size = 9.0;
+			float dot_size_1of3 = dot_size/3.0;
+			if ((mod(xy.x, dot_size)) < dot_size_1of3 * 1.0) {
+				rgb.r *= 1.0;
+				rgb.g *= 0.0;
+				rgb.b *= 0.0;
+			} else if ((mod(xy.x, dot_size)) < dot_size_1of3 * 2.0) {
+				rgb.r *= 0.0;
+				rgb.g *= 1.0;
+				rgb.b *= 0.0;
+			} else if ((mod(xy.x, dot_size)) < dot_size_1of3 * 3.0) {
+				rgb.r *= 0.0;
+				rgb.g *= 0.0;
+				rgb.b *= 1.0;
+			}
+			if (mod(xy.y, dot_size) < dot_size_1of3/2.0) {
+				discard;
+			}
+			gl_FragColor = vec4(rgb, 1.0);
 		}
 	`
 
@@ -458,11 +486,18 @@ function drawCanvas1(containerElement) {
 
 	Program1.glControl.commonLight.program = ven$createProgram(Program1.glControl.gl, COMMON_VERTEX_SHADER, COMMON_FRAGMENT_SHADER)
 	const commonWebGLVariableLocation = ven$getWebGLVariableLocation(Program1.glControl.gl, Program1.glControl.commonLight.program, {
-		glAttributes: ['a_ObjPosition', 'a_Color'],
-		glUniforms: ['u_ModelMatrix', 'u_ViewMatrix', 'u_ProjMatrix'],
+		glAttributes: ['a_ObjPosition', 'a_Color', 'a_textureCoord'],
+		glUniforms: ['u_ModelMatrix', 'u_ViewMatrix', 'u_ProjMatrix', 'u_texture'],
 	})
 	Program1.glControl.commonLight.glAttributes = commonWebGLVariableLocation.glAttributes
 	Program1.glControl.commonLight.glUniforms = commonWebGLVariableLocation.glUniforms
+
+	ven$loadImageResourceTexture(Program1.glControl.gl, '../common/images/frog-256x256.jpg', (gl, texture) => {
+		gl.uniform1i(Program1.glControl.commonLight.glUniforms.u_texture, 0)
+		gl.activeTexture(gl.TEXTURE0)
+		// gl.bindTexture(gl.TEXTURE_2D, null)
+		Program1.isRender = true
+	})
 
 	const canvas = {
 		status: null,
@@ -492,7 +527,6 @@ function drawCanvas1(containerElement) {
 				Program1.profile.persProjection.far
 			)
 			gl.uniformMatrix4fv(glUniforms.u_ProjMatrix, false, new Float32Array(projectionMatrix4.data))
-
 			/**
 			 * 创建视图矩阵
 			 */
@@ -511,20 +545,9 @@ function drawCanvas1(containerElement) {
 		},
 		drawBuffer(gl, modelInstanceItem, itemProgramControl) {
 			const { normalBuffer, featureBuffer, vertexBuffer, colorBuffer, indexBuffer, texCoordBuffer, vertexDatas } = modelInstanceItem
-			const { colors, vertices, normals, indices } = vertexDatas
+			const { colors, vertices, normals, indices, textureCoords } = vertexDatas
 			const { glAttributes } = itemProgramControl
 
-			// ven$initAttributeVariable(
-			// 	gl,
-			// 	glAttributes.a_Normal,
-			// 	normalBuffer,
-			// 	{
-			// 		size: 3,
-			// 	},
-			// 	{
-			// 		data: normals,
-			// 	}
-			// )
 			ven$initAttributeVariable(
 				gl,
 				glAttributes.a_ObjPosition,

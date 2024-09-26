@@ -369,7 +369,6 @@ function drawCanvas1(containerElement) {
 		void main() {
 			gl_Position = u_ProjMatrix * u_ViewMatrix * u_ModelMatrix * vec4(a_Position, 1.0);
 			v_Color = a_Color;
-			gl_PointSize = 5.0;
 		}
 	`
 	const COMMON_FRAGMENT_SHADER = `
@@ -438,7 +437,6 @@ function drawCanvas1(containerElement) {
 				Program1.profile.orthoProjection.far
 			)
 			gl.uniformMatrix4fv(glUniforms.u_ProjMatrix, false, new Float32Array(orthoMatrix4.data))
-
 			/**
 			 * 创建视图矩阵
 			 */
@@ -470,7 +468,6 @@ function drawCanvas1(containerElement) {
 				offset: 12,
 			})
 			gl.bufferData(gl.ARRAY_BUFFER, featureData, gl.STATIC_DRAW)
-
 			gl.drawArrays(gl.TRIANGLES, 0, vertexFeatureSize / 7)
 		},
 		applyModelMatrix(gl, modelInstance, itemProgramControl) {
@@ -516,7 +513,6 @@ function drawCanvas1(containerElement) {
 			const modelEffectInverseMatrix4 = Ven$CanvasMatrix4.setInverse(modelEffectMatrix4)
 			const modelEffectInverseTransposeMatrix4 = Ven$CanvasMatrix4.setTranspose(modelEffectInverseMatrix4)
 			const normalMatrix4 = modelEffectInverseTransposeMatrix4
-
 			gl.uniformMatrix4fv(glUniforms.u_ModelMatrix, false, new Float32Array(modelEffectMatrix4.data))
 			gl.uniformMatrix4fv(glUniforms.u_NormalMatrix, false, new Float32Array(normalMatrix4.data))
 		},

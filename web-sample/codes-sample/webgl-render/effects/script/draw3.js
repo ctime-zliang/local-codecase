@@ -691,7 +691,6 @@ function drawCanvas3(containerElement) {
 					new Ven$Vector3(0, 1, 0)
 				)
 			}
-
 			gl.uniformMatrix4fv(glUniforms.u_ViewMatrix, false, new Float32Array(lookAtMatrix4.data))
 			gl.uniformMatrix4fv(glUniforms.u_ProjMatrix, false, new Float32Array(projectionMatrix4.data))
 			return {
@@ -726,7 +725,6 @@ function drawCanvas3(containerElement) {
 				offset: 12,
 			})
 			gl.bufferData(gl.ARRAY_BUFFER, featureData, gl.STATIC_DRAW)
-
 			gl.drawArrays(gl.TRIANGLES, 0, vertexFeatureSize / 7)
 		},
 		applyModelMatrix(gl, modelInstance, itemProgramControl) {
@@ -750,13 +748,11 @@ function drawCanvas3(containerElement) {
 			const modelScaleMatrix4 = Ven$CanvasMatrix4.setScale(
 				new Ven$Vector3(modelInstance.modelScale.x, modelInstance.modelScale.y, modelInstance.modelScale.z)
 			)
-
 			const modelEffectMatrix4 = modelRotationXMatrix4
 				.multiply4(modelRotationYMatrix4)
 				.multiply4(modelRotationZMatrix4)
 				.multiply4(modelScaleMatrix4)
 				.multiply4(modelOffsetMatrix4)
-
 			gl.uniformMatrix4fv(glUniforms.u_ModelMatrix, false, new Float32Array(modelEffectMatrix4.data))
 			return modelEffectMatrix4
 		},
@@ -825,7 +821,6 @@ function drawCanvas3(containerElement) {
 		canvas.render(Program3.glControl.gl, Program3.glControl.vertexFeatureSize1, Program3.glControl.modelInstances1, Program3.glControl.main)
 		Program3.glControl.gl.uniformMatrix4fv(mainGlUniforms.u_ModelMatrixFromLight, false, new Float32Array(m2.data))
 		canvas.render(Program3.glControl.gl, Program3.glControl.vertexFeatureSize2, Program3.glControl.modelInstances2, Program3.glControl.main)
-
 		stepControl.updateLastStamp()
 		window.requestAnimationFrame(exec)
 	}

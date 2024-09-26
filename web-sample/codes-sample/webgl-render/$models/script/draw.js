@@ -214,12 +214,10 @@ function drawCanvas(containerElement) {
 				new Ven$Vector3(0, 1, 0)
 			)
 			gl.uniformMatrix4fv(glUniforms.u_ViewMatrix, false, new Float32Array(lookAtMatrix4.data))
-
 			gl.uniform3fv(
 				glUniforms.u_EyePosition,
 				new Float32Array([Program.profile.lookAt.eyePosition.x, Program.profile.lookAt.eyePosition.y, Program.profile.lookAt.eyePosition.z])
 			)
-
 			gl.uniform1f(glUniforms.u_illuType, Program.profile.light.illuType)
 			if (Program.profile.light.illuType === 1) {
 				/**
@@ -269,7 +267,7 @@ function drawCanvas(containerElement) {
 		drawBuffer(gl, vertexFeatureSize, modelInstanceItem, itemProgramControl) {
 			const { normalBuffer, featureBuffer, vertexBuffer, colorBuffer, indexBuffer, texCoordBuffer, vertexDatas } = modelInstanceItem
 			const { vertexNormals: normalData, vertexFeature: featureData, vertexCoordinate: texCoordData } = vertexDatas
-			const { colors, vertices, normals, indices } = vertexDatas
+			const { colors, vertices, normals, indices, textureCoords } = vertexDatas
 			const { glAttributes } = itemProgramControl
 
 			if (Program.profile.modelSourceType === 1) {
@@ -390,7 +388,6 @@ function drawCanvas(containerElement) {
 			const modelEffectInverseMatrix4 = Ven$CanvasMatrix4.setInverse(modelEffectMatrix4)
 			const modelEffectInverseTransposeMatrix4 = Ven$CanvasMatrix4.setTranspose(modelEffectInverseMatrix4)
 			const normalMatrix4 = modelEffectInverseTransposeMatrix4
-
 			gl.uniformMatrix4fv(glUniforms.u_ModelMatrix, false, new Float32Array(modelEffectMatrix4.data))
 			gl.uniformMatrix4fv(glUniforms.u_NormalMatrix, false, new Float32Array(normalMatrix4.data))
 		},

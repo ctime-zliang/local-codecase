@@ -430,7 +430,6 @@ function drawCanvas2(containerElement) {
 		void main() {
 			gl_Position = u_ProjMatrix * u_ViewMatrix * u_ModelMatrix * vec4(a_Position, 1.0);
 			v_Color = a_Color;
-			gl_PointSize = 5.0;
 			v_TexCoord = a_TexCoord;
 		}
 	`
@@ -528,7 +527,6 @@ function drawCanvas2(containerElement) {
 				new Ven$Vector3(Program2.profile.lookAt.atPosition.x, Program2.profile.lookAt.atPosition.y, Program2.profile.lookAt.atPosition.z),
 				new Ven$Vector3(0, 1, 0)
 			)
-
 			gl.uniformMatrix4fv(glUniforms.u_ViewMatrix, false, new Float32Array(lookAtMatrix4.data))
 			gl.uniformMatrix4fv(glUniforms.u_ProjMatrix, false, new Float32Array(projectionMatrix4.data))
 		},
@@ -564,7 +562,6 @@ function drawCanvas2(containerElement) {
 					data: texCoordData,
 				}
 			)
-
 			if (this.status === 'FRAME_BUFFER') {
 				gl.activeTexture(gl.TEXTURE0)
 				gl.bindTexture(gl.TEXTURE_2D, cubeTexture)
@@ -596,13 +593,11 @@ function drawCanvas2(containerElement) {
 			const modelScaleMatrix4 = Ven$CanvasMatrix4.setScale(
 				new Ven$Vector3(modelInstance.modelScale.x, modelInstance.modelScale.y, modelInstance.modelScale.z)
 			)
-
 			const modelEffectMatrix4 = modelRotationXMatrix4
 				.multiply4(modelRotationYMatrix4)
 				.multiply4(modelRotationZMatrix4)
 				.multiply4(modelScaleMatrix4)
 				.multiply4(modelOffsetMatrix4)
-
 			gl.uniformMatrix4fv(glUniforms.u_ModelMatrix, false, new Float32Array(modelEffectMatrix4.data))
 		},
 	}

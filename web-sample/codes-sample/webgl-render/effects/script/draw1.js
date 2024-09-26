@@ -1002,7 +1002,6 @@ function drawCanvas1(containerElement) {
 				new Ven$Vector3(0, 1, 0)
 			)
 			gl.uniformMatrix4fv(glUniforms.u_ViewMatrix, false, new Float32Array(lookAtMatrix4.data))
-
 			gl.uniform1f(glUniforms.u_illuType, Program1.profile.light.illuType)
 			if (Program1.profile.light.illuType === 1) {
 				const lightDirection = new Ven$Vector3(
@@ -1104,7 +1103,6 @@ function drawCanvas1(containerElement) {
 			const modelScaleMatrix4 = Ven$CanvasMatrix4.setScale(
 				new Ven$Vector3(modelInstance.modelScale.x, modelInstance.modelScale.y, modelInstance.modelScale.z)
 			)
-
 			const modelEffectMatrix4 = modelRotationXMatrix4
 				.multiply4(modelRotationYMatrix4)
 				.multiply4(modelRotationZMatrix4)
