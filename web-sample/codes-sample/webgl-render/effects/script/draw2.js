@@ -515,7 +515,6 @@ function drawCanvas2(containerElement) {
 		},
 		setProfile(gl, itemProgramControl) {
 			const { glUniforms } = itemProgramControl
-
 			const projectionMatrix4 = Ven$CanvasMatrix4.setPerspective(
 				Program2.profile.persProjection.fovy,
 				Program2.profile.persProjection.aspect,
@@ -540,7 +539,6 @@ function drawCanvas2(containerElement) {
 			const { featureBuffer, texCoordBuffer, vertexDatas } = modelInstanceItem
 			const { vertexFeature: featureData, vertexCoordinate: texCoordData } = vertexDatas
 			const { glAttributes, frameTexture, cubeTexture } = itemProgramControl
-
 			ven$initAttributeVariable(gl, glAttributes.a_Position, featureBuffer, {
 				size: 3,
 				stride: 28,
@@ -574,7 +572,6 @@ function drawCanvas2(containerElement) {
 		},
 		applyModelMatrix(gl, modelInstance, itemProgramControl) {
 			const { glUniforms } = itemProgramControl
-
 			const modelRotationXMatrix4 = Ven$CanvasMatrix4.setRotate(
 				Ven$Angles.degreeToRadian(modelInstance.modelRatation.x),
 				new Ven$Vector3(1, 0, 0)

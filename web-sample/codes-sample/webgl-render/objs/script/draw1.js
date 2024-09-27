@@ -776,7 +776,6 @@ function drawCanvas1(containerElement) {
 		},
 		setProfile(gl, itemProgramControl) {
 			const { glUniforms } = itemProgramControl
-
 			if (Program1.profile.projectionType === 1) {
 				/**
 				 * 创建透视投影矩阵
@@ -855,7 +854,6 @@ function drawCanvas1(containerElement) {
 			const { normalBuffer, vertexBuffer, colorBuffer, indexBuffer, texCoordBuffer, vertexDatas } = modelInstanceItem
 			const { colors, vertices, normals, indices, textureCoords } = vertexDatas
 			const { glAttributes } = itemProgramControl
-
 			ven$initAttributeVariable(
 				gl,
 				glAttributes.a_Normal,
@@ -895,7 +893,6 @@ function drawCanvas1(containerElement) {
 		},
 		applyModelMatrix(gl, modelInstance, itemProgramControl) {
 			const { glUniforms } = itemProgramControl
-
 			const modelRotationXMatrix4 = Ven$CanvasMatrix4.setRotate(
 				Ven$Angles.degreeToRadian(modelInstance.modelRatation.x),
 				new Ven$Vector3(1, 0, 0)

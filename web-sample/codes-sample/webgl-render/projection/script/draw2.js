@@ -446,7 +446,6 @@ function drawCanvas2(containerElement) {
 		},
 		setProfile(gl, itemProgramControl) {
 			const { glUniforms } = itemProgramControl
-
 			/**
 			 * 创建透视投影矩阵
 			 */
@@ -477,7 +476,6 @@ function drawCanvas2(containerElement) {
 			const { featureBuffer, vertexDatas } = modelInstanceItem
 			const { vertexFeature: featureData } = vertexDatas
 			const { glAttributes } = itemProgramControl
-
 			ven$initAttributeVariable(gl, glAttributes.a_Position, featureBuffer, {
 				size: 3,
 				stride: 28,

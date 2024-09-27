@@ -3,30 +3,6 @@ function drawCanvas(containerElement) {
 	Program.glControl.gl = ven$initWebGLContext(canvasElement)
 	Program.init(containerElement)
 
-	const COMMON_VERTEX_SHADER = `
-		precision mediump float;
-		varying vec4 v_Color;
-		// 顶点配置(组)
-		attribute vec3 a_Position;
-		attribute vec4 a_Color;
-		// 变换矩阵(组)
-		uniform mat4 u_ModelMatrix;
-		uniform mat4 u_ViewMatrix;
-		uniform mat4 u_ProjMatrix;
-		void main() {
-			gl_Position = u_ProjMatrix * u_ViewMatrix * u_ModelMatrix * vec4(a_Position, 1.0);
-			v_Color = a_Color;
-			gl_PointSize = 5.0;
-		}
-	`
-	const COMMON_FRAGMENT_SHADER = `
-		precision mediump float;
-		varying vec4 v_Color;
-		void main() {
-			gl_FragColor = v_Color;
-		}
-	`
-
 	Program.glControl.gl.clearColor(Program.profile.clearColor.r / 255, Program.profile.clearColor.g / 255, Program.profile.clearColor.b / 255, 1.0)
 	Program.glControl.gl.clear(Program.glControl.gl.COLOR_BUFFER_BIT | Program.glControl.gl.DEPTH_BUFFER_BIT)
 	Program.glControl.gl.enable(Program.glControl.gl.BLEND)
@@ -53,7 +29,6 @@ function drawCanvas(containerElement) {
 		},
 		setProfile(gl, itemProgramControl) {
 			const { glUniforms } = itemProgramControl
-
 			/**
 			 * 创建正交投影矩阵
 			 */
@@ -73,7 +48,6 @@ function drawCanvas(containerElement) {
 				new Ven$Vector3(Program.profile.lookAt.atPosition.x, Program.profile.lookAt.atPosition.y, Program.profile.lookAt.atPosition.z),
 				new Ven$Vector3(0, 1, 0)
 			)
-
 			gl.uniformMatrix4fv(glUniforms.u_ViewMatrix, false, new Float32Array(lookAtMatrix4.data))
 			gl.uniformMatrix4fv(glUniforms.u_ProjMatrix, false, new Float32Array(orthoMatrix4.data))
 		},
@@ -87,7 +61,6 @@ function drawCanvas(containerElement) {
 			const { featureBuffer, vertexDatas } = modelInstanceItem
 			const { vertexFeature: featureData } = vertexDatas
 			const { glAttributes } = itemProgramControl
-
 			ven$initAttributeVariable(gl, glAttributes.a_Position, featureBuffer, {
 				size: 3,
 				stride: 28,
@@ -98,7 +71,6 @@ function drawCanvas(containerElement) {
 				offset: 12,
 			})
 			gl.bufferData(gl.ARRAY_BUFFER, featureData, gl.STATIC_DRAW)
-
 			gl.drawArrays(gl.TRIANGLES, 0, vertexFeatureSize / 7)
 		},
 		applyModelMatrix(gl, modelInstance, itemProgramControl) {

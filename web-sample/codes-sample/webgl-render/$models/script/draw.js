@@ -178,7 +178,6 @@ function drawCanvas(containerElement) {
 		},
 		setProfile(gl, itemProgramControl) {
 			const { glUniforms } = itemProgramControl
-
 			if (Program.profile.projectionType === 1) {
 				/**
 				 * 创建透视投影矩阵
@@ -269,7 +268,6 @@ function drawCanvas(containerElement) {
 			const { vertexNormals: normalData, vertexFeature: featureData, vertexCoordinate: texCoordData } = vertexDatas
 			const { colors, vertices, normals, indices, textureCoords } = vertexDatas
 			const { glAttributes } = itemProgramControl
-
 			if (Program.profile.modelSourceType === 1) {
 				ven$initAttributeVariable(
 					gl,

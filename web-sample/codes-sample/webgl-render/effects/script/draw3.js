@@ -659,7 +659,6 @@ function drawCanvas3(containerElement) {
 		},
 		setProfile(gl, itemProgramControl) {
 			const { glUniforms } = itemProgramControl
-
 			let projectionMatrix4 = Ven$CanvasMatrix4.initMatrix()
 			let lookAtMatrix4 = Ven$CanvasMatrix4.initMatrix()
 			if (this.status === 'FRAME_BUFFER') {
@@ -700,7 +699,6 @@ function drawCanvas3(containerElement) {
 		},
 		render(gl, vertexFeatureSize, modelInstances, itemProgramControl) {
 			const { glUniforms } = itemProgramControl
-
 			if (this.status === 'CANVAS') {
 				gl.uniform1i(glUniforms.u_ShadowMap, 0)
 			}
@@ -714,7 +712,6 @@ function drawCanvas3(containerElement) {
 			const { featureBuffer, vertexDatas } = modelInstanceItem
 			const { vertexFeature: featureData } = vertexDatas
 			const { glAttributes, frameTexture } = itemProgramControl
-
 			ven$initAttributeVariable(gl, glAttributes.a_Position, featureBuffer, {
 				size: 3,
 				stride: 28,
@@ -729,7 +726,6 @@ function drawCanvas3(containerElement) {
 		},
 		applyModelMatrix(gl, modelInstance, itemProgramControl) {
 			const { glUniforms } = itemProgramControl
-
 			const modelRotationXMatrix4 = Ven$CanvasMatrix4.setRotate(
 				Ven$Angles.degreeToRadian(modelInstance.modelRatation.x),
 				new Ven$Vector3(1, 0, 0)
@@ -766,10 +762,8 @@ function drawCanvas3(containerElement) {
 			stepControl.updateLastStamp()
 			return
 		}
-
 		const { glUniforms: shadowGlUniforms } = Program3.glControl.shadow
 		const { glUniforms: mainGlUniforms } = Program3.glControl.main
-
 		if (Program3.profile.autoTransformation) {
 			angle = stepControl.getNextValue() % 360
 			Program3.glControl.modelInstances1.forEach(modelInstanceItem => {
