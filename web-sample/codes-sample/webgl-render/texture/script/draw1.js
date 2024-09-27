@@ -117,6 +117,7 @@ class Program1 {
 	static isRender = true
 	static containerElement
 	static profile = {
+		renderStyle: 'st01',
 		/**
 		 * 视图矩阵参数
 		 */
@@ -205,6 +206,7 @@ class Program1 {
 
 	static initFormView() {
 		const self = this
+		const renderStyleSelectorSelectElement = this.containerElement.querySelector(`[data-tag-name="renderStyleSelector"]`)
 		const modelRotationRangeXElement = this.containerElement.querySelector(`[data-tag-name="modelRotationRangeX"]`)
 		const modelRotationXShowSpanElement = this.containerElement.querySelector(`[data-tag-name="modelRotationRangeXShow"]`)
 		const modelRotationRangeYElement = this.containerElement.querySelector(`[data-tag-name="modelRotationRangeY"]`)
@@ -238,6 +240,7 @@ class Program1 {
 		const lookAtMatrix4AtPositionZRangeElement = this.containerElement.querySelector(`[data-tag-name="lookAtMatrix4AtPositionZ"]`)
 		const lookAtMatrix4AtPositionZShowSpanElement = this.containerElement.querySelector(`[data-tag-name="lookAtMatrix4AtPositionZShow"]`)
 
+		renderStyleSelectorSelectElement.value = self.profile.renderStyle
 		modelRotationXShowSpanElement.textContent = modelRotationRangeXElement.value = 0
 		modelRotationYShowSpanElement.textContent = modelRotationRangeYElement.value = 0
 		modelRotationZShowSpanElement.textContent = modelRotationRangeZElement.value = 0
@@ -259,6 +262,7 @@ class Program1 {
 	static eventHandle() {
 		const self = this
 		const canvasElement = this.containerElement.querySelector(`canvas`)
+		const renderStyleSelectorSelectElement = this.containerElement.querySelector(`[data-tag-name="renderStyleSelector"]`)
 		const modelRotationRangeXElement = this.containerElement.querySelector(`[data-tag-name="modelRotationRangeX"]`)
 		const modelRotationRangeXShowSpanElement = this.containerElement.querySelector(`[data-tag-name="modelRotationRangeXShow"]`)
 		const modelRotationRangeYElement = this.containerElement.querySelector(`[data-tag-name="modelRotationRangeY"]`)
@@ -295,6 +299,11 @@ class Program1 {
 		canvasElement.addEventListener('contextmenu', function (e) {
 			e.preventDefault()
 			e.stopPropagation()
+		})
+		renderStyleSelectorSelectElement.addEventListener('input', function (e) {
+			draw1Renderer(Program1.profile.renderStyle, Program1.glControl)
+			Program1.loadImageTexture(Program1.glControl)
+			self.isRender = true
 		})
 		modelRotationRangeXElement.addEventListener('input', function (e) {
 			modelRotationRangeXShowSpanElement.textContent = +this.value
@@ -405,63 +414,21 @@ class Program1 {
 		})
 		this.isRender = true
 	}
+
+	static loadImageTexture(glControl) {
+		ven$loadImageResourceTexture(glControl.gl, '../common/images/frog-256x256.jpg', (gl, texture) => {
+			gl.uniform1i(glControl.commonLight.glUniforms.u_texture, 0)
+			gl.activeTexture(gl.TEXTURE0)
+			// gl.bindTexture(gl.TEXTURE_2D, null)
+			this.isRender = true
+		})
+	}
 }
 
 function drawCanvas1(containerElement) {
 	const canvasElement = containerElement.querySelector('canvas')
 	Program1.glControl.gl = ven$initWebGLContext(canvasElement)
 	Program1.init(containerElement)
-
-	const COMMON_VERTEX_SHADER = `
-		precision mediump float;
-		varying vec4 v_Color;
-		varying vec2 v_TextureCoord;
-		// 顶点配置(组)
-		attribute vec3 a_ObjPosition;
-		attribute vec4 a_Color;
-		attribute vec2 a_textureCoord;
-		// 变换矩阵(组)
-		uniform mat4 u_ModelMatrix;
-		uniform mat4 u_ViewMatrix;
-		uniform mat4 u_ProjMatrix;
-		void main() {
-			gl_Position = u_ProjMatrix * u_ViewMatrix * u_ModelMatrix * vec4(a_ObjPosition, 1.0);
-			v_Color = a_Color;
-			v_TextureCoord = a_textureCoord;
-		}
-	`
-	const COMMON_FRAGMENT_SHADER = `
-		precision mediump float;
-		varying vec4 v_Color;
-		varying vec2 v_TextureCoord;
-		// 纹理参数(组)
-		uniform sampler2D u_texture;
-		void main() {
-			gl_FragColor = v_Color;
-			vec4 color = texture2D(u_texture, v_TextureCoord);
-			vec2 xy = gl_FragCoord.xy * 1.0;
-			vec3 rgb = color.rgb;
-			float dot_size = 9.0;
-			float dot_size_1of3 = dot_size / 3.0;
-			if ((mod(xy.x, dot_size)) < dot_size_1of3 * 1.0) {
-				rgb.r *= 1.0;
-				rgb.g *= 0.0;
-				rgb.b *= 0.0;
-			} else if ((mod(xy.x, dot_size)) < dot_size_1of3 * 2.0) {
-				rgb.r *= 0.0;
-				rgb.g *= 1.0;
-				rgb.b *= 0.0;
-			} else if ((mod(xy.x, dot_size)) < dot_size_1of3 * 3.0) {
-				rgb.r *= 0.0;
-				rgb.g *= 0.0;
-				rgb.b *= 1.0;
-			}
-			if (mod(xy.y, dot_size) < dot_size_1of3 / 2.0) {
-				discard;
-			}
-			gl_FragColor = vec4(rgb, 1.0);
-		}
-	`
 
 	Program1.glControl.gl.clearColor(
 		Program1.profile.clearColor.r / 255,
@@ -483,20 +450,8 @@ function drawCanvas1(containerElement) {
 		program: null,
 	}
 
-	Program1.glControl.commonLight.program = ven$createProgram(Program1.glControl.gl, COMMON_VERTEX_SHADER, COMMON_FRAGMENT_SHADER)
-	const commonWebGLVariableLocation = ven$getWebGLVariableLocation(Program1.glControl.gl, Program1.glControl.commonLight.program, {
-		glAttributes: ['a_ObjPosition', 'a_Color', 'a_textureCoord'],
-		glUniforms: ['u_ModelMatrix', 'u_ViewMatrix', 'u_ProjMatrix', 'u_texture'],
-	})
-	Program1.glControl.commonLight.glAttributes = commonWebGLVariableLocation.glAttributes
-	Program1.glControl.commonLight.glUniforms = commonWebGLVariableLocation.glUniforms
-
-	ven$loadImageResourceTexture(Program1.glControl.gl, '../common/images/frog-256x256.jpg', (gl, texture) => {
-		gl.uniform1i(Program1.glControl.commonLight.glUniforms.u_texture, 0)
-		gl.activeTexture(gl.TEXTURE0)
-		// gl.bindTexture(gl.TEXTURE_2D, null)
-		Program1.isRender = true
-	})
+	draw1Renderer(Program1.profile.renderStyle, Program1.glControl)
+	Program1.loadImageTexture(Program1.glControl)
 
 	const canvas = {
 		status: null,
