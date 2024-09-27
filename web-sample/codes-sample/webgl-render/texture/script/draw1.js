@@ -470,7 +470,6 @@ function drawCanvas1(containerElement) {
 		},
 		setProfile(gl, itemProgramControl) {
 			const { glUniforms } = itemProgramControl
-
 			if (typeof glUniforms.u_resolution !== 'undefined') {
 				gl.uniform2f(glUniforms.u_resolution, canvasElement.clientWidth, canvasElement.clientHeight)
 			}
@@ -504,7 +503,6 @@ function drawCanvas1(containerElement) {
 			const { normalBuffer, featureBuffer, vertexBuffer, colorBuffer, indexBuffer, texCoordBuffer, vertexDatas } = modelInstanceItem
 			const { colors, vertices, normals, indices, textureCoords } = vertexDatas
 			const { glAttributes } = itemProgramControl
-
 			ven$initAttributeVariable(
 				gl,
 				glAttributes.a_ObjPosition,
