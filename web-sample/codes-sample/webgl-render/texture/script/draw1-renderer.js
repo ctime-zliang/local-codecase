@@ -92,7 +92,7 @@ function draw1Renderer(type, glControl, callback) {
                     vec2 cor;
                     cor.x = gl_FragCoord.x / PIXELSIZE;
                     cor.y = (gl_FragCoord.y + PIXELSIZE * 1.5 * mod(floor(cor.x), 2.0)) / (PIXELSIZE * 3.0);
-                    cor.y = - cor.y;
+                    cor.y = -cor.y;
                     vec2 ico = floor(cor);
                     vec2 fco = fract(cor);
                     vec3 pix = step(1.5, mod(vec3(0.0, 1.0, 2.0) + ico.x, 3.0));
