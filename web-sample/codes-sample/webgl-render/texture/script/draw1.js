@@ -301,7 +301,7 @@ class Program1 {
 			e.stopPropagation()
 		})
 		renderStyleSelectorSelectElement.addEventListener('input', function (e) {
-			draw1Renderer(Program1.profile.renderStyle, Program1.glControl)
+			draw1Renderer(this.value, Program1.glControl)
 			Program1.loadImageTexture(Program1.glControl)
 			self.isRender = true
 		})
@@ -471,6 +471,9 @@ function drawCanvas1(containerElement) {
 		setProfile(gl, itemProgramControl) {
 			const { glUniforms } = itemProgramControl
 
+			if (typeof glUniforms.u_resolution !== 'undefined') {
+				gl.uniform2f(glUniforms.u_resolution, canvasElement.clientWidth, canvasElement.clientHeight)
+			}
 			/**
 			 * 创建透视投影矩阵
 			 */
