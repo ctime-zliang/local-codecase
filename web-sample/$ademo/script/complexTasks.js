@@ -1,4 +1,16 @@
 class ComplexTasks {
+	static init() {
+		this.elementUpdation.init(document.getElementById('appContainer'), 100)
+		let prev = performance.now()
+		const fn1 = now => {
+			const dist = now - prev
+			this.elementUpdation.update(dist)
+			window.requestAnimationFrame(fn1)
+			prev = now
+		}
+		fn1()
+	}
+
 	static elementUpdation = {
 		count: 0,
 		elementSize: 0,
