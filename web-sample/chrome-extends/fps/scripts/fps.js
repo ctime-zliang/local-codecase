@@ -3,7 +3,7 @@
 	 * 模式
 	 * 		0 - 不显示
 	 * 		1 - 精简纯数字模式
-	 *		2 - 精简纯数字模式 + 画布图示模式
+	 *		2 - 精简纯数字 & 画布图示模式
 	 */
 	const MODES = [0, 1, 2]
 	const CANVAS_X_STEP_SIZE = 4
@@ -11,7 +11,7 @@
 	 * 画布尺寸
 	 * 		画布宽度(CANVAS_RECT[0])必须为 CANVAS_X_STEP_SIZE 的整数倍
 	 */
-	const CANVAS_RECT = [88, 30]
+	const CANVAS_RECT = [92, 30]
 	const config = {
 		mode: MODES[2],
 		pathSize: CANVAS_RECT[0] / CANVAS_X_STEP_SIZE,
@@ -97,7 +97,7 @@
 			htmlString = `
 				<div class="_fps-monitor-container" style="${CONTAINER_STYLE}">
 					<div style="${WRAPPER_STYLE}">
-						<div style="padding: 2.5px 0 5px 0;">
+						<div style="padding: 2.5px 0 3px 0;">
 							<div data-tagitem="_fps-raf-simplify-count">-</div>
 						</div>
 						<canvas 
@@ -225,7 +225,7 @@
 		if (runtimeProfile.rAFCanvasElement) {
 			runtimeProfile.ctx = runtimeProfile.rAFCanvasElement.getContext('2d')
 		}
-		runtimeProfile.rAFCount = 0
+		runtimeProfile.rAFCountCalc = 0
 		runtimeProfile.rAFCountRatio = 0
 		runtimeProfile.rAFIntervalCount = 0
 		runtimeProfile.pathData = []
@@ -249,7 +249,7 @@
 
 	const countRAF = nowStamp => {
 		runtimeProfile.rAFIntervalCount++
-		runtimeProfile.rAFCount = 1000 / (nowStamp - runtimeProfile._prevRAFCountTimeStamp)
+		runtimeProfile.rAFCountCalc = 1000 / (nowStamp - runtimeProfile._prevRAFCountTimeStamp)
 		const refreshDiffTime = nowStamp - runtimeProfile._prevRAFRefreshTimeStamp
 		if (Math.abs(refreshDiffTime - config.interval) <= 5 || refreshDiffTime >= config.interval) {
 			runtimeProfile.rAFCountRatio = runtimeProfile.rAFIntervalCount / (refreshDiffTime / 1000)
@@ -261,7 +261,7 @@
 			if (runtimeProfile.pathData.length > config.pathSize + 1) {
 				runtimeProfile.pathData.shift()
 			}
-			runtimeProfile.rAFCount = runtimeProfile.rAFCount.toFixed(2)
+			runtimeProfile.rAFCountCalc = runtimeProfile.rAFCountCalc.toFixed(2)
 			runtimeProfile.rAFCountRatio = runtimeProfile.rAFCountRatio.toFixed(2)
 			renderView()
 			runtimeProfile.rAFIntervalCount = 0
@@ -274,28 +274,28 @@
 	const resetRAF = () => {}
 
 	const renderView = () => {
-		const rAFCount = runtimeProfile.rAFCount >> 0
+		const rAFCountCalc = runtimeProfile.rAFCountCalc >> 0
 		if (config.mode === MODES[1]) {
-			runtimeProfile.rAFSimplifyCountElement.innerHTML = `<span>${runtimeProfile.rAFCount}/${runtimeProfile.rAFCountRatio}/${runtimeProfile.rAFIntervalCount}</span>`
-			if (rAFCount >= config.warning[0] && rAFCount <= config.warning[1]) {
+			runtimeProfile.rAFSimplifyCountElement.innerHTML = `<span>${runtimeProfile.rAFCountCalc}/${runtimeProfile.rAFCountRatio}/${runtimeProfile.rAFIntervalCount}</span>`
+			if (rAFCountCalc >= config.warning[0] && rAFCountCalc <= config.warning[1]) {
 				runtimeProfile.wrapperElement.classList.add('_fps-monitor-tips-warning')
 			} else {
 				runtimeProfile.wrapperElement.classList.remove('_fps-monitor-tips-warning')
 			}
-			if (rAFCount >= config.serious[0] && rAFCount <= config.serious[1]) {
+			if (rAFCountCalc >= config.serious[0] && rAFCountCalc <= config.serious[1]) {
 				runtimeProfile.wrapperElement.classList.add('_fps-monitor-tips-serious')
 			} else {
 				runtimeProfile.wrapperElement.classList.remove('_fps-monitor-tips-serious')
 			}
 		}
 		if (config.mode === MODES[2]) {
-			runtimeProfile.rAFSimplifyCountElement.innerHTML = `<span>${runtimeProfile.rAFCount}/${runtimeProfile.rAFCountRatio}/${runtimeProfile.rAFIntervalCount}</span>`
-			if (rAFCount >= config.warning[0] && rAFCount <= config.warning[1]) {
+			runtimeProfile.rAFSimplifyCountElement.innerHTML = `<span>${runtimeProfile.rAFCountCalc}/${runtimeProfile.rAFCountRatio}/${runtimeProfile.rAFIntervalCount}</span>`
+			if (rAFCountCalc >= config.warning[0] && rAFCountCalc <= config.warning[1]) {
 				runtimeProfile.wrapperElement.classList.add('_fps-monitor-tips-warning')
 			} else {
 				runtimeProfile.wrapperElement.classList.remove('_fps-monitor-tips-warning')
 			}
-			if (rAFCount >= config.serious[0] && rAFCount <= config.serious[1]) {
+			if (rAFCountCalc >= config.serious[0] && rAFCountCalc <= config.serious[1]) {
 				runtimeProfile.wrapperElement.classList.add('_fps-monitor-tips-serious')
 			} else {
 				runtimeProfile.wrapperElement.classList.remove('_fps-monitor-tips-serious')
