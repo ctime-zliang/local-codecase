@@ -47,9 +47,9 @@
 		-webkit-user-select: none;
 		-moz-user-select: none;
 		user-select: none;
-		-webkit-transform: translate3d(0, 0, 1px);
-		-moz-transform: translate3d(0, 0, 1px);
-		transform: translate3d(0, 0, 1px);
+		-webkit-transform: translate3d(0, 0, 1px) scale(1.0);
+		-moz-transform: translate3d(0, 0, 1px) scale(1.0);
+		transform: translate3d(0, 0, 1px) scale(1.0);
 	`
 	const CONTAINER_HOVER_STYLE = `
 		opacity: 0.35 !important;
