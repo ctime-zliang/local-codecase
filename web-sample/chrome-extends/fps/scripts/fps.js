@@ -2,28 +2,31 @@
 	/**
 	 * 模式
 	 * 		0 - 不显示
-	 * 		1 - 精简纯数字模式
-	 *		2 - 精简纯数字 & 画布图示模式
+	 * 		1 - 画布图示模式
 	 */
-	const MODES = [0, 1, 2]
+	const MODES = [0, 1]
+	const CANVAS_TEXT_SEC_HEIGHT = 20
 	const CANVAS_X_STEP_SIZE = 4
 	/**
 	 * 画布尺寸
 	 * 		画布宽度(CANVAS_RECT[0])必须为 CANVAS_X_STEP_SIZE 的整数倍
 	 */
-	const CANVAS_RECT = [92, 30]
+	const CANVAS_RECT = [104, 50]
+	/**
+	 * 帧率告警阈值边界及文本提示颜色
+	 */
+	const SERIOUS = [0, 19]
+	const WARNING = [20, 29]
+	const NORMAL_TEXT_COLOR = 'rgba(0, 255, 0, 1)'
+	const WARNING_TEXT_COLOR = 'rgba(255, 126, 82, 1)'
+	const SERIOUS_TEXT_COLOR = 'rgba(255, 0, 0, 1)'
 	const config = {
-		mode: MODES[2],
+		mode: MODES[1],
 		pathSize: CANVAS_RECT[0] / CANVAS_X_STEP_SIZE,
 		/**
 		 * 帧率刷新间隔(ms)
 		 */
 		interval: 200,
-		/**
-		 * 帧率告警阈值边界
-		 */
-		serious: [0, 19],
-		warning: [20, 29],
 	}
 	const CONTAINER_STYLE = `
 		display: block;
@@ -32,7 +35,7 @@
 		left: 2px;
 		cursor: move;
 		line-height: 14px;
-		padding: 2px 4px;
+		padding: 2px 4px 4px 4px;
 		text-align: left;
 		opacity: 1;
 		white-space: nowrap;
@@ -55,14 +58,6 @@
 		opacity: 0.35 !important;
 		background-color: rgba(25, 25, 25, 0) !important;
 	`
-	const WRAPPER_STYLE = `
-		width: fit-content !important;
-		min-width: fit-content !important;
-		max-width: fit-content !important;
-		height: fit-content !important;
-		min-height: fit-content !important;
-		max-height: fit-content !important;
-	`
 	const runtimeProfile = {}
 	const styleProfile = {
 		cssText: `
@@ -72,12 +67,6 @@
 			._fps-monitor-container-hover {
                 ${CONTAINER_HOVER_STYLE}
             }
-            ._fps-monitor-tips-warning {
-                color: #ff6600;
-            }
-            ._fps-monitor-tips-serious {
-                color: #ff0000;
-            }
         `,
 	}
 
@@ -86,24 +75,11 @@
 		if (config.mode === MODES[1]) {
 			htmlString = `
 				<div class="_fps-monitor-container" style="${CONTAINER_STYLE}">
-					<div style="${WRAPPER_STYLE}">
-						<div data-tagitem="_fps-raf-simplify-count">-</div>
-					</div>
-				</div>
-			`
-			return htmlString
-		}
-		if (config.mode === MODES[2]) {
-			htmlString = `
-				<div class="_fps-monitor-container" style="${CONTAINER_STYLE}">
-					<div style="${WRAPPER_STYLE}">
-						<div style="padding: 2.5px 0 3px 0;">
-							<div data-tagitem="_fps-raf-simplify-count">-</div>
-						</div>
+					<div style="width: ${CANVAS_RECT[0]}px !important; height: ${CANVAS_RECT[1]}px !important;">
 						<canvas 
 							width="${CANVAS_RECT[0]}" 
 							height="${CANVAS_RECT[1]}" 
-							style="width: ${CANVAS_RECT[0]}px; height: ${CANVAS_RECT[1]}px; border: 1px solid rgba(135, 135, 135, 0.9);" 
+							style="width: ${CANVAS_RECT[0]}px; height: ${CANVAS_RECT[1]}px;" 
 							data-tagitem="_fps-raf-canvas-view">
 						</canvas>
 					</div>
@@ -124,7 +100,7 @@
 			}
 		} catch (e) {
 			console.warn(e)
-			config.mode = MODES[2]
+			config.mode = MODES[1]
 		}
 	}
 
@@ -161,10 +137,6 @@
 
 	const initElementHandler = () => {
 		if (config.mode === MODES[1]) {
-			runtimeProfile.rAFSimplifyCountElement = runtimeProfile.containerElement.querySelector('[data-tagitem="_fps-raf-simplify-count"]')
-		}
-		if (config.mode === MODES[2]) {
-			runtimeProfile.rAFSimplifyCountElement = runtimeProfile.containerElement.querySelector('[data-tagitem="_fps-raf-simplify-count"]')
 			runtimeProfile.rAFCanvasElement = runtimeProfile.containerElement.querySelector('[data-tagitem="_fps-raf-canvas-view"]')
 		}
 	}
@@ -224,11 +196,18 @@
 		runtimeProfile.ctx = null
 		if (runtimeProfile.rAFCanvasElement) {
 			runtimeProfile.ctx = runtimeProfile.rAFCanvasElement.getContext('2d')
+			/**
+			 * 创建一个曲线显示范围内的渐变色对象
+			 */
+			runtimeProfile.linearGradient = runtimeProfile.ctx.createLinearGradient(0, CANVAS_TEXT_SEC_HEIGHT, 0, CANVAS_RECT[1])
+			runtimeProfile.linearGradient.addColorStop(0, 'rgba(47, 224, 212, 0.9)')
+			runtimeProfile.linearGradient.addColorStop(0.6, 'rgba(2, 199, 252, 0.9)')
+			runtimeProfile.linearGradient.addColorStop(1, 'rgba(19, 135, 251, 0.9)')
 		}
 		runtimeProfile.rAFCountCalc = 0
 		runtimeProfile.rAFCountRatio = 0
 		runtimeProfile.rAFIntervalCount = 0
-		runtimeProfile.pathData = []
+		runtimeProfile.yPositions = []
 		runtimeProfile.maxRAFCount = 60
 		modifyProfile.updateMaxTopRAFCount()
 		/* ... */
@@ -238,12 +217,6 @@
 	const modifyProfile = {
 		updateMaxTopRAFCount() {
 			runtimeProfile.maxTopRAFCount = parseInt(runtimeProfile.maxRAFCount + runtimeProfile.maxRAFCount * 0.05)
-			if (runtimeProfile.ctx) {
-				runtimeProfile.linearGradient = runtimeProfile.ctx.createLinearGradient(0, 0, 0, runtimeProfile.maxTopRAFCount)
-				runtimeProfile.linearGradient.addColorStop(0, 'rgba(47, 254, 212, 0.8)')
-				runtimeProfile.linearGradient.addColorStop(0.4, 'rgba(2, 199, 252, 0.9)')
-				runtimeProfile.linearGradient.addColorStop(1, 'rgba(19, 98, 251, 0.9)')
-			}
 		},
 	}
 
@@ -257,9 +230,13 @@
 				runtimeProfile.maxRAFCount = runtimeProfile.rAFCountRatio
 				modifyProfile.updateMaxTopRAFCount()
 			}
-			runtimeProfile.pathData.push(CANVAS_RECT[1] - parseInt((runtimeProfile.rAFCountRatio / runtimeProfile.maxTopRAFCount) * CANVAS_RECT[1]))
-			if (runtimeProfile.pathData.length > config.pathSize + 1) {
-				runtimeProfile.pathData.shift()
+			runtimeProfile.yPositions.push(
+				CANVAS_TEXT_SEC_HEIGHT +
+					((runtimeProfile.maxTopRAFCount - runtimeProfile.rAFCountRatio) / runtimeProfile.maxTopRAFCount) *
+						(CANVAS_RECT[1] - CANVAS_TEXT_SEC_HEIGHT)
+			)
+			if (runtimeProfile.yPositions.length > config.pathSize + 1) {
+				runtimeProfile.yPositions.shift()
 			}
 			runtimeProfile.rAFCountCalc = runtimeProfile.rAFCountCalc.toFixed(2)
 			runtimeProfile.rAFCountRatio = runtimeProfile.rAFCountRatio.toFixed(2)
@@ -274,52 +251,51 @@
 	const resetRAF = () => {}
 
 	const renderView = () => {
-		const rAFCountCalc = runtimeProfile.rAFCountCalc >> 0
-		if (config.mode === MODES[1]) {
-			runtimeProfile.rAFSimplifyCountElement.innerHTML = `<span>${runtimeProfile.rAFCountCalc}/${runtimeProfile.rAFCountRatio}/${runtimeProfile.rAFIntervalCount}</span>`
-			if (rAFCountCalc >= config.warning[0] && rAFCountCalc <= config.warning[1]) {
-				runtimeProfile.wrapperElement.classList.add('_fps-monitor-tips-warning')
-			} else {
-				runtimeProfile.wrapperElement.classList.remove('_fps-monitor-tips-warning')
-			}
-			if (rAFCountCalc >= config.serious[0] && rAFCountCalc <= config.serious[1]) {
-				runtimeProfile.wrapperElement.classList.add('_fps-monitor-tips-serious')
-			} else {
-				runtimeProfile.wrapperElement.classList.remove('_fps-monitor-tips-serious')
-			}
-		}
-		if (config.mode === MODES[2]) {
-			runtimeProfile.rAFSimplifyCountElement.innerHTML = `<span>${runtimeProfile.rAFCountCalc}/${runtimeProfile.rAFCountRatio}/${runtimeProfile.rAFIntervalCount}</span>`
-			if (rAFCountCalc >= config.warning[0] && rAFCountCalc <= config.warning[1]) {
-				runtimeProfile.wrapperElement.classList.add('_fps-monitor-tips-warning')
-			} else {
-				runtimeProfile.wrapperElement.classList.remove('_fps-monitor-tips-warning')
-			}
-			if (rAFCountCalc >= config.serious[0] && rAFCountCalc <= config.serious[1]) {
-				runtimeProfile.wrapperElement.classList.add('_fps-monitor-tips-serious')
-			} else {
-				runtimeProfile.wrapperElement.classList.remove('_fps-monitor-tips-serious')
-			}
-			drawCanvas()
-		}
+		drawCanvas()
 		resetRAF()
 	}
 
 	const drawCanvas = () => {
+		const refValue = runtimeProfile.rAFCountCalc >> 0
+		const textContent = `${runtimeProfile.rAFCountRatio}/${runtimeProfile.rAFCountCalc}/${runtimeProfile.rAFIntervalCount}`
 		const ctx = runtimeProfile.ctx
-		const pathData = runtimeProfile.pathData
+		const yPositions = runtimeProfile.yPositions
 		ctx.clearRect(0, 0, CANVAS_RECT[0], CANVAS_RECT[1])
 		ctx.lineWidth = 1
-		ctx.strokeSyle = 'rgba(255, 255, 255, 1)'
+		/**
+		 * 绘制分割线
+		 */
+		ctx.strokeStyle = 'rgba(255, 255, 255, 1)'
+		ctx.setLineDash([1, 5])
 		ctx.beginPath()
-		const sx = (config.pathSize - pathData.length + 1) * CANVAS_X_STEP_SIZE
-		ctx.moveTo(sx, pathData[0])
+		ctx.moveTo(0, CANVAS_TEXT_SEC_HEIGHT)
+		ctx.lineTo(CANVAS_RECT[0], CANVAS_TEXT_SEC_HEIGHT)
+		ctx.stroke()
+		/**
+		 * 绘制文本
+		 */
+		ctx.fillStyle =
+			refValue <= SERIOUS[1] ? SERIOUS_TEXT_COLOR : refValue >= WARNING[0] && refValue <= WARNING[1] ? WARNING_TEXT_COLOR : NORMAL_TEXT_COLOR
+		ctx.font = '12px serif'
+		ctx.textBaseline = 'middle'
+		ctx.fillText(textContent, 0, 10)
+		/**
+		 * 绘制曲线
+		 */
+		ctx.beginPath()
+		ctx.setLineDash([])
+		const sx = (config.pathSize - yPositions.length + 1) * CANVAS_X_STEP_SIZE
+		ctx.moveTo(sx, yPositions[0])
 		let i = 0
-		for (i = 1; i < pathData.length; i++) {
-			ctx.lineTo(sx + i * CANVAS_X_STEP_SIZE, pathData[i])
+		for (i = 1; i < yPositions.length; i++) {
+			ctx.lineTo(sx + i * CANVAS_X_STEP_SIZE, yPositions[i])
 		}
 		ctx.stroke()
-		if (pathData.length >= 2) {
+		/**
+		 * 绘制曲线填充色
+		 */
+		ctx.strokeStyle = 'rgba(19, 98, 251, 1.0)'
+		if (yPositions.length >= 2) {
 			ctx.lineTo(sx + (i - 1) * CANVAS_X_STEP_SIZE, CANVAS_RECT[1])
 			ctx.lineTo(sx, CANVAS_RECT[1])
 			ctx.stroke()

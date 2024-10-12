@@ -1,6 +1,6 @@
 class ComplexTasks {
 	static init() {
-		this.elementUpdation.init(document.getElementById('appContainer'), 100)
+		this.elementUpdation.init(document.getElementById('appContainer'), 500)
 		let prev = performance.now()
 		const fn1 = now => {
 			const dist = now - prev
