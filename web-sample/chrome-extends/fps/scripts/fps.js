@@ -3,18 +3,17 @@
 	 * 模式
 	 * 		0 - 不显示
 	 * 		1 - 精简纯数字模式
-	 * 		2 - 带标题的纯文本模式
-	 * 		3 - 带标题的纯文本模式 + 画布图示模式
-	 *		4 - 精简纯数字模式 + 画布图示模式
+	 *		2 - 精简纯数字模式 + 画布图示模式
 	 */
-	const MODES = [0, 1, 2, 3, 4]
+	const MODES = [0, 1, 2]
 	const CANVAS_X_STEP_SIZE = 4
 	/**
 	 * 画布尺寸
+	 * 		画布宽度(CANVAS_RECT[0])必须为 CANVAS_X_STEP_SIZE 的整数倍
 	 */
-	const CANVAS_RECT = [120, 40]
+	const CANVAS_RECT = [88, 30]
 	const config = {
-		mode: MODES[4],
+		mode: MODES[2],
 		pathSize: CANVAS_RECT[0] / CANVAS_X_STEP_SIZE,
 		/**
 		 * 帧率刷新间隔(ms)
@@ -48,9 +47,9 @@
 		-webkit-user-select: none;
 		-moz-user-select: none;
 		user-select: none;
-		-webkit-transform: translate3d(0, 0, 5px);
-		-moz-transform: translate3d(0, 0, 5px);
-		transform: translate3d(0, 0, 5px);
+		-webkit-transform: translate3d(0, 0, 1px);
+		-moz-transform: translate3d(0, 0, 1px);
+		transform: translate3d(0, 0, 1px);
 	`
 	const CONTAINER_HOVER_STYLE = `
 		opacity: 0.35 !important;
@@ -98,40 +97,6 @@
 			htmlString = `
 				<div class="_fps-monitor-container" style="${CONTAINER_STYLE}">
 					<div style="${WRAPPER_STYLE}">
-						<div data-tagitem="_fps-refresh-interval">-</div>
-						<div data-tagitem="_fps-raf-count">-</div>
-						<div data-tagitem="_fps-raf-count-ratio">-</div>
-						<div data-tagitem="_fps-raf-interval-count">-</div>
-					</div>
-				</section>
-			`
-			return htmlString
-		}
-		if (config.mode === MODES[3]) {
-			htmlString = `
-				<div class="_fps-monitor-container" style="${CONTAINER_STYLE}">
-					<div style="${WRAPPER_STYLE}">
-						<div style="padding: 2.5px 0 5px 0;">
-							<div data-tagitem="_fps-refresh-interval">-</div>
-							<div data-tagitem="_fps-raf-count">-</div>
-							<div data-tagitem="_fps-raf-count-ratio">-</div>
-							<div data-tagitem="_fps-raf-interval-count">-</div>
-						</div>
-						<canvas 
-							width="${CANVAS_RECT[0]}" 
-							height="${CANVAS_RECT[1]}" 
-							style="width: ${CANVAS_RECT[0]}px; height: ${CANVAS_RECT[1]}px; border: 1px solid rgba(135, 135, 135, 0.9);" 
-							data-tagitem="_fps-raf-canvas-view">
-						</canvas>
-					</div>
-				</div>
-			`
-			return htmlString
-		}
-		if (config.mode === MODES[4]) {
-			htmlString = `
-				<div class="_fps-monitor-container" style="${CONTAINER_STYLE}">
-					<div style="${WRAPPER_STYLE}">
 						<div style="padding: 2.5px 0 5px 0;">
 							<div data-tagitem="_fps-raf-simplify-count">-</div>
 						</div>
@@ -159,7 +124,7 @@
 			}
 		} catch (e) {
 			console.warn(e)
-			config.mode = MODES[4]
+			config.mode = MODES[2]
 		}
 	}
 
@@ -199,19 +164,6 @@
 			runtimeProfile.rAFSimplifyCountElement = runtimeProfile.containerElement.querySelector('[data-tagitem="_fps-raf-simplify-count"]')
 		}
 		if (config.mode === MODES[2]) {
-			runtimeProfile.refreshIntervalElement = runtimeProfile.containerElement.querySelector('[data-tagitem="_fps-refresh-interval"]')
-			runtimeProfile.rAFCountElement = runtimeProfile.containerElement.querySelector('[data-tagitem="_fps-raf-count"]')
-			runtimeProfile.rAFCountRatioElement = runtimeProfile.containerElement.querySelector('[data-tagitem="_fps-raf-count-ratio"]')
-			runtimeProfile.rAFIntervalCountElement = runtimeProfile.containerElement.querySelector('[data-tagitem="_fps-raf-interval-count"]')
-		}
-		if (config.mode === MODES[3]) {
-			runtimeProfile.refreshIntervalElement = runtimeProfile.containerElement.querySelector('[data-tagitem="_fps-refresh-interval"]')
-			runtimeProfile.rAFCountElement = runtimeProfile.containerElement.querySelector('[data-tagitem="_fps-raf-count"]')
-			runtimeProfile.rAFCountRatioElement = runtimeProfile.containerElement.querySelector('[data-tagitem="_fps-raf-count-ratio"]')
-			runtimeProfile.rAFIntervalCountElement = runtimeProfile.containerElement.querySelector('[data-tagitem="_fps-raf-interval-count"]')
-			runtimeProfile.rAFCanvasElement = runtimeProfile.containerElement.querySelector('[data-tagitem="_fps-raf-canvas-view"]')
-		}
-		if (config.mode === MODES[4]) {
 			runtimeProfile.rAFSimplifyCountElement = runtimeProfile.containerElement.querySelector('[data-tagitem="_fps-raf-simplify-count"]')
 			runtimeProfile.rAFCanvasElement = runtimeProfile.containerElement.querySelector('[data-tagitem="_fps-raf-canvas-view"]')
 		}
@@ -324,7 +276,7 @@
 	const renderView = () => {
 		const rAFCount = runtimeProfile.rAFCount >> 0
 		if (config.mode === MODES[1]) {
-			runtimeProfile.rAFSimplifyCountElement.innerHTML = `<span>${config.interval}/${runtimeProfile.rAFCount}/${runtimeProfile.rAFCountRatio}/${runtimeProfile.rAFIntervalCount}</span>`
+			runtimeProfile.rAFSimplifyCountElement.innerHTML = `<span>${runtimeProfile.rAFCount}/${runtimeProfile.rAFCountRatio}/${runtimeProfile.rAFIntervalCount}</span>`
 			if (rAFCount >= config.warning[0] && rAFCount <= config.warning[1]) {
 				runtimeProfile.wrapperElement.classList.add('_fps-monitor-tips-warning')
 			} else {
@@ -337,40 +289,7 @@
 			}
 		}
 		if (config.mode === MODES[2]) {
-			runtimeProfile.refreshIntervalElement.innerHTML = `Refresh: <span>${config.interval}ms</span>`
-			runtimeProfile.rAFCountElement.innerHTML = `RAF(calc): <span>${runtimeProfile.rAFCount} per sec</span>`
-			runtimeProfile.rAFCountRatioElement.innerHTML = `RAF(calc): <span>${runtimeProfile.rAFCountRatio} per sec</span>`
-			runtimeProfile.rAFIntervalCountElement.innerHTML = `RAF(acc): <span>${runtimeProfile.rAFIntervalCount} per inter</span>`
-			if (rAFCount >= config.warning[0] && rAFCount <= config.warning[1]) {
-				runtimeProfile.wrapperElement.classList.add('_fps-monitor-tips-warning')
-			} else {
-				runtimeProfile.wrapperElement.classList.remove('_fps-monitor-tips-warning')
-			}
-			if (rAFCount >= config.serious[0] && rAFCount <= config.serious[1]) {
-				runtimeProfile.wrapperElement.classList.add('_fps-monitor-tips-serious')
-			} else {
-				runtimeProfile.wrapperElement.classList.remove('_fps-monitor-tips-serious')
-			}
-		}
-		if (config.mode === MODES[3]) {
-			runtimeProfile.refreshIntervalElement.innerHTML = `Refresh: <span>${config.interval}ms</span>`
-			runtimeProfile.rAFCountElement.innerHTML = `RAF(calc): <span>${runtimeProfile.rAFCount} per sec</span>`
-			runtimeProfile.rAFCountRatioElement.innerHTML = `RAF(calc): <span>${runtimeProfile.rAFCountRatio} per sec</span>`
-			runtimeProfile.rAFIntervalCountElement.innerHTML = `RAF(acc): <span>${runtimeProfile.rAFIntervalCount} per inter</span>`
-			if (rAFCount >= config.warning[0] && rAFCount <= config.warning[1]) {
-				runtimeProfile.wrapperElement.classList.add('_fps-monitor-tips-warning')
-			} else {
-				runtimeProfile.wrapperElement.classList.remove('_fps-monitor-tips-warning')
-			}
-			if (rAFCount >= config.serious[0] && rAFCount <= config.serious[1]) {
-				runtimeProfile.wrapperElement.classList.add('_fps-monitor-tips-serious')
-			} else {
-				runtimeProfile.wrapperElement.classList.remove('_fps-monitor-tips-serious')
-			}
-			drawCanvas()
-		}
-		if (config.mode === MODES[4]) {
-			runtimeProfile.rAFSimplifyCountElement.innerHTML = `<span>${config.interval}/${runtimeProfile.rAFCount}/${runtimeProfile.rAFCountRatio}/${runtimeProfile.rAFIntervalCount}</span>`
+			runtimeProfile.rAFSimplifyCountElement.innerHTML = `<span>${runtimeProfile.rAFCount}/${runtimeProfile.rAFCountRatio}/${runtimeProfile.rAFIntervalCount}</span>`
 			if (rAFCount >= config.warning[0] && rAFCount <= config.warning[1]) {
 				runtimeProfile.wrapperElement.classList.add('_fps-monitor-tips-warning')
 			} else {
