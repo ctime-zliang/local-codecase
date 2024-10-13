@@ -20,7 +20,8 @@
 	const NORMAL_TEXT_COLOR = 'rgba(0, 255, 0, 1)'
 	const WARNING_TEXT_COLOR = 'rgba(255, 126, 82, 1)'
 	const SERIOUS_TEXT_COLOR = 'rgba(255, 0, 0, 1)'
-	const config = {
+	const TEXT_FONT = `12px arial, sans-serif`
+	const variableConfig = {
 		mode: MODES[1],
 		pathSize: CANVAS_RECT[0] / CANVAS_X_STEP_SIZE,
 		/**
@@ -28,6 +29,7 @@
 		 */
 		interval: 200,
 	}
+	const runtimeProfile = {}
 	const CONTAINER_STYLE = `
 		display: block;
 		position: fixed; 
@@ -58,7 +60,6 @@
 		opacity: 0.35 !important;
 		background-color: rgba(25, 25, 25, 0) !important;
 	`
-	const runtimeProfile = {}
 	const styleProfile = {
 		cssText: `
             ._fps-monitor-container {
@@ -72,7 +73,7 @@
 
 	const createHtmlString = () => {
 		let htmlString = ``
-		if (config.mode === MODES[1]) {
+		if (variableConfig.mode === MODES[1]) {
 			htmlString = `
 				<div class="_fps-monitor-container" style="${CONTAINER_STYLE}">
 					<div style="width: ${CANVAS_RECT[0]}px !important; height: ${CANVAS_RECT[1]}px !important;">
@@ -94,13 +95,13 @@
 		try {
 			const _fps_mode = window.localStorage.getItem('_fps_mode')
 			if (typeof _fps_mode === 'undefined' || _fps_mode === null || isNaN(+_fps_mode) || !MODES.includes(+_fps_mode)) {
-				window.localStorage.setItem('_fps_mode', config.mode)
+				window.localStorage.setItem('_fps_mode', variableConfig.mode)
 			} else {
-				config.mode = +_fps_mode
+				variableConfig.mode = +_fps_mode
 			}
 		} catch (e) {
 			console.warn(e)
-			config.mode = MODES[1]
+			variableConfig.mode = MODES[1]
 		}
 	}
 
@@ -136,7 +137,7 @@
 	}
 
 	const initElementHandler = () => {
-		if (config.mode === MODES[1]) {
+		if (variableConfig.mode === MODES[1]) {
 			runtimeProfile.rAFCanvasElement = runtimeProfile.containerElement.querySelector('[data-tagitem="_fps-raf-canvas-view"]')
 		}
 	}
@@ -189,7 +190,7 @@
 	/****************************************************************************************************/
 
 	const initProfile = () => {
-		config.interval = config.interval >= 1000 ? 1000 : config.interval
+		variableConfig.interval = variableConfig.interval >= 1000 ? 1000 : variableConfig.interval
 		/* ... */
 		runtimeProfile._prevRAFCountTimeStamp = performance.now()
 		runtimeProfile._prevRAFRefreshTimeStamp = performance.now()
@@ -224,7 +225,7 @@
 		runtimeProfile.rAFIntervalCount++
 		runtimeProfile.rAFCountCalc = 1000 / (nowStamp - runtimeProfile._prevRAFCountTimeStamp)
 		const refreshDiffTime = nowStamp - runtimeProfile._prevRAFRefreshTimeStamp
-		if (Math.abs(refreshDiffTime - config.interval) <= 5 || refreshDiffTime >= config.interval) {
+		if (Math.abs(refreshDiffTime - variableConfig.interval) <= 5 || refreshDiffTime >= variableConfig.interval) {
 			runtimeProfile.rAFCountRatio = runtimeProfile.rAFIntervalCount / (refreshDiffTime / 1000)
 			if (runtimeProfile.maxRAFCount <= runtimeProfile.rAFCountRatio) {
 				runtimeProfile.maxRAFCount = runtimeProfile.rAFCountRatio
@@ -235,7 +236,7 @@
 					((runtimeProfile.maxTopRAFCount - runtimeProfile.rAFCountRatio) / runtimeProfile.maxTopRAFCount) *
 						(CANVAS_RECT[1] - CANVAS_TEXT_SEC_HEIGHT)
 			)
-			if (runtimeProfile.yPositions.length > config.pathSize + 1) {
+			if (runtimeProfile.yPositions.length > variableConfig.pathSize + 1) {
 				runtimeProfile.yPositions.shift()
 			}
 			runtimeProfile.rAFCountCalc = runtimeProfile.rAFCountCalc.toFixed(2)
@@ -276,15 +277,15 @@
 		 */
 		ctx.fillStyle =
 			refValue <= SERIOUS[1] ? SERIOUS_TEXT_COLOR : refValue >= WARNING[0] && refValue <= WARNING[1] ? WARNING_TEXT_COLOR : NORMAL_TEXT_COLOR
-		ctx.font = '12px serif'
+		ctx.font = TEXT_FONT
 		ctx.textBaseline = 'middle'
-		ctx.fillText(textContent, 0, 10)
+		ctx.fillText(textContent, 0, CANVAS_TEXT_SEC_HEIGHT / 2)
 		/**
 		 * 绘制曲线
 		 */
 		ctx.beginPath()
 		ctx.setLineDash([])
-		const sx = (config.pathSize - yPositions.length + 1) * CANVAS_X_STEP_SIZE
+		const sx = (variableConfig.pathSize - yPositions.length + 1) * CANVAS_X_STEP_SIZE
 		ctx.moveTo(sx, yPositions[0])
 		let i = 0
 		for (i = 1; i < yPositions.length; i++) {
@@ -309,7 +310,12 @@
 			throw new Error('window.requestAnimationFrame no surppot.')
 		}
 		initStorage()
-		if (typeof config.mode === 'undefined' || config.mode === null || isNaN(+config.mode) || !MODES.includes(+config.mode)) {
+		if (
+			typeof variableConfig.mode === 'undefined' ||
+			variableConfig.mode === null ||
+			isNaN(+variableConfig.mode) ||
+			!MODES.includes(+variableConfig.mode)
+		) {
 			return
 		}
 		initViewStyle(styleProfile.cssText)
