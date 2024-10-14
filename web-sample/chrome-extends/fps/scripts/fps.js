@@ -36,17 +36,11 @@
 		top: 2px;
 		left: 2px;
 		cursor: move;
-		line-height: 14px;
 		padding: 2px 4px 4px 4px;
-		text-align: left;
 		opacity: 1;
-		white-space: nowrap;
 		border: 1px solid rgba(50, 50, 50, 1);
 		background-color: rgba(25, 25, 25, 0.85);
 		box-shadow: rgba(75, 75, 75, 0.35) 0 0 5px;
-		color: #00ee00 !important;
-		font-size: 12px !important;
-		font-weight: 400 !important;
 		box-sizing: border-box !important;
 		z-index: 99999999;
 		-webkit-user-select: none;
