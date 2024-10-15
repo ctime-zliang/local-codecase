@@ -6,12 +6,12 @@
 	 */
 	const MODES = [0, 1]
 	const CANVAS_TEXT_SEC_HEIGHT = 20
-	const CANVAS_X_STEP_SIZE = 4
+	const CANVAS_X_STEP_SIZE = 3
 	/**
 	 * 画布尺寸
 	 * 		画布宽度(CANVAS_RECT[0])必须为 CANVAS_X_STEP_SIZE 的整数倍
 	 */
-	const CANVAS_RECT = [104, 50]
+	const CANVAS_RECT = [102, 50]
 	/**
 	 * 帧率告警阈值边界及文本提示颜色
 	 */
