@@ -174,9 +174,20 @@
 		const mouseleaveHandler = evte => {
 			runtimeProfile.containerElement.classList.remove('_performance-monitor-container-hover')
 		}
+		const visiblitychangeHandler = evte => {
+			if (document.visibilityState === 'hidden') {
+				window.clearTimeout(runtimeProfile.visiblityChangeTimer)
+				runtimeProfile.visibilityState = document.visibilityState
+				return
+			}
+			runtimeProfile.visiblityChangeTimer = window.setTimeout(() => {
+				runtimeProfile.visibilityState = document.visibilityState
+			}, 300)
+		}
 		hostElement.addEventListener('mousedown', mousedownHandler)
 		hostElement.addEventListener('mouseover', mouseoverHandler)
 		hostElement.addEventListener('mouseleave', mouseleaveHandler)
+		document.addEventListener('visibilitychange', visiblitychangeHandler)
 	}
 
 	/****************************************************************************************************/
@@ -246,7 +257,7 @@
 		runtimeProfile.rAFCountCalc = 1000 / (nowStamp - runtimeProfile._prevRAFCountTimeStamp)
 		const refreshDiffTime = nowStamp - runtimeProfile._prevRAFRefreshTimeStamp
 		let needRfreshView = false
-		if (refreshDiffTime >= runtimeProfile.maxBlockInterval) {
+		if (runtimeProfile.visibilityState === 'visible' && refreshDiffTime >= runtimeProfile.maxBlockInterval) {
 			const si = refreshDiffTime / variableConfig.interval
 			runtimeProfile.rAFYPositions = [].concat(
 				runtimeProfile.rAFYPositions,
