@@ -260,11 +260,11 @@
 		}
 		if (Math.abs(refreshDiffTime - variableConfig.interval) <= 5 || refreshDiffTime >= variableConfig.interval) {
 			runtimeProfile.rAFCountRatio = runtimeProfile.rAFIntervalCount / (refreshDiffTime / 1000)
-			runtimeProfile.rICCountRatio = (runtimeProfile.rAFIntervalCount - runtimeProfile.rICIntervalCount) / runtimeProfile.rAFIntervalCount
 			if (runtimeProfile.maxRAFCount <= runtimeProfile.rAFCountRatio) {
 				runtimeProfile.maxRAFCount = runtimeProfile.rAFCountRatio
 				modifyProfile.updateMaxTopRAFCount()
 			}
+			runtimeProfile.rICCountRatio = runtimeProfile.rICIntervalCount / (runtimeProfile.maxRAFCount * (refreshDiffTime / 1000))
 			runtimeProfile.rAFYPositions.push(
 				CANVAS_FPSTEXT_SECHEIGHT +
 					((runtimeProfile.maxTopRAFCount - runtimeProfile.rAFCountRatio) / runtimeProfile.maxTopRAFCount) * CANVAS_FPSPOLYLINE_SECHEIGHT
@@ -273,7 +273,7 @@
 				CANVAS_FPSTEXT_SECHEIGHT +
 					CANVAS_FPSPOLYLINE_SECHEIGHT +
 					CANVAS_RICRTEXT_SECHEIGHT +
-					(1 - runtimeProfile.rICCountRatio) * CANVAS_RICRPOLYLINE_SECHEIGHT
+					runtimeProfile.rICCountRatio * CANVAS_RICRPOLYLINE_SECHEIGHT
 			)
 			if (runtimeProfile.rAFYPositions.length > variableConfig.pathSize + 1) {
 				runtimeProfile.rAFYPositions.shift()
@@ -283,7 +283,7 @@
 			}
 			runtimeProfile.rAFCountCalc = runtimeProfile.rAFCountCalc.toFixed(2)
 			runtimeProfile.rAFCountRatio = runtimeProfile.rAFCountRatio.toFixed(2)
-			runtimeProfile.rICCountRatio = runtimeProfile.rICCountRatio.toFixed(2)
+			runtimeProfile.rICCountRatio = runtimeProfile.rICCountRatio.toFixed(4)
 			runtimeProfile._prevRAFRefreshTimeStamp = nowStamp
 			needRfreshView = true
 		}
@@ -325,9 +325,9 @@
 	}
 
 	const drawIRCRatioText = () => {
-		const rationPercent = ((runtimeProfile.rAFIntervalCount - runtimeProfile.rICIntervalCount) / runtimeProfile.rAFIntervalCount).toFixed(4) * 100
+		const rationPercent = (1 - +runtimeProfile.rICCountRatio) * 100
 		const ratioText = String(rationPercent).length >= 6 ? String(rationPercent).substring(0, 4) : rationPercent
-		const textContent = `${ratioText}%`
+		const textContent = `${runtimeProfile.rICIntervalCount}/${ratioText}%`
 		const ctx = runtimeProfile.ctx
 		ctx.fillStyle = FPS_NORMAL_TEXT_COLOR
 		ctx.font = TEXT_FONT
