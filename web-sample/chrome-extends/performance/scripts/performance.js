@@ -260,13 +260,11 @@
 		}
 		if (Math.abs(refreshDiffTime - variableConfig.interval) <= 5 || refreshDiffTime >= variableConfig.interval) {
 			runtimeProfile.rAFCountRatio = runtimeProfile.rAFIntervalCount / (refreshDiffTime / 1000)
-			runtimeProfile.rAFCountRatio = Math.min(0, runtimeProfile.rAFCountRatio)
 			if (runtimeProfile.maxRAFCount <= runtimeProfile.rAFCountRatio) {
 				runtimeProfile.maxRAFCount = runtimeProfile.rAFCountRatio
 				modifyProfile.updateMaxTopRAFCount()
 			}
 			runtimeProfile.rICCountRatio = runtimeProfile.rICIntervalCount / (runtimeProfile.maxRAFCount * (refreshDiffTime / 1000))
-			runtimeProfile.rICCountRatio = Math.min(0, runtimeProfile.rICCountRatio)
 			runtimeProfile.rAFYPositions.push(
 				CANVAS_FPSTEXT_SECHEIGHT +
 					((runtimeProfile.maxTopRAFCount - runtimeProfile.rAFCountRatio) / runtimeProfile.maxTopRAFCount) * CANVAS_FPSPOLYLINE_SECHEIGHT
@@ -327,7 +325,7 @@
 	}
 
 	const drawIRCRatioText = () => {
-		const rationPercent = (1 - +runtimeProfile.rICCountRatio) * 100
+		const rationPercent = Math.max(0, 1 - +runtimeProfile.rICCountRatio) * 100
 		const ratioText = String(rationPercent).length >= 6 ? String(rationPercent).substring(0, 4) : rationPercent
 		const textContent = `${runtimeProfile.rICIntervalCount}/${ratioText}%`
 		const ctx = runtimeProfile.ctx
