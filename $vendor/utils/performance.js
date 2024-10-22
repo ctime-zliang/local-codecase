@@ -5,17 +5,21 @@
 	 * 		1 - 画布图示模式
 	 */
 	const MODES = [0, 1]
-	const CANVAS_RICRTEXT_SECHEIGHT = (CANVAS_FPSTEXT_SECHEIGHT = 15)
+	const CANVAS_RICRTEXT_SECHEIGHT = (CANVAS_MEMOTEXT_SECHEIGHT = CANVAS_FPSTEXT_SECHEIGHT = 15)
 	const CANVAS_RICRPOLYLINE_SECHEIGHT = (CANVAS_FPSPOLYLINE_SECHEIGHT = 25)
 	const CANVAS_X_STEP_SIZE = 3
 	/**
 	 * 画布尺寸
 	 * 		画布宽度(CANVAS_RECT[0])必须为 CANVAS_X_STEP_SIZE 的整数倍
 	 */
-	const CANVAS_RECT = [102, CANVAS_FPSTEXT_SECHEIGHT + CANVAS_FPSPOLYLINE_SECHEIGHT + CANVAS_RICRTEXT_SECHEIGHT + CANVAS_RICRPOLYLINE_SECHEIGHT]
-	/**
-	 * 帧率告警阈值边界及文本提示颜色
-	 */
+	const CANVAS_RECT = [
+		102,
+		CANVAS_MEMOTEXT_SECHEIGHT +
+			CANVAS_FPSTEXT_SECHEIGHT +
+			CANVAS_FPSPOLYLINE_SECHEIGHT +
+			CANVAS_RICRTEXT_SECHEIGHT +
+			CANVAS_RICRPOLYLINE_SECHEIGHT,
+	]
 	const FPS_SERIOUS = [0, 19]
 	const FPS_WARNING = [20, 29]
 	const FPS_NORMAL_TEXT_COLOR = 'rgba(0, 255, 0, 1)'
@@ -25,9 +29,6 @@
 	const variableConfig = {
 		mode: MODES[1],
 		pathSize: CANVAS_RECT[0] / CANVAS_X_STEP_SIZE,
-		/**
-		 * 刷新间隔(ms)
-		 */
 		interval: 200,
 	}
 	const runtimeProfile = {}
@@ -205,16 +206,20 @@
 			runtimeProfile.rAFLinearGradient = createLinearGradient(
 				runtimeProfile.ctx,
 				0,
-				CANVAS_FPSTEXT_SECHEIGHT,
+				CANVAS_MEMOTEXT_SECHEIGHT + CANVAS_FPSTEXT_SECHEIGHT,
 				0,
-				CANVAS_FPSTEXT_SECHEIGHT + CANVAS_FPSPOLYLINE_SECHEIGHT
+				CANVAS_MEMOTEXT_SECHEIGHT + CANVAS_FPSTEXT_SECHEIGHT + CANVAS_FPSPOLYLINE_SECHEIGHT
 			)
 			runtimeProfile.rICLinearGradient = createLinearGradient(
 				runtimeProfile.ctx,
 				0,
-				CANVAS_FPSTEXT_SECHEIGHT + CANVAS_FPSPOLYLINE_SECHEIGHT + CANVAS_RICRTEXT_SECHEIGHT,
+				CANVAS_MEMOTEXT_SECHEIGHT + CANVAS_FPSTEXT_SECHEIGHT + CANVAS_FPSPOLYLINE_SECHEIGHT + CANVAS_RICRTEXT_SECHEIGHT,
 				0,
-				CANVAS_FPSTEXT_SECHEIGHT + CANVAS_FPSPOLYLINE_SECHEIGHT + CANVAS_RICRTEXT_SECHEIGHT + CANVAS_RICRPOLYLINE_SECHEIGHT
+				CANVAS_MEMOTEXT_SECHEIGHT +
+					CANVAS_FPSTEXT_SECHEIGHT +
+					CANVAS_FPSPOLYLINE_SECHEIGHT +
+					CANVAS_RICRTEXT_SECHEIGHT +
+					CANVAS_RICRPOLYLINE_SECHEIGHT
 			)
 		}
 		/* ... */
@@ -224,19 +229,11 @@
 		runtimeProfile.rAFIntervalCount = runtimeProfile.rAFCountRatio = runtimeProfile.rAFCountCalc = 0
 		runtimeProfile.rAFYPositions = []
 		runtimeProfile.maxRAFCount = 60
-		modifyProfile.updateMaxTopRAFCount()
+		runtimeProfile.maxTopRAFCount = parseInt(runtimeProfile.maxRAFCount + runtimeProfile.maxRAFCount * 0.05)
 		/* ... */
 		runtimeProfile._prevRICRefreshTimeStamp = runtimeProfile._prevRICCountTimeStamp = performance.now()
 		runtimeProfile.rICIntervalCount = runtimeProfile.rICCountRatio = 0
 		runtimeProfile.rICYPositions = []
-		/* ... */
-		window.performanceRuntimeProfile = runtimeProfile
-	}
-
-	const modifyProfile = {
-		updateMaxTopRAFCount() {
-			runtimeProfile.maxTopRAFCount = parseInt(runtimeProfile.maxRAFCount + runtimeProfile.maxRAFCount * 0.05)
-		},
 	}
 
 	const createLinearGradient = (ctx, startX, startY, endX, endY) => {
@@ -245,6 +242,10 @@
 		linearGradient.addColorStop(0.6, 'rgba(2, 199, 252, 0.9)')
 		linearGradient.addColorStop(1, 'rgba(19, 135, 251, 0.9)')
 		return linearGradient
+	}
+
+	const transMemoryUnit = byteSize => {
+		return (byteSize / Math.pow(1024.0, 2)).toFixed(2)
 	}
 
 	const countRIC = deadline => {
@@ -261,11 +262,13 @@
 			const si = refreshDiffTime / variableConfig.interval
 			runtimeProfile.rAFYPositions = [].concat(
 				runtimeProfile.rAFYPositions,
-				new Array(si >> 0).fill(CANVAS_FPSTEXT_SECHEIGHT + CANVAS_FPSPOLYLINE_SECHEIGHT)
+				new Array(si >> 0).fill(CANVAS_MEMOTEXT_SECHEIGHT + CANVAS_FPSTEXT_SECHEIGHT + CANVAS_FPSPOLYLINE_SECHEIGHT)
 			)
 			runtimeProfile.rICYPositions = [].concat(
 				runtimeProfile.rICYPositions,
-				new Array(si >> 0).fill(CANVAS_FPSTEXT_SECHEIGHT + CANVAS_FPSPOLYLINE_SECHEIGHT + CANVAS_RICRTEXT_SECHEIGHT)
+				new Array(si >> 0).fill(
+					CANVAS_MEMOTEXT_SECHEIGHT + CANVAS_FPSTEXT_SECHEIGHT + CANVAS_FPSPOLYLINE_SECHEIGHT + CANVAS_RICRTEXT_SECHEIGHT
+				)
 			)
 			needRfreshView = true
 		}
@@ -273,15 +276,17 @@
 			runtimeProfile.rAFCountRatio = runtimeProfile.rAFIntervalCount / (refreshDiffTime / 1000)
 			if (runtimeProfile.maxRAFCount <= runtimeProfile.rAFCountRatio) {
 				runtimeProfile.maxRAFCount = runtimeProfile.rAFCountRatio
-				modifyProfile.updateMaxTopRAFCount()
+				runtimeProfile.maxTopRAFCount = parseInt(runtimeProfile.maxRAFCount + runtimeProfile.maxRAFCount * 0.05)
 			}
 			runtimeProfile.rICCountRatio = runtimeProfile.rICIntervalCount / (runtimeProfile.maxRAFCount * (refreshDiffTime / 1000))
 			runtimeProfile.rAFYPositions.push(
-				CANVAS_FPSTEXT_SECHEIGHT +
+				CANVAS_MEMOTEXT_SECHEIGHT +
+					CANVAS_FPSTEXT_SECHEIGHT +
 					((runtimeProfile.maxTopRAFCount - runtimeProfile.rAFCountRatio) / runtimeProfile.maxTopRAFCount) * CANVAS_FPSPOLYLINE_SECHEIGHT
 			)
 			runtimeProfile.rICYPositions.push(
-				CANVAS_FPSTEXT_SECHEIGHT +
+				CANVAS_MEMOTEXT_SECHEIGHT +
+					CANVAS_FPSTEXT_SECHEIGHT +
 					CANVAS_FPSPOLYLINE_SECHEIGHT +
 					CANVAS_RICRTEXT_SECHEIGHT +
 					runtimeProfile.rICCountRatio * CANVAS_RICRPOLYLINE_SECHEIGHT
@@ -320,6 +325,18 @@
 		ctx.lineWidth = 1
 	}
 
+	const drawMemoryText = () => {
+		const ctx = runtimeProfile.ctx
+		const memoryInfo = performance.memory
+		const totalTextContent = `${transMemoryUnit(memoryInfo.totalJSHeapSize)}`
+		const usedTextContent = `${transMemoryUnit(memoryInfo.usedJSHeapSize)}`
+		const textContent = usedTextContent + '/' + totalTextContent + ' M'
+		ctx.fillStyle = FPS_NORMAL_TEXT_COLOR
+		ctx.font = TEXT_FONT
+		ctx.textBaseline = 'middle'
+		ctx.fillText(textContent, 0, CANVAS_MEMOTEXT_SECHEIGHT / 2)
+	}
+
 	const drawFPSText = () => {
 		const textContent = `${runtimeProfile.rAFCountRatio}/${runtimeProfile.rAFCountCalc}/${runtimeProfile.rAFIntervalCount}`
 		const refValue = runtimeProfile.rAFCountCalc >> 0
@@ -332,7 +349,7 @@
 				: FPS_NORMAL_TEXT_COLOR
 		ctx.font = TEXT_FONT
 		ctx.textBaseline = 'middle'
-		ctx.fillText(textContent, 0, CANVAS_FPSTEXT_SECHEIGHT / 2)
+		ctx.fillText(textContent, 0, CANVAS_MEMOTEXT_SECHEIGHT + CANVAS_FPSTEXT_SECHEIGHT / 2)
 	}
 
 	const drawIRCRatioText = () => {
@@ -343,7 +360,11 @@
 		ctx.fillStyle = FPS_NORMAL_TEXT_COLOR
 		ctx.font = TEXT_FONT
 		ctx.textBaseline = 'middle'
-		ctx.fillText(textContent, 0, CANVAS_FPSTEXT_SECHEIGHT + CANVAS_FPSPOLYLINE_SECHEIGHT + CANVAS_RICRTEXT_SECHEIGHT / 2)
+		ctx.fillText(
+			textContent,
+			0,
+			CANVAS_MEMOTEXT_SECHEIGHT + CANVAS_FPSTEXT_SECHEIGHT + CANVAS_FPSPOLYLINE_SECHEIGHT + CANVAS_RICRTEXT_SECHEIGHT / 2
+		)
 	}
 
 	const drawPolyline = (positions, polylineBottomY, linearGradient) => {
@@ -368,12 +389,21 @@
 
 	const drawCanvas = () => {
 		resetCanvasStatus()
+		drawMemoryText()
 		drawFPSText()
-		drawPolyline(runtimeProfile.rAFYPositions, CANVAS_FPSTEXT_SECHEIGHT + CANVAS_FPSPOLYLINE_SECHEIGHT, runtimeProfile.rAFLinearGradient)
+		drawPolyline(
+			runtimeProfile.rAFYPositions,
+			CANVAS_MEMOTEXT_SECHEIGHT + CANVAS_FPSTEXT_SECHEIGHT + CANVAS_FPSPOLYLINE_SECHEIGHT,
+			runtimeProfile.rAFLinearGradient
+		)
 		drawIRCRatioText()
 		drawPolyline(
 			runtimeProfile.rICYPositions,
-			CANVAS_FPSTEXT_SECHEIGHT + CANVAS_FPSPOLYLINE_SECHEIGHT + CANVAS_RICRTEXT_SECHEIGHT + CANVAS_RICRPOLYLINE_SECHEIGHT,
+			CANVAS_MEMOTEXT_SECHEIGHT +
+				CANVAS_FPSTEXT_SECHEIGHT +
+				CANVAS_FPSPOLYLINE_SECHEIGHT +
+				CANVAS_RICRTEXT_SECHEIGHT +
+				CANVAS_RICRPOLYLINE_SECHEIGHT,
 			runtimeProfile.rICLinearGradient
 		)
 	}
