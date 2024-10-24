@@ -1,3 +1,3 @@
 ﻿  SampleApplication.cpp
-D:\phpstudy_pro\WWW\WebDev Document\local-codecase\cpp-sample\SampleApplication\SampleApplication\Common.cpp(19,19): warning C4244: “return”: 从“double”转换到“float”，可能丢失数据
+D:\phpstudy_pro\WWW\WebDev Document\local-codecase\cpp-sample\SampleApplication\SampleApplication\Common.cpp(30,19): warning C4244: “return”: 从“double”转换到“float”，可能丢失数据
   SampleApplication.vcxproj -> D:\phpstudy_pro\WWW\WebDev Document\local-codecase\cpp-sample\SampleApplication\Debug\SampleApplication.exe
