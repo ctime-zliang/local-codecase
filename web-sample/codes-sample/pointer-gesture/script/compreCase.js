@@ -165,21 +165,18 @@
 				if (profile.pointerdownTarget !== imageElement) {
 					return
 				}
-				Ven$AlertManager.setBtns([Ven$AlertManager.defaultConfirmBtn, Ven$AlertManager.defaultCancelBtn]).open(
-					'还原图片状态?',
-					function (tag) {
-						if (tag === 'confirm') {
-							TransfromManager.rotate = 0
-							TransfromManager.scale = 1
-							TransfromManager.translateX = 0
-							TransfromManager.translateY = 0
-							TransfromManager.setTransitionStyle(imageElement, true)
-							TransfromManager.applyTransfromStyle(imageElement)
-							TransfromManager.updateTransformTextContent(transformValueElement)
-						}
-						this.close()
+				Ven$AlertManager.setBtns([Ven$AlertManager.defaultConfirmBtn, Ven$AlertManager.defaultCancelBtn]).open('还原图片状态?', function (tag) {
+					if (tag === 'confirm') {
+						TransfromManager.rotate = 0
+						TransfromManager.scale = 1
+						TransfromManager.translateX = 0
+						TransfromManager.translateY = 0
+						TransfromManager.setTransitionStyle(imageElement, true)
+						TransfromManager.applyTransfromStyle(imageElement)
+						TransfromManager.updateTransformTextContent(transformValueElement)
 					}
-				)
+					this.close()
+				})
 			},
 			onDoubleTap(evte, { clientX, clientY }, gesture) {
 				if (profile.pointerdownTarget !== imageElement) {

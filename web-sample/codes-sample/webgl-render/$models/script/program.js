@@ -391,21 +391,10 @@ class Program {
 				const ratioDistX = 0.65 * itemDistNativeX
 				const ratioDistY = 0.65 * itemDistNativeY
 				const len = Math.sqrt(totalDistNativeX * totalDistNativeX + totalDistNativeY * totalDistNativeY)
-				const ratationQuaternion =
-					len === 0
-						? Ven$Quaternion.initQuaternion()
-						: Ven$Quaternion.fromRotation(
-								Ven$Angles.degreeToRadian(len * 0.65),
-								new Ven$Vector3(totalDistNativeY / len, totalDistNativeX / len, 0)
-						  )
+				const ratationQuaternion = len === 0 ? Ven$Quaternion.initQuaternion() : Ven$Quaternion.fromRotation(Ven$Angles.degreeToRadian(len * 0.65), new Ven$Vector3(totalDistNativeY / len, totalDistNativeX / len, 0))
 				self.getModelInstances(self.glControl.modelInstances).forEach(modelInstanceItem => {
-					modelInstanceItem.modeControl.currentQuaternion = Ven$Quaternion.multiplyQuaternions(
-						ratationQuaternion,
-						modelInstanceItem.modeControl.lastQuaternion
-					)
-					modelInstanceItem.modeControl.currentMatrixData = Ven$Quaternion.makeRotationFromQuaternion(
-						modelInstanceItem.modeControl.currentQuaternion
-					)
+					modelInstanceItem.modeControl.currentQuaternion = Ven$Quaternion.multiplyQuaternions(ratationQuaternion, modelInstanceItem.modeControl.lastQuaternion)
+					modelInstanceItem.modeControl.currentMatrixData = Ven$Quaternion.makeRotationFromQuaternion(modelInstanceItem.modeControl.currentQuaternion)
 					/* ... */
 					modelInstanceItem.modelRatation.y += ratioDistX
 					modelInstanceItem.modelRatation.x += ratioDistY
@@ -647,18 +636,10 @@ class Program {
 		modelRotationRangeXElement.addEventListener('input', function (e) {
 			modelRotationRangeXShowSpanElement.textContent = +this.value
 			const len = Math.sqrt(+this.value * +this.value)
-			const ratationQuaternion =
-				len === 0
-					? Ven$Quaternion.initQuaternion()
-					: Ven$Quaternion.fromRotation(Ven$Angles.degreeToRadian(len), new Ven$Vector3(+this.value / len, 0, 0))
+			const ratationQuaternion = len === 0 ? Ven$Quaternion.initQuaternion() : Ven$Quaternion.fromRotation(Ven$Angles.degreeToRadian(len), new Ven$Vector3(+this.value / len, 0, 0))
 			self.getModelInstances(self.glControl.modelInstances, self.downNumberKeys).forEach(modelInstanceItem => {
-				modelInstanceItem.modeControl.currentQuaternion = Ven$Quaternion.multiplyQuaternions(
-					ratationQuaternion,
-					modelInstanceItem.modeControl.lastQuaternion
-				)
-				modelInstanceItem.modeControl.currentMatrixData = Ven$Quaternion.makeRotationFromQuaternion(
-					modelInstanceItem.modeControl.currentQuaternion
-				)
+				modelInstanceItem.modeControl.currentQuaternion = Ven$Quaternion.multiplyQuaternions(ratationQuaternion, modelInstanceItem.modeControl.lastQuaternion)
+				modelInstanceItem.modeControl.currentMatrixData = Ven$Quaternion.makeRotationFromQuaternion(modelInstanceItem.modeControl.currentQuaternion)
 				/* ... */
 				modelInstanceItem.modelRatation.x = +this.value
 			})
@@ -672,18 +653,10 @@ class Program {
 		modelRotationRangeYElement.addEventListener('input', function (e) {
 			modelRotationRangeYShowSpanElement.textContent = +this.value
 			const len = Math.sqrt(+this.value * +this.value)
-			const ratationQuaternion =
-				len === 0
-					? Ven$Quaternion.initQuaternion()
-					: Ven$Quaternion.fromRotation(Ven$Angles.degreeToRadian(len), new Ven$Vector3(0, +this.value / len, 0))
+			const ratationQuaternion = len === 0 ? Ven$Quaternion.initQuaternion() : Ven$Quaternion.fromRotation(Ven$Angles.degreeToRadian(len), new Ven$Vector3(0, +this.value / len, 0))
 			self.getModelInstances(self.glControl.modelInstances, self.downNumberKeys).forEach(modelInstanceItem => {
-				modelInstanceItem.modeControl.currentQuaternion = Ven$Quaternion.multiplyQuaternions(
-					ratationQuaternion,
-					modelInstanceItem.modeControl.lastQuaternion
-				)
-				modelInstanceItem.modeControl.currentMatrixData = Ven$Quaternion.makeRotationFromQuaternion(
-					modelInstanceItem.modeControl.currentQuaternion
-				)
+				modelInstanceItem.modeControl.currentQuaternion = Ven$Quaternion.multiplyQuaternions(ratationQuaternion, modelInstanceItem.modeControl.lastQuaternion)
+				modelInstanceItem.modeControl.currentMatrixData = Ven$Quaternion.makeRotationFromQuaternion(modelInstanceItem.modeControl.currentQuaternion)
 				/* ... */
 				modelInstanceItem.modelRatation.y = +this.value
 			})
@@ -697,18 +670,10 @@ class Program {
 		modelRotationRangeZElement.addEventListener('input', function (e) {
 			modelRotationRangeZShowSpanElement.textContent = +this.value
 			const len = Math.sqrt(+this.value * +this.value)
-			const ratationQuaternion =
-				len === 0
-					? Ven$Quaternion.initQuaternion()
-					: Ven$Quaternion.fromRotation(Ven$Angles.degreeToRadian(len), new Ven$Vector3(0, 0, +this.value / len))
+			const ratationQuaternion = len === 0 ? Ven$Quaternion.initQuaternion() : Ven$Quaternion.fromRotation(Ven$Angles.degreeToRadian(len), new Ven$Vector3(0, 0, +this.value / len))
 			self.getModelInstances(self.glControl.modelInstances, self.downNumberKeys).forEach(modelInstanceItem => {
-				modelInstanceItem.modeControl.currentQuaternion = Ven$Quaternion.multiplyQuaternions(
-					ratationQuaternion,
-					modelInstanceItem.modeControl.lastQuaternion
-				)
-				modelInstanceItem.modeControl.currentMatrixData = Ven$Quaternion.makeRotationFromQuaternion(
-					modelInstanceItem.modeControl.currentQuaternion
-				)
+				modelInstanceItem.modeControl.currentQuaternion = Ven$Quaternion.multiplyQuaternions(ratationQuaternion, modelInstanceItem.modeControl.lastQuaternion)
+				modelInstanceItem.modeControl.currentMatrixData = Ven$Quaternion.makeRotationFromQuaternion(modelInstanceItem.modeControl.currentQuaternion)
 				/* ... */
 				modelInstanceItem.modelRatation.z = +this.value
 			})

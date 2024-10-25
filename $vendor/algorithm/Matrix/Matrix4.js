@@ -188,9 +188,7 @@ class Ven$Matrix4 extends Ven$Matrix {
 		if (centerPoint.equalsWithPoint(Ven$Vector2.ORIGIN)) {
 			return Ven$Matrix4.matrix4RotateZByRadian(radian)
 		}
-		return Ven$Matrix4.createTranslateMatrix4ByCoordinate(-centerPoint.x, -centerPoint.y, 0)
-			.rotateZByRadian(radian)
-			.translateByVector3(centerPoint.x, centerPoint.y, 0)
+		return Ven$Matrix4.createTranslateMatrix4ByCoordinate(-centerPoint.x, -centerPoint.y, 0).rotateZByRadian(radian).translateByVector3(centerPoint.x, centerPoint.y, 0)
 	}
 
 	static getMatrix4(startTranslate, endTranslate, radian, scaleX) {
@@ -238,9 +236,7 @@ class Ven$Matrix4 extends Ven$Matrix {
 	}
 
 	setOriginByVector3(vector3) {
-		return Ven$Matrix4.createTranslateMatrix4ByCoordinate(-vector3.x, -vector3.y, -vector3.z)
-			.multiply4(this)
-			.multiply4(Ven$Matrix4.createTranslateMatrix4ByCoordinate(vector3.x, vector3.y, vector3.z))
+		return Ven$Matrix4.createTranslateMatrix4ByCoordinate(-vector3.x, -vector3.y, -vector3.z).multiply4(this).multiply4(Ven$Matrix4.createTranslateMatrix4ByCoordinate(vector3.x, vector3.y, vector3.z))
 	}
 
 	toMatrix3() {

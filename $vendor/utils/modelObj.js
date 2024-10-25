@@ -17,13 +17,7 @@
 		let idx = 0
 		for (idx = start; idx < str.length; idx++) {
 			const c = str.charAt(idx)
-			if (
-				c === STRING_TAG_T ||
-				c === STRING_TAG_BLANK ||
-				c === STRING_TAG_LEFT_BRACKETS ||
-				c === STRING_TAG_RIGHT_BRACKETS ||
-				c === STRING_TAG_QUOT
-			) {
+			if (c === STRING_TAG_T || c === STRING_TAG_BLANK || c === STRING_TAG_LEFT_BRACKETS || c === STRING_TAG_RIGHT_BRACKETS || c === STRING_TAG_QUOT) {
 				break
 			}
 		}
@@ -149,13 +143,7 @@
 			let idx = this.index
 			for (; idx < this.str.length; idx++) {
 				const c = this.str.charAt(idx)
-				if (
-					c === STRING_TAG_T ||
-					c === STRING_TAG_BLANK ||
-					c === STRING_TAG_LEFT_BRACKETS ||
-					c === STRING_TAG_RIGHT_BRACKETS ||
-					c === STRING_TAG_QUOT
-				) {
+				if (c === STRING_TAG_T || c === STRING_TAG_BLANK || c === STRING_TAG_LEFT_BRACKETS || c === STRING_TAG_RIGHT_BRACKETS || c === STRING_TAG_QUOT) {
 					continue
 				}
 				break

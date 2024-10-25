@@ -445,12 +445,7 @@ function drawCanvas2(containerElement) {
 		}
 	`
 
-	Program2.glControl.gl.clearColor(
-		Program2.profile.clearColor.r / 255,
-		Program2.profile.clearColor.g / 255,
-		Program2.profile.clearColor.b / 255,
-		1.0
-	)
+	Program2.glControl.gl.clearColor(Program2.profile.clearColor.r / 255, Program2.profile.clearColor.g / 255, Program2.profile.clearColor.b / 255, 1.0)
 	Program2.glControl.gl.clear(Program2.glControl.gl.COLOR_BUFFER_BIT | Program2.glControl.gl.DEPTH_BUFFER_BIT)
 	Program2.glControl.gl.enable(Program2.glControl.gl.BLEND)
 	Program2.glControl.gl.enable(Program2.glControl.gl.CULL_FACE)
@@ -476,11 +471,7 @@ function drawCanvas2(containerElement) {
 	Program2.glControl.commonLight.glAttributes = commonWebGLVariableLocation.glAttributes
 	Program2.glControl.commonLight.glUniforms = commonWebGLVariableLocation.glUniforms
 
-	const { frameBuffer: frameBuffer, texture: frameTexture } = ven$initFramebufferObject(
-		Program2.glControl.gl,
-		Program2.profile.offscreenWidth,
-		Program2.profile.offscreenHeight
-	)
+	const { frameBuffer: frameBuffer, texture: frameTexture } = ven$initFramebufferObject(Program2.glControl.gl, Program2.profile.offscreenWidth, Program2.profile.offscreenHeight)
 	Program2.glControl.commonLight.frameBuffer = frameBuffer
 	Program2.glControl.commonLight.frameTexture = frameTexture
 
@@ -515,12 +506,7 @@ function drawCanvas2(containerElement) {
 		},
 		setProfile(gl, itemProgramControl) {
 			const { glUniforms } = itemProgramControl
-			const projectionMatrix4 = Ven$CanvasMatrix4.setPerspective(
-				Program2.profile.persProjection.fovy,
-				Program2.profile.persProjection.aspect,
-				Program2.profile.persProjection.near,
-				Program2.profile.persProjection.far
-			)
+			const projectionMatrix4 = Ven$CanvasMatrix4.setPerspective(Program2.profile.persProjection.fovy, Program2.profile.persProjection.aspect, Program2.profile.persProjection.near, Program2.profile.persProjection.far)
 			const lookAtMatrix4 = Ven$CanvasMatrix4.setLookAt(
 				new Ven$Vector3(Program2.profile.lookAt.eyePosition.x, Program2.profile.lookAt.eyePosition.y, Program2.profile.lookAt.eyePosition.z),
 				new Ven$Vector3(Program2.profile.lookAt.atPosition.x, Program2.profile.lookAt.atPosition.y, Program2.profile.lookAt.atPosition.z),
@@ -572,29 +558,12 @@ function drawCanvas2(containerElement) {
 		},
 		applyModelMatrix(gl, modelInstance, itemProgramControl) {
 			const { glUniforms } = itemProgramControl
-			const modelRotationXMatrix4 = Ven$CanvasMatrix4.setRotate(
-				Ven$Angles.degreeToRadian(modelInstance.modelRatation.x),
-				new Ven$Vector3(1, 0, 0)
-			)
-			const modelRotationYMatrix4 = Ven$CanvasMatrix4.setRotate(
-				Ven$Angles.degreeToRadian(modelInstance.modelRatation.y),
-				new Ven$Vector3(0, 1, 0)
-			)
-			const modelRotationZMatrix4 = Ven$CanvasMatrix4.setRotate(
-				Ven$Angles.degreeToRadian(modelInstance.modelRatation.z),
-				new Ven$Vector3(0, 0, 1)
-			)
-			const modelOffsetMatrix4 = Ven$CanvasMatrix4.setTranslate(
-				new Ven$Vector3(modelInstance.modelOffset.x, modelInstance.modelOffset.y, modelInstance.modelOffset.z)
-			)
-			const modelScaleMatrix4 = Ven$CanvasMatrix4.setScale(
-				new Ven$Vector3(modelInstance.modelScale.x, modelInstance.modelScale.y, modelInstance.modelScale.z)
-			)
-			const modelEffectMatrix4 = modelRotationXMatrix4
-				.multiply4(modelRotationYMatrix4)
-				.multiply4(modelRotationZMatrix4)
-				.multiply4(modelScaleMatrix4)
-				.multiply4(modelOffsetMatrix4)
+			const modelRotationXMatrix4 = Ven$CanvasMatrix4.setRotate(Ven$Angles.degreeToRadian(modelInstance.modelRatation.x), new Ven$Vector3(1, 0, 0))
+			const modelRotationYMatrix4 = Ven$CanvasMatrix4.setRotate(Ven$Angles.degreeToRadian(modelInstance.modelRatation.y), new Ven$Vector3(0, 1, 0))
+			const modelRotationZMatrix4 = Ven$CanvasMatrix4.setRotate(Ven$Angles.degreeToRadian(modelInstance.modelRatation.z), new Ven$Vector3(0, 0, 1))
+			const modelOffsetMatrix4 = Ven$CanvasMatrix4.setTranslate(new Ven$Vector3(modelInstance.modelOffset.x, modelInstance.modelOffset.y, modelInstance.modelOffset.z))
+			const modelScaleMatrix4 = Ven$CanvasMatrix4.setScale(new Ven$Vector3(modelInstance.modelScale.x, modelInstance.modelScale.y, modelInstance.modelScale.z))
+			const modelEffectMatrix4 = modelRotationXMatrix4.multiply4(modelRotationYMatrix4).multiply4(modelRotationZMatrix4).multiply4(modelScaleMatrix4).multiply4(modelOffsetMatrix4)
 			gl.uniformMatrix4fv(glUniforms.u_ModelMatrix, false, new Float32Array(modelEffectMatrix4.data))
 		},
 	}
@@ -609,12 +578,7 @@ function drawCanvas2(containerElement) {
 		Program2.glControl.gl.useProgram(Program2.glControl.commonLight.program)
 		canvas.clear(Program2.glControl.gl)
 		canvas.setProfile(Program2.glControl.gl, Program2.glControl.commonLight)
-		canvas.render(
-			Program2.glControl.gl,
-			Program2.glControl.frameBufferVertexFeatureSize,
-			Program2.glControl.frameBufferModelInstances,
-			Program2.glControl.commonLight
-		)
+		canvas.render(Program2.glControl.gl, Program2.glControl.frameBufferVertexFeatureSize, Program2.glControl.frameBufferModelInstances, Program2.glControl.commonLight)
 		canvas.init('CANVAS', Program2.glControl.gl, null)
 		Program2.glControl.gl.useProgram(Program2.glControl.commonLight.program)
 		canvas.clear(Program2.glControl.gl)

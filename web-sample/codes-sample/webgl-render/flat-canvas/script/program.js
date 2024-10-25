@@ -254,11 +254,7 @@ class Program {
 		switch (modelType) {
 			case 'model1': {
 				this.glControl.modelInstances = [new TestModel1()]
-				Program.glControl[useProgram].program = ven$createProgram(
-					Program.glControl.gl,
-					SHADER_PROFILE[useProgram].vertex,
-					SHADER_PROFILE[useProgram].fragment
-				)
+				Program.glControl[useProgram].program = ven$createProgram(Program.glControl.gl, SHADER_PROFILE[useProgram].vertex, SHADER_PROFILE[useProgram].fragment)
 				const commonWebGLVariableLocation = ven$getWebGLVariableLocation(Program.glControl.gl, Program.glControl[useProgram].program, {
 					glAttributes: ['a_Position', 'a_Color'],
 					glUniforms: ['u_ModelMatrix', 'u_ViewMatrix', 'u_ProjMatrix'],
@@ -269,11 +265,7 @@ class Program {
 			}
 			case 'model2': {
 				this.glControl.modelInstances = [new TestModel2()]
-				Program.glControl[useProgram].program = ven$createProgram(
-					Program.glControl.gl,
-					SHADER_PROFILE[useProgram].vertex,
-					SHADER_PROFILE[useProgram].fragment
-				)
+				Program.glControl[useProgram].program = ven$createProgram(Program.glControl.gl, SHADER_PROFILE[useProgram].vertex, SHADER_PROFILE[useProgram].fragment)
 				const commonWebGLVariableLocation = ven$getWebGLVariableLocation(Program.glControl.gl, Program.glControl[useProgram].program, {
 					glAttributes: ['a_Position', 'a_Color'],
 					glUniforms: ['u_ModelMatrix', 'u_ViewMatrix', 'u_ProjMatrix'],
@@ -284,11 +276,7 @@ class Program {
 			}
 			case 'model3': {
 				this.glControl.modelInstances = [new TestModel3()]
-				Program.glControl[useProgram].program = ven$createProgram(
-					Program.glControl.gl,
-					SHADER_PROFILE[useProgram].vertex,
-					SHADER_PROFILE[useProgram].fragment
-				)
+				Program.glControl[useProgram].program = ven$createProgram(Program.glControl.gl, SHADER_PROFILE[useProgram].vertex, SHADER_PROFILE[useProgram].fragment)
 				const commonWebGLVariableLocation = ven$getWebGLVariableLocation(Program.glControl.gl, Program.glControl[useProgram].program, {
 					glAttributes: ['a_Position', 'a_Color'],
 					glUniforms: ['u_ModelMatrix', 'u_ViewMatrix', 'u_ProjMatrix'],

@@ -5,16 +5,36 @@
 	 * 		1 - 画布图示模式
 	 */
 	const MODES = [0, 1]
-	const MEMOTEXT_HEIGHT = (RAFTEXT_HEIGHT = RICTEXT_HEIGHT = 15)
-	const RAFPOLYL_HEIGHT = (RICPOLYL_HEIGHT = 25)
-	const STEP_SIZE = 3
-	const RECORD_SIZE = 35
-	const CANVAS_RECT = [(RECORD_SIZE - 1) * STEP_SIZE, MEMOTEXT_HEIGHT + RAFTEXT_HEIGHT + RAFPOLYL_HEIGHT + RICTEXT_HEIGHT + RICPOLYL_HEIGHT]
+	let _V_MODE = MODES[1]
+	let _V_INTERVAL = 200
+	/**
+	 * 记录数据配置项
+	 * 		[DATA_SIZE, PIX_STEP]
+	 * |---|---|
+	 * 		即
+	 * 			RECORD_CONFIG[0] = 3
+	 * 			RECORD_CONFIG[1] = 3
+	 * 		则
+	 * 			POLY_WIDHT = (RECORD_CONFIG[0] - 1) * RECORD_CONFIG[1]
+	 */
+	const RECORD_CONFIG = [35, 3]
+	/**
+	 * 画布尺寸
+	 * 		[WIDTH, HEIGHT]
+	 */
+	const CANVAS_RECT = [(RECORD_CONFIG[0] - 1) * RECORD_CONFIG[1], 95]
+	/**
+	 * 分割区域尺寸
+	 * 		[START_X, START_Y, WIDTH, HEIGHT]
+	 */
+	const MEMOTEXT_RECT = [0, 0, 102, 15]
+	const RAFTEXT_RECT = [0, 15, 102, 15]
+	const RAFPOLY_RECT = [0, 30, 102, 25]
+	const RICTEXT_RECT = [0, 55, 102, 15]
+	const RICPOLY_RECT = [0, 70, 102, 25]
 	const FPS_THRESHOLD = [20, 30]
 	const TEXT_COLOR = ['rgba(255, 0, 0, 1)', 'rgba(255, 126, 82, 1)', 'rgba(0, 255, 0, 1)']
 	const TEXT_FONT = `11px arial, sans-serif`
-	let _V_MODE = MODES[1]
-	let _V_INTERVAL = 200
 	const runtimeProfile = {}
 	const CONTAINER_STYLE = `
 		display: block;
@@ -52,41 +72,26 @@
 	}
 
 	const createHtmlString = () => {
-		let htmlString = ``
-		if (_V_MODE === MODES[1]) {
-			htmlString = `
-				<div class="_performance-monitor-container" style="${CONTAINER_STYLE}">
-					<div style="width: ${CANVAS_RECT[0]}px !important; height: ${CANVAS_RECT[1]}px !important;">
-						<canvas 
-							width="${CANVAS_RECT[0]}" 
-							height="${CANVAS_RECT[1]}" 
-							style="width: ${CANVAS_RECT[0]}px; height: ${CANVAS_RECT[1]}px;" 
-							data-tagitem="_performance-raf-canvas-view">
-						</canvas>
-					</div>
+		let htmlString = `
+			<div class="_performance-monitor-container" style="${CONTAINER_STYLE}">
+				<div style="width: ${CANVAS_RECT[0]}px !important; height: ${CANVAS_RECT[1]}px !important;">
+					<canvas width="${CANVAS_RECT[0]}" height="${CANVAS_RECT[1]}" style="width: ${CANVAS_RECT[0]}px; height: ${CANVAS_RECT[1]}px;"></canvas>
 				</div>
-			`
-			return htmlString
-		}
+			</div>
+		`
 		return htmlString
 	}
 
 	const initStorage = () => {
 		try {
 			const _performance_mode = globalScope.localStorage.getItem('_performance_mode')
-			if (
-				typeof _performance_mode === 'undefined' ||
-				_performance_mode === null ||
-				isNaN(+_performance_mode) ||
-				!MODES.includes(+_performance_mode)
-			) {
+			if (isNaN(+_performance_mode) || !MODES.includes(+_performance_mode)) {
 				globalScope.localStorage.setItem('_performance_mode', _V_MODE)
-			} else {
-				_V_MODE = +_performance_mode
+				return
 			}
+			_V_MODE = +_performance_mode
 		} catch (e) {
 			console.warn(e)
-			_V_MODE = MODES[1]
 		}
 	}
 
@@ -110,15 +115,10 @@
 		rootElement.appendChild(document.createRange().createContextualFragment(createHtmlString()))
 	}
 
-	const initContainerElementHandler = () => {
+	const initDomElementHandler = () => {
 		runtimeProfile.containerElement = document.querySelector('._performance-monitor-container')
 		runtimeProfile.wrapperElement = runtimeProfile.containerElement.firstElementChild
-	}
-
-	const initElementHandler = () => {
-		if (_V_MODE === MODES[1]) {
-			runtimeProfile.rAFCanvasElement = runtimeProfile.containerElement.querySelector('[data-tagitem="_performance-raf-canvas-view"]')
-		}
+		runtimeProfile.mainCanvasElement = runtimeProfile.containerElement.getElementsByTagName('canvas')[0]
 	}
 
 	const bindEvent = hostElement => {
@@ -135,8 +135,7 @@
 				return
 			}
 			const rect = hostElement.getBoundingClientRect()
-			const xa = document.documentElement.clientWidth - rect.width
-			const ya = document.documentElement.clienHeight - rect.height
+			const [xa, ya] = [document.documentElement.clientWidth - rect.width, document.documentElement.clienHeight - rect.height]
 			let [moveX, moveY] = [evte.clientX - profile.distX, evte.clientY - profile.distY]
 			hostElement.style.left = ((moveX = moveX <= 0 ? 0 : moveX), (moveX = moveX >= xa ? xa : moveX), moveX) + 'px'
 			hostElement.style.top = ((moveY = moveY <= 0 ? 0 : moveY), (moveY = moveY >= ya ? ya : moveY), moveY) + 'px'
@@ -175,34 +174,25 @@
 	/****************************************************************************************************/
 
 	const initProfile = () => {
+		const nowStamp = performance.now()
 		_V_INTERVAL = _V_INTERVAL >= 1000 ? 1000 : _V_INTERVAL
 		/* ... */
 		runtimeProfile.ctx = null
-		if (runtimeProfile.rAFCanvasElement) {
-			runtimeProfile.ctx = runtimeProfile.rAFCanvasElement.getContext('2d')
-			runtimeProfile.rAFLinearGradient = createLinearGradient(
-				0,
-				MEMOTEXT_HEIGHT + RAFTEXT_HEIGHT,
-				0,
-				MEMOTEXT_HEIGHT + RAFTEXT_HEIGHT + RAFPOLYL_HEIGHT
-			)
-			runtimeProfile.rICLinearGradient = createLinearGradient(
-				0,
-				MEMOTEXT_HEIGHT + RAFTEXT_HEIGHT + RAFPOLYL_HEIGHT + RICTEXT_HEIGHT,
-				0,
-				MEMOTEXT_HEIGHT + RAFTEXT_HEIGHT + RAFPOLYL_HEIGHT + RICTEXT_HEIGHT + RICPOLYL_HEIGHT
-			)
+		if (runtimeProfile.mainCanvasElement) {
+			runtimeProfile.ctx = runtimeProfile.mainCanvasElement.getContext('2d')
+			runtimeProfile.rAFLinearGradient = createLinearGradient(RAFPOLY_RECT[0], RAFPOLY_RECT[1], RAFPOLY_RECT[0], RAFPOLY_RECT[1] + RAFPOLY_RECT[3])
+			runtimeProfile.rICLinearGradient = createLinearGradient(RICPOLY_RECT[0], RICPOLY_RECT[1], RICPOLY_RECT[0], RICPOLY_RECT[1] + RICPOLY_RECT[3])
 		}
 		/* ... */
 		const maxBlockIntervalThreshold = _V_INTERVAL * 1.5
 		runtimeProfile.maxBlockInterval = maxBlockIntervalThreshold >= 1000 ? 1000 : maxBlockIntervalThreshold
-		runtimeProfile._prevRAFRefreshTimeStamp = runtimeProfile._prevRAFCountTimeStamp = performance.now()
+		runtimeProfile._prevRAFRefreshTimeStamp = runtimeProfile._prevRAFCountTimeStamp = nowStamp
 		runtimeProfile.rAFIntervalCount = runtimeProfile.rAFCountRatio = runtimeProfile.rAFCountCalc = 0
 		runtimeProfile.rAFYPositions = []
 		runtimeProfile.maxRAFCount = 60
-		runtimeProfile.maxTopRAFCount = parseInt(runtimeProfile.maxRAFCount + runtimeProfile.maxRAFCount * 0.05)
+		runtimeProfile.maxTopRAFCount = parseInt(runtimeProfile.maxRAFCount + runtimeProfile.maxRAFCount * 0.05) >> 0
 		/* ... */
-		runtimeProfile._prevRICRefreshTimeStamp = runtimeProfile._prevRICCountTimeStamp = performance.now()
+		runtimeProfile._prevRICRefreshTimeStamp = runtimeProfile._prevRICCountTimeStamp = nowStamp
 		runtimeProfile.rICIntervalCount = runtimeProfile.rICCountRatio = 0
 		runtimeProfile.rICYPositions = []
 	}
@@ -231,14 +221,8 @@
 		let needRfreshView = false
 		if (runtimeProfile.visibilityState === 'visible' && refreshDiffTime >= runtimeProfile.maxBlockInterval) {
 			const si = (refreshDiffTime / _V_INTERVAL) >> 0
-			runtimeProfile.rAFYPositions = [].concat(
-				runtimeProfile.rAFYPositions,
-				new Array(si).fill(MEMOTEXT_HEIGHT + RAFTEXT_HEIGHT + RAFPOLYL_HEIGHT)
-			)
-			runtimeProfile.rICYPositions = [].concat(
-				runtimeProfile.rICYPositions,
-				new Array(si).fill(MEMOTEXT_HEIGHT + RAFTEXT_HEIGHT + RAFPOLYL_HEIGHT + RICTEXT_HEIGHT)
-			)
+			runtimeProfile.rAFYPositions = [].concat(runtimeProfile.rAFYPositions, new Array(si).fill(RAFPOLY_RECT[1] + RAFPOLY_RECT[3]))
+			runtimeProfile.rICYPositions = [].concat(runtimeProfile.rICYPositions, new Array(si).fill(RICPOLY_RECT[1] + RICPOLY_RECT[3]))
 			needRfreshView = true
 		}
 		if (Math.abs(refreshDiffTime - _V_INTERVAL) <= 5 || refreshDiffTime >= _V_INTERVAL) {
@@ -248,18 +232,12 @@
 				runtimeProfile.maxTopRAFCount = (runtimeProfile.maxRAFCount + runtimeProfile.maxRAFCount * 0.05) >> 0
 			}
 			runtimeProfile.rICCountRatio = runtimeProfile.rICIntervalCount / (runtimeProfile.maxRAFCount * (refreshDiffTime / 1000))
-			runtimeProfile.rAFYPositions.push(
-				MEMOTEXT_HEIGHT +
-					RAFTEXT_HEIGHT +
-					((runtimeProfile.maxTopRAFCount - runtimeProfile.rAFCountRatio) / runtimeProfile.maxTopRAFCount) * RAFPOLYL_HEIGHT
-			)
-			runtimeProfile.rICYPositions.push(
-				MEMOTEXT_HEIGHT + RAFTEXT_HEIGHT + RAFPOLYL_HEIGHT + RICTEXT_HEIGHT + runtimeProfile.rICCountRatio * RICPOLYL_HEIGHT
-			)
-			if (runtimeProfile.rAFYPositions.length >= RECORD_SIZE + 1) {
+			runtimeProfile.rAFYPositions.push(RAFPOLY_RECT[1] + ((runtimeProfile.maxTopRAFCount - runtimeProfile.rAFCountRatio) / runtimeProfile.maxTopRAFCount) * RAFPOLY_RECT[3])
+			runtimeProfile.rICYPositions.push(RICPOLY_RECT[1] + runtimeProfile.rICCountRatio * RICPOLY_RECT[3])
+			if (runtimeProfile.rAFYPositions.length >= RECORD_CONFIG[0] + 1) {
 				runtimeProfile.rAFYPositions.shift()
 			}
-			if (runtimeProfile.rICYPositions.length >= RECORD_SIZE + 1) {
+			if (runtimeProfile.rICYPositions.length >= RECORD_CONFIG[0] + 1) {
 				runtimeProfile.rICYPositions.shift()
 			}
 			runtimeProfile.rAFCountCalc = runtimeProfile.rAFCountCalc.toFixed(2)
@@ -299,40 +277,38 @@
 		const usedTextContent = `${transMemoryUnit(memoryInfo.usedJSHeapSize)}`
 		const textContent = usedTextContent + '/' + totalTextContent + ' M'
 		ctx.fillStyle = TEXT_COLOR[2]
-		ctx.fillText(textContent, 0, MEMOTEXT_HEIGHT / 2)
+		ctx.fillText(textContent, 0, MEMOTEXT_RECT[1] + MEMOTEXT_RECT[3] / 2)
 	}
 
 	const drawRAFText = () => {
 		const textContent = `${runtimeProfile.rAFCountRatio}/${runtimeProfile.rAFCountCalc}/${runtimeProfile.rAFIntervalCount}`
 		const refValue = runtimeProfile.rAFCountCalc >> 0
 		const ctx = runtimeProfile.ctx
-		ctx.fillStyle =
-			refValue < FPS_THRESHOLD[0] ? TEXT_COLOR[0] : refValue >= FPS_THRESHOLD[0] && refValue < FPS_THRESHOLD[1] ? TEXT_COLOR[1] : TEXT_COLOR[2]
-		ctx.fillText(textContent, 0, MEMOTEXT_HEIGHT + RAFTEXT_HEIGHT / 2)
+		ctx.fillStyle = refValue < FPS_THRESHOLD[0] ? TEXT_COLOR[0] : refValue >= FPS_THRESHOLD[0] && refValue < FPS_THRESHOLD[1] ? TEXT_COLOR[1] : TEXT_COLOR[2]
+		ctx.fillText(textContent, 0, RAFTEXT_RECT[1] + RAFTEXT_RECT[3] / 2)
 	}
 
 	const drawRICText = () => {
-		const rationPercent = Math.max(0, 1 - +runtimeProfile.rICCountRatio) * 100
-		const ratioText = String(rationPercent).length >= 6 ? String(rationPercent).substring(0, 4) : rationPercent
-		const textContent = `${runtimeProfile.rICIntervalCount}/${ratioText}%`
+		const rationPercent = (Math.max(0, 1 - +runtimeProfile.rICCountRatio) * 100).toFixed(2)
+		const textContent = `${runtimeProfile.rICIntervalCount}/${rationPercent}%`
 		const ctx = runtimeProfile.ctx
 		ctx.fillStyle = TEXT_COLOR[2]
-		ctx.fillText(textContent, 0, MEMOTEXT_HEIGHT + RAFTEXT_HEIGHT + RAFPOLYL_HEIGHT + RICTEXT_HEIGHT / 2)
+		ctx.fillText(textContent, 0, RICTEXT_RECT[1] + RICTEXT_RECT[3] / 2)
 	}
 
 	const drawPolyline = (positions, polylineBottomY, linearGradient) => {
 		const ctx = runtimeProfile.ctx
 		ctx.beginPath()
-		const sx = (RECORD_SIZE - positions.length) * STEP_SIZE
+		const sx = (RECORD_CONFIG[0] - positions.length) * RECORD_CONFIG[1]
 		ctx.moveTo(sx, positions[0])
 		let i = 0
 		for (i = 1; i < positions.length; i++) {
-			ctx.lineTo(sx + i * STEP_SIZE, positions[i])
+			ctx.lineTo(sx + i * RECORD_CONFIG[1], positions[i])
 		}
 		ctx.stroke()
 		ctx.strokeStyle = 'rgba(19, 98, 251, 1.0)'
 		if (positions.length >= 2) {
-			ctx.lineTo(sx + (i - 1) * STEP_SIZE, polylineBottomY)
+			ctx.lineTo(sx + (i - 1) * RECORD_CONFIG[1], polylineBottomY)
 			ctx.lineTo(sx, polylineBottomY)
 			ctx.stroke()
 		}
@@ -344,24 +320,19 @@
 		resetCanvasStatus()
 		drawMemoryText()
 		drawRAFText()
-		drawPolyline(runtimeProfile.rAFYPositions, MEMOTEXT_HEIGHT + RAFTEXT_HEIGHT + RAFPOLYL_HEIGHT, runtimeProfile.rAFLinearGradient)
+		drawPolyline(runtimeProfile.rAFYPositions, RAFPOLY_RECT[1] + RAFPOLY_RECT[3], runtimeProfile.rAFLinearGradient)
 		drawRICText()
-		drawPolyline(
-			runtimeProfile.rICYPositions,
-			MEMOTEXT_HEIGHT + RAFTEXT_HEIGHT + RAFPOLYL_HEIGHT + RICTEXT_HEIGHT + RICPOLYL_HEIGHT,
-			runtimeProfile.rICLinearGradient
-		)
+		drawPolyline(runtimeProfile.rICYPositions, RICPOLY_RECT[1] + RICPOLY_RECT[3], runtimeProfile.rICLinearGradient)
 	}
 
 	const main = () => {
 		initStorage()
-		if (typeof _V_MODE === 'undefined' || _V_MODE === null || isNaN(+_V_MODE) || !MODES.includes(+_V_MODE)) {
+		if (isNaN(+_V_MODE) || !MODES.includes(+_V_MODE)) {
 			return
 		}
 		initViewStyle(styleProfile.cssText)
 		initViewElement()
-		initContainerElementHandler()
-		initElementHandler()
+		initDomElementHandler()
 		initProfile()
 		bindEvent(runtimeProfile.containerElement)
 		globalScope.requestAnimationFrame(countRAF)

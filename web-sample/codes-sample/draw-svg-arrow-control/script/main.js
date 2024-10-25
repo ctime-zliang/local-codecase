@@ -59,11 +59,7 @@ function handlerMouseMove(evte) {
 
 	if (POSRECT.isCanRotate) {
 		// 获取鼠标的实时旋转角度
-		POSRECT.newAngle = window.$handler.getAngleOfXAxial(
-			{ x: POSRECT.newX, y: POSRECT.newY },
-			{ x: POSRECT.rotateCenterPoint.x, y: POSRECT.rotateCenterPoint.y },
-			POSRECT.isReverseDirection
-		)
+		POSRECT.newAngle = window.$handler.getAngleOfXAxial({ x: POSRECT.newX, y: POSRECT.newY }, { x: POSRECT.rotateCenterPoint.x, y: POSRECT.rotateCenterPoint.y }, POSRECT.isReverseDirection)
 		// 实时旋转所有坐标点
 		realTimeControlPoints = window.$math.getDotsAfterRotate(POSRECT.newAngle - POSRECT.initAngle || 0, POSRECT.initControlPoints, {
 			x: POSRECT.rotateCenterPoint.x,

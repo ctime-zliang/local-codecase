@@ -53,21 +53,16 @@ function init() {
 		{ text: 'Simple Chartlet Light Cude', value: DRAWTYPE_SIMPLE_CHARTLET_LIGHT_CUBE },
 	]
 	const selectedValue = drawGraphicTypeSelectorDataList[drawGraphicTypeSelectorDataList.length - 1].value
-	handlerDrawGraphicTypeSelector(
-		document.getElementById('drawGraphicTypeSelector'),
-		drawGraphicTypeSelectorDataList,
-		selectedValue,
-		controllerName => {
-			if (!window[controllerName]) {
-				console.warn(`${controllerName} is not found on window.`)
-				return
-			}
-			drawGraphicsModifiedHandler(controllerName)
-			gVars.controllerInstance = new window[controllerName]()
-			gVars.controllerInstance.init(gVars.gl)
-			gVars.controllerInstance.render()
+	handlerDrawGraphicTypeSelector(document.getElementById('drawGraphicTypeSelector'), drawGraphicTypeSelectorDataList, selectedValue, controllerName => {
+		if (!window[controllerName]) {
+			console.warn(`${controllerName} is not found on window.`)
+			return
 		}
-	)
+		drawGraphicsModifiedHandler(controllerName)
+		gVars.controllerInstance = new window[controllerName]()
+		gVars.controllerInstance.init(gVars.gl)
+		gVars.controllerInstance.render()
+	})
 }
 
 function main() {

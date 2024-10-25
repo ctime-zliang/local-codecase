@@ -41,16 +41,7 @@ function ven$deepClone2(data) {
 	return traverse(data)
 
 	function traverse(data) {
-		if (
-			typeof data !== 'object' ||
-			data === null ||
-			data instanceof Date ||
-			data instanceof ArrayBuffer ||
-			data instanceof Uint8ClampedArray ||
-			data instanceof Uint8Array ||
-			data instanceof Uint16Array ||
-			data instanceof Uint32Array
-		) {
+		if (typeof data !== 'object' || data === null || data instanceof Date || data instanceof ArrayBuffer || data instanceof Uint8ClampedArray || data instanceof Uint8Array || data instanceof Uint16Array || data instanceof Uint32Array) {
 			return data
 		}
 		if (Array.isArray(data)) {

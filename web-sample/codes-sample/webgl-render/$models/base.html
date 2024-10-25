@@ -14,30 +14,9 @@
 	</head>
 
 	<body style="display: flex; justify-content: space-between; flex-wrap: wrap; background-color: rgba(200, 200, 200, 1)">
-		<div
-			id="appContainer"
-			class="app-container"
-			style="
-				height: fit-content;
-				display: flex;
-				padding: 5px 0 15px 0;
-				border-bottom: 2px dashed #444444;
-				border-top: 2px dashed #444444;
-				margin: 5px 0;
-			"
-		>
+		<div id="appContainer" class="app-container" style="height: fit-content; display: flex; padding: 5px 0 15px 0; border-bottom: 2px dashed #444444; border-top: 2px dashed #444444; margin: 5px 0">
 			<div data-tagitem="profile-panel" style="width: 600px; height: inherit; overflow: hidden; padding: 5px 5px">
-				<div
-					style="
-						width: fit-content;
-						font-size: 12px;
-						display: flex;
-						flex-wrap: nowrap;
-						align-items: center;
-						align-content: center;
-						padding: 3px 0;
-					"
-				>
+				<div style="width: fit-content; font-size: 12px; display: flex; flex-wrap: nowrap; align-items: center; align-content: center; padding: 3px 0">
 					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">Model Source Type: </label>
 					<input type="radio" data-tag-name="modelSourceType" value="1" style="width: 20px; height: 20px; cursor: pointer" />
 					<span>Preset List Selector</span>
@@ -45,17 +24,7 @@
 					<input type="radio" data-tag-name="modelSourceType" value="2" style="width: 20px; height: 20px; cursor: pointer" />
 					<span>File Selector</span>
 				</div>
-				<div
-					style="
-						width: fit-content;
-						font-size: 12px;
-						display: flex;
-						flex-wrap: nowrap;
-						align-items: center;
-						align-content: center;
-						padding: 3px 0;
-					"
-				>
+				<div style="width: fit-content; font-size: 12px; display: flex; flex-wrap: nowrap; align-items: center; align-content: center; padding: 3px 0">
 					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">Model: </label>
 					<select data-tag-name="modelPresetListSelector" style="width: 300px; cursor: pointer">
 						<option value="model1">Humanoid</option>
@@ -64,419 +33,128 @@
 						<option value="model4" selected="selected">Z-Plane</option>
 					</select>
 				</div>
-				<div
-					style="
-						width: fit-content;
-						font-size: 12px;
-						display: flex;
-						flex-wrap: nowrap;
-						align-items: center;
-						align-content: center;
-						padding: 3px 0;
-					"
-				>
+				<div style="width: fit-content; font-size: 12px; display: flex; flex-wrap: nowrap; align-items: center; align-content: center; padding: 3px 0">
 					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">Model: </label>
 					<input type="file" data-tag-name="modelFileSelector" style="height: 30px; cursor: pointer" />
 				</div>
 				<br />
-				<div
-					style="
-						width: fit-content;
-						font-size: 12px;
-						display: flex;
-						flex-wrap: nowrap;
-						align-items: center;
-						align-content: center;
-						padding: 3px 0;
-					"
-				>
+				<div style="width: fit-content; font-size: 12px; display: flex; flex-wrap: nowrap; align-items: center; align-content: center; padding: 3px 0">
 					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">Rotation Calculation Type: </label>
 					<input type="radio" data-tag-name="rotationCalculationType" value="1" style="width: 20px; height: 20px; cursor: pointer" />
 					<span>Matrix Rotation</span>
 					<div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
-					<input
-						type="radio"
-						data-tag-name="rotationCalculationType"
-						value="2"
-						disabled="disabled"
-						style="width: 20px; height: 20px; cursor: pointer"
-					/>
+					<input type="radio" data-tag-name="rotationCalculationType" value="2" disabled="disabled" style="width: 20px; height: 20px; cursor: pointer" />
 					<span>Euler Rotation</span>
 					<div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
 					<input type="radio" data-tag-name="rotationCalculationType" value="3" style="width: 20px; height: 20px; cursor: pointer" />
 					<span>Quaternion Rotation</span>
 				</div>
-				<div
-					style="
-						width: fit-content;
-						font-size: 12px;
-						display: flex;
-						flex-wrap: nowrap;
-						align-items: center;
-						align-content: center;
-						padding: 3px 0;
-					"
-				>
+				<div style="width: fit-content; font-size: 12px; display: flex; flex-wrap: nowrap; align-items: center; align-content: center; padding: 3px 0">
 					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">Model Rotation X: </label>
 					<span>-360</span>
-					<input
-						type="range"
-						value="0"
-						data-tag-name="modelRotationRangeX"
-						min="-360"
-						max="360"
-						step="1"
-						style="width: 300px; cursor: pointer"
-					/>
+					<input type="range" value="0" data-tag-name="modelRotationRangeX" min="-360" max="360" step="1" style="width: 300px; cursor: pointer" />
 					<span>360</span>
 					<strong>&nbsp;(<span data-tag-name="modelRotationRangeXShow">0</span>)</strong>
 				</div>
-				<div
-					style="
-						width: fit-content;
-						font-size: 12px;
-						display: flex;
-						flex-wrap: nowrap;
-						align-items: center;
-						align-content: center;
-						padding: 3px 0;
-					"
-				>
+				<div style="width: fit-content; font-size: 12px; display: flex; flex-wrap: nowrap; align-items: center; align-content: center; padding: 3px 0">
 					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">Model Rotation Y: </label>
 					<span>-360</span>
-					<input
-						type="range"
-						value="0"
-						data-tag-name="modelRotationRangeY"
-						min="-360"
-						max="360"
-						step="1"
-						style="width: 300px; cursor: pointer"
-					/>
+					<input type="range" value="0" data-tag-name="modelRotationRangeY" min="-360" max="360" step="1" style="width: 300px; cursor: pointer" />
 					<span>360</span>
 					<strong>&nbsp;(<span data-tag-name="modelRotationRangeYShow">0</span>)</strong>
 				</div>
-				<div
-					style="
-						width: fit-content;
-						font-size: 12px;
-						display: flex;
-						flex-wrap: nowrap;
-						align-items: center;
-						align-content: center;
-						padding: 3px 0;
-					"
-				>
+				<div style="width: fit-content; font-size: 12px; display: flex; flex-wrap: nowrap; align-items: center; align-content: center; padding: 3px 0">
 					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">Model Rotation Z: </label>
 					<span>-360</span>
-					<input
-						type="range"
-						value="0"
-						data-tag-name="modelRotationRangeZ"
-						min="-360"
-						max="360"
-						step="1"
-						style="width: 300px; cursor: pointer"
-					/>
+					<input type="range" value="0" data-tag-name="modelRotationRangeZ" min="-360" max="360" step="1" style="width: 300px; cursor: pointer" />
 					<span>360</span>
 					<strong>&nbsp;(<span data-tag-name="modelRotationRangeZShow">0</span>)</strong>
 				</div>
-				<div
-					style="
-						width: fit-content;
-						font-size: 12px;
-						display: flex;
-						flex-wrap: nowrap;
-						align-items: center;
-						align-content: center;
-						padding: 3px 0;
-					"
-				>
+				<div style="width: fit-content; font-size: 12px; display: flex; flex-wrap: nowrap; align-items: center; align-content: center; padding: 3px 0">
 					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">Model Offset X: </label>
 					<span>-100</span>
-					<input
-						type="range"
-						value="0"
-						data-tag-name="modelOffsetRangeX"
-						min="-100"
-						max="100"
-						step="0.1"
-						style="width: 300px; cursor: pointer"
-					/>
+					<input type="range" value="0" data-tag-name="modelOffsetRangeX" min="-100" max="100" step="0.1" style="width: 300px; cursor: pointer" />
 					<span>100</span>
 					<strong>&nbsp;(<span data-tag-name="modelOffsetRangeXShow">0</span>)</strong>
 				</div>
-				<div
-					style="
-						width: fit-content;
-						font-size: 12px;
-						display: flex;
-						flex-wrap: nowrap;
-						align-items: center;
-						align-content: center;
-						padding: 3px 0;
-					"
-				>
+				<div style="width: fit-content; font-size: 12px; display: flex; flex-wrap: nowrap; align-items: center; align-content: center; padding: 3px 0">
 					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">Model Offset Y: </label>
 					<span>-100</span>
-					<input
-						type="range"
-						value="0"
-						data-tag-name="modelOffsetRangeY"
-						min="-100"
-						max="100"
-						step="0.1"
-						style="width: 300px; cursor: pointer"
-					/>
+					<input type="range" value="0" data-tag-name="modelOffsetRangeY" min="-100" max="100" step="0.1" style="width: 300px; cursor: pointer" />
 					<span>100</span>
 					<strong>&nbsp;(<span data-tag-name="modelOffsetRangeYShow">0</span>)</strong>
 				</div>
-				<div
-					style="
-						width: fit-content;
-						font-size: 12px;
-						display: flex;
-						flex-wrap: nowrap;
-						align-items: center;
-						align-content: center;
-						padding: 3px 0;
-					"
-				>
+				<div style="width: fit-content; font-size: 12px; display: flex; flex-wrap: nowrap; align-items: center; align-content: center; padding: 3px 0">
 					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">Model Offset Z: </label>
 					<span>-100</span>
-					<input
-						type="range"
-						value="0"
-						data-tag-name="modelOffsetRangeZ"
-						min="-100"
-						max="100"
-						step="0.1"
-						style="width: 300px; cursor: pointer"
-					/>
+					<input type="range" value="0" data-tag-name="modelOffsetRangeZ" min="-100" max="100" step="0.1" style="width: 300px; cursor: pointer" />
 					<span>100</span>
 					<strong>&nbsp;(<span data-tag-name="modelOffsetRangeZShow">0</span>)</strong>
 				</div>
-				<div
-					style="
-						width: fit-content;
-						font-size: 12px;
-						display: flex;
-						flex-wrap: nowrap;
-						align-items: center;
-						align-content: center;
-						padding: 3px 0;
-					"
-				>
+				<div style="width: fit-content; font-size: 12px; display: flex; flex-wrap: nowrap; align-items: center; align-content: center; padding: 3px 0">
 					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">Model Scale: </label>
 					<span>0.01</span>
-					<input
-						type="range"
-						value="0"
-						data-tag-name="modelScaleRange"
-						min="0.01"
-						max="10"
-						step="0.1"
-						style="width: 300px; cursor: pointer"
-					/>
+					<input type="range" value="0" data-tag-name="modelScaleRange" min="0.01" max="10" step="0.1" style="width: 300px; cursor: pointer" />
 					<span>10</span>
 					<strong>&nbsp;(<span data-tag-name="modelScaleRangeShow">0</span>)</strong>
 				</div>
 				<br />
-				<div
-					style="
-						width: fit-content;
-						font-size: 12px;
-						display: flex;
-						flex-wrap: nowrap;
-						align-items: center;
-						align-content: center;
-						padding: 3px 0;
-					"
-				>
+				<div style="width: fit-content; font-size: 12px; display: flex; flex-wrap: nowrap; align-items: center; align-content: center; padding: 3px 0">
 					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">LookAt-EyePosition X: </label>
 					<span>-500</span>
-					<input
-						type="range"
-						data-tag-name="lookAtMatrix4EyePositionX"
-						min="-500"
-						max="500"
-						step="1"
-						style="width: 300px; cursor: pointer"
-					/>
+					<input type="range" data-tag-name="lookAtMatrix4EyePositionX" min="-500" max="500" step="1" style="width: 300px; cursor: pointer" />
 					<span>500</span>
 					<strong>&nbsp;(<span data-tag-name="lookAtMatrix4EyePositionXShow">0</span>)</strong>
 				</div>
-				<div
-					style="
-						width: fit-content;
-						font-size: 12px;
-						display: flex;
-						flex-wrap: nowrap;
-						align-items: center;
-						align-content: center;
-						padding: 3px 0;
-					"
-				>
+				<div style="width: fit-content; font-size: 12px; display: flex; flex-wrap: nowrap; align-items: center; align-content: center; padding: 3px 0">
 					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">LookAt-EyePosition Y: </label>
 					<span>-500</span>
-					<input
-						type="range"
-						data-tag-name="lookAtMatrix4EyePositionY"
-						min="-500"
-						max="500"
-						step="1"
-						style="width: 300px; cursor: pointer"
-					/>
+					<input type="range" data-tag-name="lookAtMatrix4EyePositionY" min="-500" max="500" step="1" style="width: 300px; cursor: pointer" />
 					<span>500</span>
 					<strong>&nbsp;(<span data-tag-name="lookAtMatrix4EyePositionYShow">0</span>)</strong>
 				</div>
-				<div
-					style="
-						width: fit-content;
-						font-size: 12px;
-						display: flex;
-						flex-wrap: nowrap;
-						align-items: center;
-						align-content: center;
-						padding: 3px 0;
-					"
-				>
+				<div style="width: fit-content; font-size: 12px; display: flex; flex-wrap: nowrap; align-items: center; align-content: center; padding: 3px 0">
 					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">LookAt-EyePosition Z: </label>
 					<span>-500</span>
-					<input
-						type="range"
-						data-tag-name="lookAtMatrix4EyePositionZ"
-						min="-500"
-						max="500"
-						step="1"
-						style="width: 300px; cursor: pointer"
-					/>
+					<input type="range" data-tag-name="lookAtMatrix4EyePositionZ" min="-500" max="500" step="1" style="width: 300px; cursor: pointer" />
 					<span>500</span>
 					<strong>&nbsp;(<span data-tag-name="lookAtMatrix4EyePositionZShow">0</span>)</strong>
 				</div>
-				<div
-					style="
-						width: fit-content;
-						font-size: 12px;
-						display: flex;
-						flex-wrap: nowrap;
-						align-items: center;
-						align-content: center;
-						padding: 3px 0;
-					"
-				>
+				<div style="width: fit-content; font-size: 12px; display: flex; flex-wrap: nowrap; align-items: center; align-content: center; padding: 3px 0">
 					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">LookAt-AtPosition X: </label>
 					<span>-10</span>
-					<input
-						type="range"
-						data-tag-name="lookAtMatrix4AtPositionX"
-						min="-10"
-						max="10"
-						step="0.01"
-						style="width: 300px; cursor: pointer"
-					/>
+					<input type="range" data-tag-name="lookAtMatrix4AtPositionX" min="-10" max="10" step="0.01" style="width: 300px; cursor: pointer" />
 					<span>10</span>
 					<strong>&nbsp;(<span data-tag-name="lookAtMatrix4AtPositionXShow">0</span>)</strong>
 				</div>
-				<div
-					style="
-						width: fit-content;
-						font-size: 12px;
-						display: flex;
-						flex-wrap: nowrap;
-						align-items: center;
-						align-content: center;
-						padding: 3px 0;
-					"
-				>
+				<div style="width: fit-content; font-size: 12px; display: flex; flex-wrap: nowrap; align-items: center; align-content: center; padding: 3px 0">
 					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">LookAt-AtPosition Y: </label>
 					<span>-10</span>
-					<input
-						type="range"
-						data-tag-name="lookAtMatrix4AtPositionY"
-						min="-10"
-						max="10"
-						step="0.01"
-						style="width: 300px; cursor: pointer"
-					/>
+					<input type="range" data-tag-name="lookAtMatrix4AtPositionY" min="-10" max="10" step="0.01" style="width: 300px; cursor: pointer" />
 					<span>10</span>
 					<strong>&nbsp;(<span data-tag-name="lookAtMatrix4AtPositionYShow">0</span>)</strong>
 				</div>
-				<div
-					style="
-						width: fit-content;
-						font-size: 12px;
-						display: flex;
-						flex-wrap: nowrap;
-						align-items: center;
-						align-content: center;
-						padding: 3px 0;
-					"
-				>
+				<div style="width: fit-content; font-size: 12px; display: flex; flex-wrap: nowrap; align-items: center; align-content: center; padding: 3px 0">
 					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">LookAt-AtPosition Z: </label>
 					<span>-10</span>
-					<input
-						type="range"
-						data-tag-name="lookAtMatrix4AtPositionZ"
-						min="-10"
-						max="10"
-						step="0.01"
-						style="width: 300px; cursor: pointer"
-					/>
+					<input type="range" data-tag-name="lookAtMatrix4AtPositionZ" min="-10" max="10" step="0.01" style="width: 300px; cursor: pointer" />
 					<span>10</span>
 					<strong>&nbsp;(<span data-tag-name="lookAtMatrix4AtPositionZShow">0</span>)</strong>
 				</div>
 				<br />
-				<div
-					style="
-						width: fit-content;
-						font-size: 12px;
-						display: flex;
-						flex-wrap: nowrap;
-						align-items: center;
-						align-content: center;
-						padding: 3px 0;
-					"
-				>
+				<div style="width: fit-content; font-size: 12px; display: flex; flex-wrap: nowrap; align-items: center; align-content: center; padding: 3px 0">
 					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">Light Color: </label>
 					<input type="color" data-tag-name="lightColor" value="#ffffff" style="width: 100px; cursor: pointer; border: 0" />
 					<strong>&nbsp;(<span data-tag-name="lightColorShow">#ffffff</span>)</strong>
 				</div>
-				<div
-					style="
-						width: fit-content;
-						font-size: 12px;
-						display: flex;
-						flex-wrap: nowrap;
-						align-items: center;
-						align-content: center;
-						padding: 3px 0;
-					"
-				>
+				<div style="width: fit-content; font-size: 12px; display: flex; flex-wrap: nowrap; align-items: center; align-content: center; padding: 3px 0">
 					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">Light Intensity Gain: </label>
 					<span>0.01</span>
-					<input
-						type="range"
-						data-tag-name="lightIntensityGainRange"
-						min="-0.01"
-						max="2"
-						step="0.01"
-						style="width: 300px; cursor: pointer"
-					/>
+					<input type="range" data-tag-name="lightIntensityGainRange" min="-0.01" max="2" step="0.01" style="width: 300px; cursor: pointer" />
 					<span>2</span>
 					<strong>&nbsp;(<span data-tag-name="lightIntensityGainRangeShow">0</span>)</strong>
 				</div>
-				<div
-					style="
-						width: fit-content;
-						font-size: 12px;
-						display: flex;
-						flex-wrap: nowrap;
-						align-items: center;
-						align-content: center;
-						padding: 3px 0;
-					"
-				>
+				<div style="width: fit-content; font-size: 12px; display: flex; flex-wrap: nowrap; align-items: center; align-content: center; padding: 3px 0">
 					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">Light Illu Type: </label>
 					<input type="radio" data-tag-name="lightIlluType" value="1" style="width: 20px; height: 20px; cursor: pointer" />
 					<span>Parallel Light</span>
@@ -484,296 +162,86 @@
 					<input type="radio" data-tag-name="lightIlluType" value="2" style="width: 20px; height: 20px; cursor: pointer" />
 					<span>Spot Light</span>
 				</div>
-				<div
-					style="
-						width: fit-content;
-						font-size: 12px;
-						display: none;
-						flex-wrap: nowrap;
-						align-items: center;
-						align-content: center;
-						padding: 3px 0;
-					"
-				>
+				<div style="width: fit-content; font-size: 12px; display: none; flex-wrap: nowrap; align-items: center; align-content: center; padding: 3px 0">
 					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">Light Position X: </label>
 					<span>-10</span>
-					<input
-						type="range"
-						value="0"
-						data-tag-name="lightPositionRangeX"
-						min="-200"
-						max="200"
-						step="0.1"
-						style="width: 300px; cursor: pointer"
-					/>
+					<input type="range" value="0" data-tag-name="lightPositionRangeX" min="-200" max="200" step="0.1" style="width: 300px; cursor: pointer" />
 					<span>200</span>
 					<strong>&nbsp;(<span data-tag-name="lightPositionRangeXShow">0</span>)</strong>
 				</div>
-				<div
-					style="
-						width: fit-content;
-						font-size: 12px;
-						display: none;
-						flex-wrap: nowrap;
-						align-items: center;
-						align-content: center;
-						padding: 3px 0;
-					"
-				>
+				<div style="width: fit-content; font-size: 12px; display: none; flex-wrap: nowrap; align-items: center; align-content: center; padding: 3px 0">
 					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">Light Position Y: </label>
 					<span>-10</span>
-					<input
-						type="range"
-						value="0"
-						data-tag-name="lightPositionRangeY"
-						min="-200"
-						max="200"
-						step="0.1"
-						style="width: 300px; cursor: pointer"
-					/>
+					<input type="range" value="0" data-tag-name="lightPositionRangeY" min="-200" max="200" step="0.1" style="width: 300px; cursor: pointer" />
 					<span>200</span>
 					<strong>&nbsp;(<span data-tag-name="lightPositionRangeYShow">0</span>)</strong>
 				</div>
-				<div
-					style="
-						width: fit-content;
-						font-size: 12px;
-						display: none;
-						flex-wrap: nowrap;
-						align-items: center;
-						align-content: center;
-						padding: 3px 0;
-					"
-				>
+				<div style="width: fit-content; font-size: 12px; display: none; flex-wrap: nowrap; align-items: center; align-content: center; padding: 3px 0">
 					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">Light Position Z: </label>
 					<span>-10</span>
-					<input
-						type="range"
-						value="0"
-						data-tag-name="lightPositionRangeZ"
-						min="-200"
-						max="200"
-						step="0.1"
-						style="width: 300px; cursor: pointer"
-					/>
+					<input type="range" value="0" data-tag-name="lightPositionRangeZ" min="-200" max="200" step="0.1" style="width: 300px; cursor: pointer" />
 					<span>200</span>
 					<strong>&nbsp;(<span data-tag-name="lightPositionRangeZShow">0</span>)</strong>
 				</div>
-				<div
-					style="
-						width: fit-content;
-						font-size: 12px;
-						display: none;
-						flex-wrap: nowrap;
-						align-items: center;
-						align-content: center;
-						padding: 3px 0;
-					"
-				>
+				<div style="width: fit-content; font-size: 12px; display: none; flex-wrap: nowrap; align-items: center; align-content: center; padding: 3px 0">
 					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">Light Direction X: </label>
 					<span>-10</span>
-					<input
-						type="range"
-						value="0"
-						data-tag-name="lightDirectionRangeX"
-						min="-10"
-						max="10"
-						step="0.01"
-						style="width: 300px; cursor: pointer"
-					/>
+					<input type="range" value="0" data-tag-name="lightDirectionRangeX" min="-10" max="10" step="0.01" style="width: 300px; cursor: pointer" />
 					<span>10</span>
 					<strong>&nbsp;(<span data-tag-name="lightDirectionRangeXShow">0</span>)</strong>
 				</div>
-				<div
-					style="
-						width: fit-content;
-						font-size: 12px;
-						display: none;
-						flex-wrap: nowrap;
-						align-items: center;
-						align-content: center;
-						padding: 3px 0;
-					"
-				>
+				<div style="width: fit-content; font-size: 12px; display: none; flex-wrap: nowrap; align-items: center; align-content: center; padding: 3px 0">
 					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">Light Direction Y: </label>
 					<span>-10</span>
-					<input
-						type="range"
-						value="0"
-						data-tag-name="lightDirectionRangeY"
-						min="-10"
-						max="10"
-						step="0.01"
-						style="width: 300px; cursor: pointer"
-					/>
+					<input type="range" value="0" data-tag-name="lightDirectionRangeY" min="-10" max="10" step="0.01" style="width: 300px; cursor: pointer" />
 					<span>10</span>
 					<strong>&nbsp;(<span data-tag-name="lightDirectionRangeYShow">0</span>)</strong>
 				</div>
-				<div
-					style="
-						width: fit-content;
-						font-size: 12px;
-						display: none;
-						flex-wrap: nowrap;
-						align-items: center;
-						align-content: center;
-						padding: 3px 0;
-					"
-				>
+				<div style="width: fit-content; font-size: 12px; display: none; flex-wrap: nowrap; align-items: center; align-content: center; padding: 3px 0">
 					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">Light Direction Z: </label>
 					<span>-10</span>
-					<input
-						type="range"
-						value="0"
-						data-tag-name="lightDirectionRangeZ"
-						min="-10"
-						max="10"
-						step="0.01"
-						style="width: 300px; cursor: pointer"
-					/>
+					<input type="range" value="0" data-tag-name="lightDirectionRangeZ" min="-10" max="10" step="0.01" style="width: 300px; cursor: pointer" />
 					<span>10</span>
 					<strong>&nbsp;(<span data-tag-name="lightDirectionRangeZShow">0</span>)</strong>
 				</div>
-				<div
-					style="
-						width: fit-content;
-						font-size: 12px;
-						display: flex;
-						flex-wrap: nowrap;
-						align-items: center;
-						align-content: center;
-						padding: 3px 0;
-					"
-				>
+				<div style="width: fit-content; font-size: 12px; display: flex; flex-wrap: nowrap; align-items: center; align-content: center; padding: 3px 0">
 					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">Ambient Light R: </label>
 					<span>0</span>
-					<input
-						type="range"
-						value="0"
-						data-tag-name="ambientLightRangeR"
-						min="0"
-						max="1"
-						step="0.01"
-						style="width: 300px; cursor: pointer"
-					/>
+					<input type="range" value="0" data-tag-name="ambientLightRangeR" min="0" max="1" step="0.01" style="width: 300px; cursor: pointer" />
 					<span>1</span>
 					<strong>&nbsp;(<span data-tag-name="ambientLightRShow">0</span>)</strong>
 				</div>
-				<div
-					style="
-						width: fit-content;
-						font-size: 12px;
-						display: flex;
-						flex-wrap: nowrap;
-						align-items: center;
-						align-content: center;
-						padding: 3px 0;
-					"
-				>
+				<div style="width: fit-content; font-size: 12px; display: flex; flex-wrap: nowrap; align-items: center; align-content: center; padding: 3px 0">
 					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">Ambient Light G: </label>
 					<span>0</span>
-					<input
-						type="range"
-						value="0"
-						data-tag-name="ambientLightRangeG"
-						min="0"
-						max="1"
-						step="0.01"
-						style="width: 300px; cursor: pointer"
-					/>
+					<input type="range" value="0" data-tag-name="ambientLightRangeG" min="0" max="1" step="0.01" style="width: 300px; cursor: pointer" />
 					<span>1</span>
 					<strong>&nbsp;(<span data-tag-name="ambientLightGShow">0</span>)</strong>
 				</div>
-				<div
-					style="
-						width: fit-content;
-						font-size: 12px;
-						display: flex;
-						flex-wrap: nowrap;
-						align-items: center;
-						align-content: center;
-						padding: 3px 0;
-					"
-				>
+				<div style="width: fit-content; font-size: 12px; display: flex; flex-wrap: nowrap; align-items: center; align-content: center; padding: 3px 0">
 					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">Ambient Light B: </label>
 					<span>0</span>
-					<input
-						type="range"
-						value="0"
-						data-tag-name="ambientLightRangeB"
-						min="0"
-						max="1"
-						step="0.01"
-						style="width: 300px; cursor: pointer"
-					/>
+					<input type="range" value="0" data-tag-name="ambientLightRangeB" min="0" max="1" step="0.01" style="width: 300px; cursor: pointer" />
 					<span>1</span>
 					<strong>&nbsp;(<span data-tag-name="ambientLightBShow">0</span>)</strong>
 				</div>
 				<br />
-				<div
-					style="
-						width: fit-content;
-						font-size: 12px;
-						display: flex;
-						flex-wrap: nowrap;
-						align-items: center;
-						align-content: center;
-						padding: 3px 0;
-					"
-				>
+				<div style="width: fit-content; font-size: 12px; display: flex; flex-wrap: nowrap; align-items: center; align-content: center; padding: 3px 0">
 					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">Fog Start Dist: </label>
 					<span>1</span>
-					<input
-						type="range"
-						value="0"
-						data-tag-name="fogStartDist"
-						min="1"
-						max="150"
-						step="0.1"
-						disabled="disabled"
-						style="width: 300px; cursor: pointer"
-					/>
+					<input type="range" value="0" data-tag-name="fogStartDist" min="1" max="150" step="0.1" disabled="disabled" style="width: 300px; cursor: pointer" />
 					<span>150</span>
 					<strong>&nbsp;(<span data-tag-name="fogStartDistShow">1</span>)</strong>
 				</div>
-				<div
-					style="
-						width: fit-content;
-						font-size: 12px;
-						display: flex;
-						flex-wrap: nowrap;
-						align-items: center;
-						align-content: center;
-						padding: 3px 0;
-					"
-				>
+				<div style="width: fit-content; font-size: 12px; display: flex; flex-wrap: nowrap; align-items: center; align-content: center; padding: 3px 0">
 					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">Fog End Dist: </label>
 					<span>1</span>
-					<input
-						type="range"
-						value="0"
-						data-tag-name="fogEndDist"
-						min="1"
-						max="150"
-						step="0.1"
-						disabled="disabled"
-						style="width: 300px; cursor: pointer"
-					/>
+					<input type="range" value="0" data-tag-name="fogEndDist" min="1" max="150" step="0.1" disabled="disabled" style="width: 300px; cursor: pointer" />
 					<span>150</span>
 					<strong>&nbsp;(<span data-tag-name="fogEndDistShow">1</span>)</strong>
 				</div>
 				<br />
-				<div
-					style="
-						width: fit-content;
-						font-size: 12px;
-						display: flex;
-						flex-wrap: nowrap;
-						align-items: center;
-						align-content: center;
-						padding: 3px 0;
-					"
-				>
+				<div style="width: fit-content; font-size: 12px; display: flex; flex-wrap: nowrap; align-items: center; align-content: center; padding: 3px 0">
 					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">Projection Type: </label>
 					<input type="radio" data-tag-name="projectionType" value="1" style="width: 20px; height: 20px; cursor: pointer" />
 					<span>Perspective Projection</span>
@@ -781,143 +249,43 @@
 					<input type="radio" data-tag-name="projectionType" value="2" style="width: 20px; height: 20px; cursor: pointer" />
 					<span>Orthographic Projection</span>
 				</div>
-				<div
-					style="
-						width: fit-content;
-						font-size: 12px;
-						display: none;
-						flex-wrap: nowrap;
-						align-items: center;
-						align-content: center;
-						padding: 3px 0;
-					"
-				>
+				<div style="width: fit-content; font-size: 12px; display: none; flex-wrap: nowrap; align-items: center; align-content: center; padding: 3px 0">
 					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">Perspective Projection Fovy: </label>
 					<span>1</span>
-					<input
-						type="range"
-						value="0"
-						data-tag-name="persProjectionFovy"
-						min="1"
-						max="180"
-						step="1"
-						style="width: 300px; cursor: pointer"
-					/>
+					<input type="range" value="0" data-tag-name="persProjectionFovy" min="1" max="180" step="1" style="width: 300px; cursor: pointer" />
 					<span>180</span>
 					<strong>&nbsp;(<span data-tag-name="persProjectionFovyShow">0</span>)</strong>
 				</div>
-				<div
-					style="
-						width: fit-content;
-						font-size: 12px;
-						display: none;
-						flex-wrap: nowrap;
-						align-items: center;
-						align-content: center;
-						padding: 3px 0;
-					"
-				>
+				<div style="width: fit-content; font-size: 12px; display: none; flex-wrap: nowrap; align-items: center; align-content: center; padding: 3px 0">
 					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">Perspective Projection Near: </label>
 					<span>1</span>
-					<input
-						type="range"
-						value="0"
-						data-tag-name="persProjectionNear"
-						min="1"
-						max="1000"
-						step="1"
-						style="width: 300px; cursor: pointer"
-					/>
+					<input type="range" value="0" data-tag-name="persProjectionNear" min="1" max="1000" step="1" style="width: 300px; cursor: pointer" />
 					<span>1000</span>
 					<strong>&nbsp;(<span data-tag-name="persProjectionNearShow">0</span>)</strong>
 				</div>
-				<div
-					style="
-						width: fit-content;
-						font-size: 12px;
-						display: none;
-						flex-wrap: nowrap;
-						align-items: center;
-						align-content: center;
-						padding: 3px 0;
-					"
-				>
+				<div style="width: fit-content; font-size: 12px; display: none; flex-wrap: nowrap; align-items: center; align-content: center; padding: 3px 0">
 					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">Perspective Projection Far: </label>
 					<span>1</span>
-					<input
-						type="range"
-						value="0"
-						data-tag-name="persProjectionFar"
-						min="1"
-						max="1000"
-						step="1"
-						style="width: 300px; cursor: pointer"
-					/>
+					<input type="range" value="0" data-tag-name="persProjectionFar" min="1" max="1000" step="1" style="width: 300px; cursor: pointer" />
 					<span>1000</span>
 					<strong>&nbsp;(<span data-tag-name="persProjectionFarShow">0</span>)</strong>
 				</div>
-				<div
-					style="
-						width: fit-content;
-						font-size: 12px;
-						display: none;
-						flex-wrap: nowrap;
-						align-items: center;
-						align-content: center;
-						padding: 3px 0;
-					"
-				>
+				<div style="width: fit-content; font-size: 12px; display: none; flex-wrap: nowrap; align-items: center; align-content: center; padding: 3px 0">
 					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">Ortho Projection Near: </label>
 					<span>-120</span>
-					<input
-						type="range"
-						value="0"
-						data-tag-name="orthoProjectionNear"
-						min="-120"
-						max="120"
-						step="0.1"
-						style="width: 300px; cursor: pointer"
-					/>
+					<input type="range" value="0" data-tag-name="orthoProjectionNear" min="-120" max="120" step="0.1" style="width: 300px; cursor: pointer" />
 					<span>120</span>
 					<strong>&nbsp;(<span data-tag-name="orthoProjectionNearShow">0</span>)</strong>
 				</div>
-				<div
-					style="
-						width: fit-content;
-						font-size: 12px;
-						display: none;
-						flex-wrap: nowrap;
-						align-items: center;
-						align-content: center;
-						padding: 3px 0;
-					"
-				>
+				<div style="width: fit-content; font-size: 12px; display: none; flex-wrap: nowrap; align-items: center; align-content: center; padding: 3px 0">
 					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">Ortho Projection Far: </label>
 					<span>-120</span>
-					<input
-						type="range"
-						value="0"
-						data-tag-name="orthoProjectionFar"
-						min="-120"
-						max="120"
-						step="0.1"
-						style="width: 300px; cursor: pointer"
-					/>
+					<input type="range" value="0" data-tag-name="orthoProjectionFar" min="-120" max="120" step="0.1" style="width: 300px; cursor: pointer" />
 					<span>120</span>
 					<strong>&nbsp;(<span data-tag-name="orthoProjectionFarShow">0</span>)</strong>
 				</div>
 				<br />
-				<div
-					style="
-						width: fit-content;
-						font-size: 12px;
-						display: flex;
-						flex-wrap: nowrap;
-						align-items: center;
-						align-content: center;
-						padding: 3px 0;
-					"
-				>
+				<div style="width: fit-content; font-size: 12px; display: flex; flex-wrap: nowrap; align-items: center; align-content: center; padding: 3px 0">
 					<label style="padding-right: 10px; margin: 0; max-width: 150px; min-width: 150px">Auto Transformation: </label>
 					<input type="checkbox" value="1" data-tag-name="autoTransformation" style="width: 20px; height: 20px" />
 				</div>
@@ -925,12 +293,8 @@
 			</div>
 			<div style="position: relative; width: 512px; height: 512px">
 				<canvas width="512" height="512" style="background-color: transparent; border: 1px dashed #888888"></canvas>
-				<div
-					style="position: absolute; left: 0; top: 256px; width: 512px; height: 0; border-top: 1px dashed #aaaaaa; pointer-events: none"
-				></div>
-				<div
-					style="position: absolute; left: 256px; top: 0; width: 0; height: 512px; border-left: 1px dashed #aaaaaa; pointer-events: none"
-				></div>
+				<div style="position: absolute; left: 0; top: 256px; width: 512px; height: 0; border-top: 1px dashed #aaaaaa; pointer-events: none"></div>
+				<div style="position: absolute; left: 256px; top: 0; width: 0; height: 512px; border-left: 1px dashed #aaaaaa; pointer-events: none"></div>
 			</div>
 		</div>
 	</body>

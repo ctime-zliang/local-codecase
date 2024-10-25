@@ -125,10 +125,7 @@
 				function (e) {
 					var touches = e.changedTouches[0]
 					//在部分设备上 touch 事件比较灵敏，导致按下和松开手指时的事件坐标会出现一点点变化
-					if (
-						Math.abs(startClient['clientX'] - touches.clientX) < trigger &&
-						Math.abs(startClient['clientY'] - touches.clientY) < trigger
-					) {
+					if (Math.abs(startClient['clientX'] - touches.clientX) < trigger && Math.abs(startClient['clientY'] - touches.clientY) < trigger) {
 						obj['fnBack'] && obj['fnBack'].call(obj['element'], touches, startClient)
 					}
 				},
@@ -278,10 +275,7 @@
 				'touchmove',
 				function (e) {
 					var touches = e.touches[0]
-					if (
-						lTapTimer &&
-						(Math.abs(touches.clientX - startClient['clientX']) > 5 || Math.abs(touches.clientY - startClient['startY']) > 5)
-					) {
+					if (lTapTimer && (Math.abs(touches.clientX - startClient['clientX']) > 5 || Math.abs(touches.clientY - startClient['startY']) > 5)) {
 						clearTimeout(lTapTimer)
 						lTapTimer = null
 					}
@@ -363,10 +357,7 @@
 					}
 					var touches = e.changedTouches[0],
 						isSwipe = false
-					if (
-						Math.abs(startClient['clientX'] - touches.clientX) > offsetX ||
-						Math.abs(startClient['clientY'] - touches.clientY) > offsetY
-					) {
+					if (Math.abs(startClient['clientX'] - touches.clientX) > offsetX || Math.abs(startClient['clientY'] - touches.clientY) > offsetY) {
 						obj['fnBack'] && obj['fnBack'].call(obj['element'], touches, startClient)
 					}
 				},
@@ -397,10 +388,7 @@
 							//to bottom
 							obj['element'].BuiltInGetLastClientY = touches.clientY
 							if (!single) {
-								if (
-									Math.abs(touches.clientX - startClient['clientX']) < Math.abs(touches.clientY - startClient['clientY']) &&
-									Math.abs(touches.clientX - startClient['clientX']) < obj['relataxis']
-								) {
+								if (Math.abs(touches.clientX - startClient['clientX']) < Math.abs(touches.clientY - startClient['clientY']) && Math.abs(touches.clientX - startClient['clientX']) < obj['relataxis']) {
 									obj['fnDuring'] && obj['fnDuring'].call(obj['element'], touches, startClient, -1)
 								}
 							} else {
@@ -409,10 +397,7 @@
 						} else {
 							//to top
 							obj['element'].BuiltInGetLastClientY = touches.clientY
-							if (
-								Math.abs(touches.clientX - startClient['clientX']) < Math.abs(touches.clientY - startClient['clientY']) &&
-								Math.abs(touches.clientX - startClient['clientX']) < obj['relataxis']
-							) {
+							if (Math.abs(touches.clientX - startClient['clientX']) < Math.abs(touches.clientY - startClient['clientY']) && Math.abs(touches.clientX - startClient['clientX']) < obj['relataxis']) {
 								obj['fnDuring'] && obj['fnDuring'].call(obj['element'], touches, startClient, 1)
 							}
 						}
@@ -429,10 +414,7 @@
 						var touches = e.changedTouches[0],
 							isSwipe = false,
 							offset = obj['offsetY'] || obj['offset'] || 30
-						if (
-							Math.abs(touches.clientX - startClient['clientX']) < Math.abs(touches.clientY - startClient['clientY']) &&
-							Math.abs(touches.clientX - startClient['clientX']) < obj['relataxis']
-						) {
+						if (Math.abs(touches.clientX - startClient['clientX']) < Math.abs(touches.clientY - startClient['clientY']) && Math.abs(touches.clientX - startClient['clientX']) < obj['relataxis']) {
 							if (touches.clientY - startClient['clientY'] < -1 * offset) {
 								obj['fnBack'] && obj['fnBack'].call(obj['element'], touches, startClient)
 								isSwipe = true
@@ -467,10 +449,7 @@
 							//to top
 							obj['element'].BuiltInGetLastClientY = touches.clientY
 							if (!single) {
-								if (
-									Math.abs(touches.clientX - startClient['clientX']) < Math.abs(touches.clientY - startClient['clientY']) &&
-									Math.abs(touches.clientX - startClient['clientX']) < obj['relataxis']
-								) {
+								if (Math.abs(touches.clientX - startClient['clientX']) < Math.abs(touches.clientY - startClient['clientY']) && Math.abs(touches.clientX - startClient['clientX']) < obj['relataxis']) {
 									obj['fnDuring'] && obj['fnDuring'].call(obj['element'], touches, startClient, -1)
 								}
 							} else {
@@ -479,10 +458,7 @@
 						} else {
 							//to bottom
 							obj['element'].BuiltInGetLastClientY = touches.clientY
-							if (
-								Math.abs(touches.clientX - startClient['clientX']) < Math.abs(touches.clientY - startClient['clientY']) &&
-								Math.abs(touches.clientX - startClient['clientX']) < obj['relataxis']
-							) {
+							if (Math.abs(touches.clientX - startClient['clientX']) < Math.abs(touches.clientY - startClient['clientY']) && Math.abs(touches.clientX - startClient['clientX']) < obj['relataxis']) {
 								obj['fnDuring'] && obj['fnDuring'].call(obj['element'], touches, startClient, 1)
 							}
 						}
@@ -499,10 +475,7 @@
 						var touches = e.changedTouches[0],
 							isSwipe = false,
 							offset = obj['offsetY'] || obj['offset'] || 30
-						if (
-							Math.abs(touches.clientX - startClient['clientX']) < Math.abs(touches.clientY - startClient['clientY']) &&
-							Math.abs(touches.clientX - startClient['clientX']) < obj['relataxis']
-						) {
+						if (Math.abs(touches.clientX - startClient['clientX']) < Math.abs(touches.clientY - startClient['clientY']) && Math.abs(touches.clientX - startClient['clientX']) < obj['relataxis']) {
 							if (touches.clientY - startClient['clientY'] > 1 * offset) {
 								obj['fnBack'] && obj['fnBack'].call(obj['element'], touches, startClient)
 								isSwipe = true
@@ -537,10 +510,7 @@
 							//to right
 							obj['element'].BuiltInGetLastClientX = touches.clientX
 							if (!single) {
-								if (
-									Math.abs(touches.clientX - startClient['clientX']) > Math.abs(touches.clientY - startClient['clientY']) &&
-									Math.abs(touches.clientY - startClient['clientY']) < obj['relataxis']
-								) {
+								if (Math.abs(touches.clientX - startClient['clientX']) > Math.abs(touches.clientY - startClient['clientY']) && Math.abs(touches.clientY - startClient['clientY']) < obj['relataxis']) {
 									obj['fnDuring'] && obj['fnDuring'].call(obj['element'], touches, startClient, -1)
 								}
 							} else {
@@ -549,10 +519,7 @@
 						} else {
 							//to left
 							obj['element'].BuiltInGetLastClientX = touches.clientX
-							if (
-								Math.abs(touches.clientX - startClient['clientX']) > Math.abs(touches.clientY - startClient['clientY']) &&
-								Math.abs(touches.clientY - startClient['clientY']) < obj['relataxis']
-							) {
+							if (Math.abs(touches.clientX - startClient['clientX']) > Math.abs(touches.clientY - startClient['clientY']) && Math.abs(touches.clientY - startClient['clientY']) < obj['relataxis']) {
 								obj['fnDuring'] && obj['fnDuring'].call(obj['element'], touches, startClient, 1)
 							}
 						}
@@ -569,10 +536,7 @@
 						var touches = e.changedTouches[0],
 							isSwipe = false,
 							offset = obj['offsetY'] || obj['offset'] || 30
-						if (
-							Math.abs(touches.clientX - startClient['clientX']) > Math.abs(touches.clientY - startClient['clientY']) &&
-							Math.abs(touches.clientY - startClient['clientY']) < obj['relataxis']
-						) {
+						if (Math.abs(touches.clientX - startClient['clientX']) > Math.abs(touches.clientY - startClient['clientY']) && Math.abs(touches.clientY - startClient['clientY']) < obj['relataxis']) {
 							if (touches.clientY - startClient['clientX'] < -1 * offset) {
 								obj['fnBack'] && obj['fnBack'].call(obj['element'], touches, startClient)
 								isSwipe = true
@@ -607,10 +571,7 @@
 							//to left
 							obj['element'].BuiltInGetLastClientX = touches.clientX
 							if (!single) {
-								if (
-									Math.abs(touches.clientX - startClient['clientX']) > Math.abs(touches.clientY - startClient['clientY']) &&
-									Math.abs(touches.clientY - startClient['clientY']) < obj['relataxis']
-								) {
+								if (Math.abs(touches.clientX - startClient['clientX']) > Math.abs(touches.clientY - startClient['clientY']) && Math.abs(touches.clientY - startClient['clientY']) < obj['relataxis']) {
 									obj['fnDuring'] && obj['fnDuring'].call(obj['element'], touches, startClient, -1)
 								}
 							} else {
@@ -619,10 +580,7 @@
 						} else {
 							//to right
 							obj['element'].BuiltInGetLastClientX = touches.clientX
-							if (
-								Math.abs(touches.clientX - startClient['clientX']) > Math.abs(touches.clientY - startClient['clientY']) &&
-								Math.abs(touches.clientY - startClient['clientY']) < obj['relataxis']
-							) {
+							if (Math.abs(touches.clientX - startClient['clientX']) > Math.abs(touches.clientY - startClient['clientY']) && Math.abs(touches.clientY - startClient['clientY']) < obj['relataxis']) {
 								obj['fnDuring'] && obj['fnDuring'].call(obj['element'], touches, startClient, 1)
 							}
 						}
@@ -639,10 +597,7 @@
 						var touches = e.changedTouches[0],
 							isSwipe = false,
 							offset = obj['offsetY'] || obj['offset'] || 30
-						if (
-							Math.abs(touches.clientX - startClient['clientX']) > Math.abs(touches.clientY - startClient['clientY']) &&
-							Math.abs(touches.clientY - startClient['clientY']) < obj['relataxis']
-						) {
+						if (Math.abs(touches.clientX - startClient['clientX']) > Math.abs(touches.clientY - startClient['clientY']) && Math.abs(touches.clientY - startClient['clientY']) < obj['relataxis']) {
 							if (touches.clientY - startClient['clientX'] > 1 * offset) {
 								obj['fnBack'] && obj['fnBack'].call(obj['element'], touches, startClient)
 								isSwipe = true
@@ -1021,9 +976,7 @@
 					return labelstring
 				}
 				fn_regs_out = res_tmp[0]
-				fn_regs_out.indexOf('/') != -1
-					? (fn_regs_out = fn_regs_out.match(regs_inr)[1].substring(1))
-					: (fn_regs_out = fn_regs_out.match(regs_inr)[1])
+				fn_regs_out.indexOf('/') != -1 ? (fn_regs_out = fn_regs_out.match(regs_inr)[1].substring(1)) : (fn_regs_out = fn_regs_out.match(regs_inr)[1])
 				return fn_regs_out
 			}
 			//创建DOM节点
@@ -1617,8 +1570,7 @@
 				}
 				argsuments.data = parsDataeArguments(argsuments.data)
 				if (argsuments.method === 'get') {
-					argsuments.url =
-						argsuments.url.indexOf('?') == -1 ? argsuments.url + '?' + argsuments.data : argsuments.url + '&' + argsuments.data
+					argsuments.url = argsuments.url.indexOf('?') == -1 ? argsuments.url + '?' + argsuments.data : argsuments.url + '&' + argsuments.data
 				}
 				timeoutFlag = true
 				xhr.open(argsuments.method, argsuments.url, argsuments.async, argsuments.username, argsuments.password)

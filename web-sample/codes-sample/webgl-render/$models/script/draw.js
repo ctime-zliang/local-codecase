@@ -182,12 +182,7 @@ function drawCanvas(containerElement) {
 				/**
 				 * 创建透视投影矩阵
 				 */
-				const projectionMatrix4 = Ven$CanvasMatrix4.setPerspective(
-					Program.profile.persProjection.fovy,
-					Program.profile.persProjection.aspect,
-					Program.profile.persProjection.near,
-					Program.profile.persProjection.far
-				)
+				const projectionMatrix4 = Ven$CanvasMatrix4.setPerspective(Program.profile.persProjection.fovy, Program.profile.persProjection.aspect, Program.profile.persProjection.near, Program.profile.persProjection.far)
 				gl.uniformMatrix4fv(glUniforms.u_ProjMatrix, false, new Float32Array(projectionMatrix4.data))
 			}
 			if (Program.profile.projectionType === 2) {
@@ -213,49 +208,26 @@ function drawCanvas(containerElement) {
 				new Ven$Vector3(0, 1, 0)
 			)
 			gl.uniformMatrix4fv(glUniforms.u_ViewMatrix, false, new Float32Array(lookAtMatrix4.data))
-			gl.uniform3fv(
-				glUniforms.u_EyePosition,
-				new Float32Array([Program.profile.lookAt.eyePosition.x, Program.profile.lookAt.eyePosition.y, Program.profile.lookAt.eyePosition.z])
-			)
+			gl.uniform3fv(glUniforms.u_EyePosition, new Float32Array([Program.profile.lookAt.eyePosition.x, Program.profile.lookAt.eyePosition.y, Program.profile.lookAt.eyePosition.z]))
 			gl.uniform1f(glUniforms.u_illuType, Program.profile.light.illuType)
 			if (Program.profile.light.illuType === 1) {
 				/**
 				 * 平行光
 				 * 		依据光照模型, 此处传给着色器的光源方向需要取反, 以便在着色器中正确求取入射光反方向向量与物体表面法线向量的夹角
 				 */
-				const lightDirection = new Ven$Vector3(
-					-Program.profile.light.direction.x,
-					-Program.profile.light.direction.y,
-					-Program.profile.light.direction.z
-				)
+				const lightDirection = new Ven$Vector3(-Program.profile.light.direction.x, -Program.profile.light.direction.y, -Program.profile.light.direction.z)
 				const lightNormalizeDirection = lightDirection.normalize()
-				gl.uniform3fv(
-					glUniforms.u_LightDirection,
-					new Float32Array([lightNormalizeDirection.x, lightNormalizeDirection.y, lightNormalizeDirection.z])
-				)
+				gl.uniform3fv(glUniforms.u_LightDirection, new Float32Array([lightNormalizeDirection.x, lightNormalizeDirection.y, lightNormalizeDirection.z]))
 			}
 			if (Program.profile.light.illuType === 2) {
 				/**
 				 * 点光
 				 */
-				gl.uniform3fv(
-					glUniforms.u_LightPosition,
-					new Float32Array([Program.profile.light.position.x, Program.profile.light.position.y, Program.profile.light.position.z])
-				)
+				gl.uniform3fv(glUniforms.u_LightPosition, new Float32Array([Program.profile.light.position.x, Program.profile.light.position.y, Program.profile.light.position.z]))
 			}
-			gl.uniform3f(
-				glUniforms.u_LightColor,
-				Program.profile.light.color.r / 255,
-				Program.profile.light.color.g / 255,
-				Program.profile.light.color.b / 255
-			)
+			gl.uniform3f(glUniforms.u_LightColor, Program.profile.light.color.r / 255, Program.profile.light.color.g / 255, Program.profile.light.color.b / 255)
 			gl.uniform1f(glUniforms.u_lightIntensityGain, Program.profile.light.intensityGain)
-			gl.uniform3f(
-				glUniforms.u_AmbientLightColor,
-				Program.profile.light.ambient.r,
-				Program.profile.light.ambient.g,
-				Program.profile.light.ambient.b
-			)
+			gl.uniform3f(glUniforms.u_AmbientLightColor, Program.profile.light.ambient.r, Program.profile.light.ambient.g, Program.profile.light.ambient.b)
 		},
 		render(gl, vertexFeatureSize, modelInstances, itemProgramControl) {
 			modelInstances.forEach(modelInstanceItem => {
@@ -341,18 +313,9 @@ function drawCanvas(containerElement) {
 				/**
 				 * 矩阵旋转
 				 */
-				const modelRotationXMatrix4 = Ven$CanvasMatrix4.setRotate(
-					Ven$Angles.degreeToRadian(modelInstance.modelRatation.x),
-					new Ven$Vector3(1, 0, 0)
-				)
-				const modelRotationYMatrix4 = Ven$CanvasMatrix4.setRotate(
-					Ven$Angles.degreeToRadian(modelInstance.modelRatation.y),
-					new Ven$Vector3(0, 1, 0)
-				)
-				const modelRotationZMatrix4 = Ven$CanvasMatrix4.setRotate(
-					Ven$Angles.degreeToRadian(modelInstance.modelRatation.z),
-					new Ven$Vector3(0, 0, 1)
-				)
+				const modelRotationXMatrix4 = Ven$CanvasMatrix4.setRotate(Ven$Angles.degreeToRadian(modelInstance.modelRatation.x), new Ven$Vector3(1, 0, 0))
+				const modelRotationYMatrix4 = Ven$CanvasMatrix4.setRotate(Ven$Angles.degreeToRadian(modelInstance.modelRatation.y), new Ven$Vector3(0, 1, 0))
+				const modelRotationZMatrix4 = Ven$CanvasMatrix4.setRotate(Ven$Angles.degreeToRadian(modelInstance.modelRatation.z), new Ven$Vector3(0, 0, 1))
 				modelRotationMatrix4 = modelRotationXMatrix4.multiply4(modelRotationYMatrix4).multiply4(modelRotationZMatrix4)
 			}
 			if (Program.profile.rotationCalculationType === 3) {
@@ -367,15 +330,11 @@ function drawCanvas(containerElement) {
 			/**
 			 * 创建平移矩阵
 			 */
-			const modelOffsetMatrix4 = Ven$CanvasMatrix4.setTranslate(
-				new Ven$Vector3(modelInstance.modelOffset.x, modelInstance.modelOffset.y, modelInstance.modelOffset.z)
-			)
+			const modelOffsetMatrix4 = Ven$CanvasMatrix4.setTranslate(new Ven$Vector3(modelInstance.modelOffset.x, modelInstance.modelOffset.y, modelInstance.modelOffset.z))
 			/**
 			 * 创建缩放矩阵
 			 */
-			const modelScaleMatrix4 = Ven$CanvasMatrix4.setScale(
-				new Ven$Vector3(modelInstance.modelScale.x, modelInstance.modelScale.y, modelInstance.modelScale.z)
-			)
+			const modelScaleMatrix4 = Ven$CanvasMatrix4.setScale(new Ven$Vector3(modelInstance.modelScale.x, modelInstance.modelScale.y, modelInstance.modelScale.z))
 			/**
 			 * 生成模型变换矩阵
 			 */
@@ -412,13 +371,7 @@ function drawCanvas(containerElement) {
 		Program.glControl.gl.useProgram(Program.glControl.commonLight.program)
 		canvas.clear(Program.glControl.gl)
 		canvas.setProfile(Program.glControl.gl, Program.glControl.commonLight)
-		canvas.render(
-			Program.glControl.gl,
-			Program.glControl.vertexFeatureSize,
-			Program.glControl.modelInstances,
-			Program.glControl.commonLight,
-			false
-		)
+		canvas.render(Program.glControl.gl, Program.glControl.vertexFeatureSize, Program.glControl.modelInstances, Program.glControl.commonLight, false)
 		stepControl.updateLastStamp()
 		window.requestAnimationFrame(exec)
 	}

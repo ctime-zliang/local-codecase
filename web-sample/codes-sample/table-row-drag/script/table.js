@@ -15,9 +15,7 @@ function createEmptyImage() {
 
 function createSuspensionTable(trElement, rect) {
 	const htmlStrArr = []
-	htmlStrArr.push(
-		`<table class="table suspension-table" style="width: ${rect.width}px; height: ${rect.height}px; left: ${rect.left}px; top: ${rect.top}px;">`
-	)
+	htmlStrArr.push(`<table class="table suspension-table" style="width: ${rect.width}px; height: ${rect.height}px; left: ${rect.left}px; top: ${rect.top}px;">`)
 	htmlStrArr.push(`<tbody>`)
 	htmlStrArr.push(`</tbody>`)
 	htmlStrArr.push(`</table>`)
@@ -149,12 +147,7 @@ class Table {
 		const { target } = e
 		target.classList.remove('dragmoving')
 		if (this.optional.dragEndCallback instanceof Function) {
-			this.optional.dragEndCallback(
-				this.optional.list,
-				this.dragProfile.movingElementInitialIndex,
-				this.dragProfile.nowTargetElementRealTimeIndex,
-				this.dragProfile.movingElementRealTimeIndex
-			)
+			this.optional.dragEndCallback(this.optional.list, this.dragProfile.movingElementInitialIndex, this.dragProfile.nowTargetElementRealTimeIndex, this.dragProfile.movingElementRealTimeIndex)
 		}
 		this.dragProfile.movingElement = null
 		this.dragProfile.nowTargetElement = null

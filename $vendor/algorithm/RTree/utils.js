@@ -477,10 +477,7 @@ function Ven$Rtree_removeSubtree(rect, targetOnLeaf, root, minWidth, maxWidth, b
 				itemTree = tree.nodes[lastItemIndex]
 				Ven$Rtree_debugUpdateRectangleAuxiliary(itemTree.id || 'leaf', itemTree)
 				if (Ven$Rtree_Rectangle.overlapRectangle(handleItem, itemTree)) {
-					const isConfirm =
-						handleItem.target !== false
-							? itemTree.leaf === handleItem.target
-							: itemTree.hasOwnProperty('leaf') || Ven$Rtree_Rectangle.containsRectangle(itemTree, handleItem)
+					const isConfirm = handleItem.target !== false ? itemTree.leaf === handleItem.target : itemTree.hasOwnProperty('leaf') || Ven$Rtree_Rectangle.containsRectangle(itemTree, handleItem)
 					if (isConfirm) {
 						if (itemTree.hasOwnProperty('nodes')) {
 							result = Ven$Rtree_getFlattenLeafs([itemTree])

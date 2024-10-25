@@ -236,10 +236,7 @@
 				set(target, prop, value, receiver) {
 					const hasPrev = Reflect.has(target, prop)
 					const oldValue = Reflect.get(target, prop, receiver)
-					if (
-						(hasPrev && oldValue === value) ||
-						(globalProxyObjectCache.has(value) && Object.is(oldValue, globalProxyObjectCache.get(value)))
-					) {
+					if ((hasPrev && oldValue === value) || (globalProxyObjectCache.has(value) && Object.is(oldValue, globalProxyObjectCache.get(value)))) {
 						return true
 					}
 					self._removePropListener(prop)

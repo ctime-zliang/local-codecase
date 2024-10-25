@@ -360,10 +360,7 @@
 					console.log({ clientX, clientY })
 					const currentTarget = itemElement
 					const tranlsteXItemData = self.swipeItemTranlsteXMap[currentTarget.id]
-					if (
-						tranlsteXItemData.setting === tranlsteXItemData.rightEndPoint ||
-						tranlsteXItemData.setting === tranlsteXItemData.leftEndPoint
-					) {
+					if (tranlsteXItemData.setting === tranlsteXItemData.rightEndPoint || tranlsteXItemData.setting === tranlsteXItemData.leftEndPoint) {
 						return
 					}
 					if (tranlsteXItemData.status === self.STATUS_OPEN) {

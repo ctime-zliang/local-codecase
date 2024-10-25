@@ -4,9 +4,7 @@ function showMatrix(container, data, row, col, title) {
 	}
 	let matrixTitle = title || `Matrix ${row}x${col}`
 	let htmlStrArr = []
-	htmlStrArr.push(
-		`<div style="display: inline-flex; flex-direction: column; justify-content: center; width: fit-content; border: 1px solid #dcdcdc;box-sizing: border-box; margin: 10px 10px;">`
-	)
+	htmlStrArr.push(`<div style="display: inline-flex; flex-direction: column; justify-content: center; width: fit-content; border: 1px solid #dcdcdc;box-sizing: border-box; margin: 10px 10px;">`)
 	htmlStrArr.push(`<h4 style="padding: 5px 10px; margin: 0; text-align: center;">${matrixTitle}</h4>`)
 	htmlStrArr.push(`<table border="0" cellspacing="0" cellpadding="0" style="text-align: center;">`)
 	htmlStrArr.push(`<tbody>`)

@@ -136,12 +136,7 @@ function createShereDatas(radius, meridianCount = 4, latitudeCount = 4, colorSet
 	for (let i = 0; i < latitudeCountNum; i++) {
 		for (let j = 0; j < meridianCountNum; j++) {
 			if (i === 0) {
-				const color = ven$randomRangeColor(
-					[...iColorSetting.redRange],
-					[...iColorSetting.greenRange],
-					[...iColorSetting.blueRange],
-					[...iColorSetting.alphaRange]
-				)
+				const color = ven$randomRangeColor([...iColorSetting.redRange], [...iColorSetting.greenRange], [...iColorSetting.blueRange], [...iColorSetting.alphaRange])
 				const xi = i
 				const xj = j
 				const yi = i + 1
@@ -163,12 +158,7 @@ function createShereDatas(radius, meridianCount = 4, latitudeCount = 4, colorSet
 				continue
 			}
 			if (i === latitudeCountNum - 1) {
-				const color = ven$randomRangeColor(
-					[...iColorSetting.redRange],
-					[...iColorSetting.greenRange],
-					[...iColorSetting.blueRange],
-					[...iColorSetting.alphaRange]
-				)
+				const color = ven$randomRangeColor([...iColorSetting.redRange], [...iColorSetting.greenRange], [...iColorSetting.blueRange], [...iColorSetting.alphaRange])
 				const xi = i - 1
 				const xj = j
 				const yi = i
@@ -189,12 +179,7 @@ function createShereDatas(radius, meridianCount = 4, latitudeCount = 4, colorSet
 				vertexNormals.push(originalPositions[startZ], originalPositions[startZ + 1], originalPositions[startZ + 2])
 				continue
 			}
-			const colorA = ven$randomRangeColor(
-				[...iColorSetting.redRange],
-				[...iColorSetting.greenRange],
-				[...iColorSetting.blueRange],
-				[...iColorSetting.alphaRange]
-			)
+			const colorA = ven$randomRangeColor([...iColorSetting.redRange], [...iColorSetting.greenRange], [...iColorSetting.blueRange], [...iColorSetting.alphaRange])
 			const axi = i
 			const axj = j
 			const ayi = i + 1
@@ -213,12 +198,7 @@ function createShereDatas(radius, meridianCount = 4, latitudeCount = 4, colorSet
 			vertexFeature.push(originalPositions[aStartZ], originalPositions[aStartZ + 1], originalPositions[aStartZ + 2])
 			vertexFeature.push(colorA.r / 255, colorA.g / 255, colorA.b / 255, colorA.a)
 			vertexNormals.push(originalPositions[aStartZ], originalPositions[aStartZ + 1], originalPositions[aStartZ + 2])
-			const colorB = ven$randomRangeColor(
-				[...iColorSetting.redRange],
-				[...iColorSetting.greenRange],
-				[...iColorSetting.blueRange],
-				[...iColorSetting.alphaRange]
-			)
+			const colorB = ven$randomRangeColor([...iColorSetting.redRange], [...iColorSetting.greenRange], [...iColorSetting.blueRange], [...iColorSetting.alphaRange])
 			const bxi = i
 			const bxj = j
 			const byi = i + 1

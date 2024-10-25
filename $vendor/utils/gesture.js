@@ -312,10 +312,7 @@
 		 * 并获取此刻指针坐标与 PA 点的距离
 		 */
 		let i = 0
-		while (
-			i <= _$profile.dotsRecordInPointermove.length - 1 &&
-			evte.timeStamp - _$profile.dotsRecordInPointermove[i].timeStamp < MAX_TIME_INTERVAL
-		) {
+		while (i <= _$profile.dotsRecordInPointermove.length - 1 && evte.timeStamp - _$profile.dotsRecordInPointermove[i].timeStamp < MAX_TIME_INTERVAL) {
 			x = lastOnePointerEvent.clientX - _$profile.dotsRecordInPointermove[i].x
 			y = lastOnePointerEvent.clientY - _$profile.dotsRecordInPointermove[i].y
 			i++
@@ -380,10 +377,7 @@
 			_$profile.pointerPositionCache.y = pointer1.clientY
 			/* ... */
 			if (_$profile.tapCount > 1) {
-				if (
-					Math.abs(dotRecordInPointerdown1.x - lastDotRecordInPointerdown1.x) > 30 ||
-					Math.abs(dotRecordInPointerdown1.y - lastDotRecordInPointerdown1.y) > 30
-				) {
+				if (Math.abs(dotRecordInPointerdown1.x - lastDotRecordInPointerdown1.x) > 30 || Math.abs(dotRecordInPointerdown1.y - lastDotRecordInPointerdown1.y) > 30) {
 					_$profile.tapCount = 1
 				}
 			}
@@ -500,9 +494,7 @@
 			const lastDotRecordInPointerdown2 = _$profile.lastDotsRecordInPointerdown[1]
 			/* ... */
 			const center = this.getCenter({ x: pointer1.clientX, y: pointer1.clientY }, { x: pointer2.clientX, y: pointer2.clientY })
-			const rotate =
-				this.getAngle({ x: pointer1.clientX, y: pointer1.clientY }, { x: pointer2.clientX, y: pointer2.clientY }) -
-				this.getAngle(lastDotRecordInPointerdown1, lastDotRecordInPointerdown2)
+			const rotate = this.getAngle({ x: pointer1.clientX, y: pointer1.clientY }, { x: pointer2.clientX, y: pointer2.clientY }) - this.getAngle(lastDotRecordInPointerdown1, lastDotRecordInPointerdown2)
 			this.options.onRotate &&
 				this.options.onRotate.call(
 					undefined,
@@ -518,9 +510,7 @@
 					},
 					this
 				)
-			const scale =
-				this.getDistance({ x: pointer1.clientX, y: pointer1.clientY }, { x: pointer2.clientX, y: pointer2.clientY }) /
-				this.getDistance(lastDotRecordInPointerdown1, lastDotRecordInPointerdown2)
+			const scale = this.getDistance({ x: pointer1.clientX, y: pointer1.clientY }, { x: pointer2.clientX, y: pointer2.clientY }) / this.getDistance(lastDotRecordInPointerdown1, lastDotRecordInPointerdown2)
 			this.options.onPinch &&
 				this.options.onPinch.call(
 					undefined,

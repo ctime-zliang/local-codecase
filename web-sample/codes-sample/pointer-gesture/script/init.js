@@ -17,15 +17,12 @@ var interactiveSelectedClassname = 'gesture-interactive-selected'
 
 	xGesture(exitFullcaseBtnElement)
 		.onTap((evte, { clientX, clientY }, gesture) => {
-			Ven$AlertManager.setBtns([Ven$AlertManager.defaultConfirmBtn, Ven$AlertManager.defaultCancelBtn]).open(
-				'确定要退出综合案例么?',
-				function (tag) {
-					if (tag === 'confirm') {
-						fullcaseContainerElement.style.display = 'none'
-					}
-					this.close()
+			Ven$AlertManager.setBtns([Ven$AlertManager.defaultConfirmBtn, Ven$AlertManager.defaultCancelBtn]).open('确定要退出综合案例么?', function (tag) {
+				if (tag === 'confirm') {
+					fullcaseContainerElement.style.display = 'none'
 				}
-			)
+				this.close()
+			})
 		})
 		.onLongTap((evte, { clientX, clientY }, gesture) => {
 			Ven$AlertManager.setBtns([Ven$AlertManager.defaultConfirmBtn]).open('长按无效哦~', function (tag) {

@@ -401,12 +401,7 @@ function drawCanvas2(containerElement) {
 		}
 	`
 
-	Program2.glControl.gl.clearColor(
-		Program2.profile.clearColor.r / 255,
-		Program2.profile.clearColor.g / 255,
-		Program2.profile.clearColor.b / 255,
-		1.0
-	)
+	Program2.glControl.gl.clearColor(Program2.profile.clearColor.r / 255, Program2.profile.clearColor.g / 255, Program2.profile.clearColor.b / 255, 1.0)
 	Program2.glControl.gl.clear(Program2.glControl.gl.COLOR_BUFFER_BIT | Program2.glControl.gl.DEPTH_BUFFER_BIT)
 	Program2.glControl.gl.enable(Program2.glControl.gl.BLEND)
 	Program2.glControl.gl.enable(Program2.glControl.gl.CULL_FACE)
@@ -449,12 +444,7 @@ function drawCanvas2(containerElement) {
 			/**
 			 * 创建透视投影矩阵
 			 */
-			const projectionMatrix4 = Ven$CanvasMatrix4.setPerspective(
-				Program2.profile.persProjection.fovy,
-				Program2.profile.persProjection.aspect,
-				Program2.profile.persProjection.near,
-				Program2.profile.persProjection.far
-			)
+			const projectionMatrix4 = Ven$CanvasMatrix4.setPerspective(Program2.profile.persProjection.fovy, Program2.profile.persProjection.aspect, Program2.profile.persProjection.near, Program2.profile.persProjection.far)
 			gl.uniformMatrix4fv(glUniforms.u_ProjMatrix, false, new Float32Array(projectionMatrix4.data))
 			/**
 			 * 创建视图矩阵
@@ -493,38 +483,21 @@ function drawCanvas2(containerElement) {
 			/**
 			 * 创建旋转矩阵
 			 */
-			const modelRotationXMatrix4 = Ven$CanvasMatrix4.setRotate(
-				Ven$Angles.degreeToRadian(modelInstance.modelRatation.x),
-				new Ven$Vector3(1, 0, 0)
-			)
-			const modelRotationYMatrix4 = Ven$CanvasMatrix4.setRotate(
-				Ven$Angles.degreeToRadian(modelInstance.modelRatation.y),
-				new Ven$Vector3(0, 1, 0)
-			)
-			const modelRotationZMatrix4 = Ven$CanvasMatrix4.setRotate(
-				Ven$Angles.degreeToRadian(modelInstance.modelRatation.z),
-				new Ven$Vector3(0, 0, 1)
-			)
+			const modelRotationXMatrix4 = Ven$CanvasMatrix4.setRotate(Ven$Angles.degreeToRadian(modelInstance.modelRatation.x), new Ven$Vector3(1, 0, 0))
+			const modelRotationYMatrix4 = Ven$CanvasMatrix4.setRotate(Ven$Angles.degreeToRadian(modelInstance.modelRatation.y), new Ven$Vector3(0, 1, 0))
+			const modelRotationZMatrix4 = Ven$CanvasMatrix4.setRotate(Ven$Angles.degreeToRadian(modelInstance.modelRatation.z), new Ven$Vector3(0, 0, 1))
 			/**
 			 * 创建平移矩阵
 			 */
-			const modelOffsetMatrix4 = Ven$CanvasMatrix4.setTranslate(
-				new Ven$Vector3(modelInstance.modelOffset.x, modelInstance.modelOffset.y, modelInstance.modelOffset.z)
-			)
+			const modelOffsetMatrix4 = Ven$CanvasMatrix4.setTranslate(new Ven$Vector3(modelInstance.modelOffset.x, modelInstance.modelOffset.y, modelInstance.modelOffset.z))
 			/**
 			 * 创建缩放矩阵
 			 */
-			const modelScaleMatrix4 = Ven$CanvasMatrix4.setScale(
-				new Ven$Vector3(modelInstance.modelScale.x, modelInstance.modelScale.y, modelInstance.modelScale.z)
-			)
+			const modelScaleMatrix4 = Ven$CanvasMatrix4.setScale(new Ven$Vector3(modelInstance.modelScale.x, modelInstance.modelScale.y, modelInstance.modelScale.z))
 			/**
 			 * 生成模型变换矩阵
 			 */
-			const modelEffectMatrix4 = modelRotationXMatrix4
-				.multiply4(modelRotationYMatrix4)
-				.multiply4(modelRotationZMatrix4)
-				.multiply4(modelScaleMatrix4)
-				.multiply4(modelOffsetMatrix4)
+			const modelEffectMatrix4 = modelRotationXMatrix4.multiply4(modelRotationYMatrix4).multiply4(modelRotationZMatrix4).multiply4(modelScaleMatrix4).multiply4(modelOffsetMatrix4)
 			/**
 			 * 创建法线变换矩阵
 			 */
