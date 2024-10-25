@@ -272,9 +272,9 @@
 
 	const drawMemoryText = () => {
 		const ctx = runtimeProfile.ctx
-		const memoryInfo = performance.memory
-		const totalTextContent = `${transMemoryUnit(memoryInfo.totalJSHeapSize)}`
-		const usedTextContent = `${transMemoryUnit(memoryInfo.usedJSHeapSize)}`
+		const memoryInfo = performance.memory || {}
+		const totalTextContent = `${transMemoryUnit(memoryInfo.totalJSHeapSize || 0)}`
+		const usedTextContent = `${transMemoryUnit(memoryInfo.usedJSHeapSize || 0)}`
 		const textContent = usedTextContent + '/' + totalTextContent + ' M'
 		ctx.fillStyle = TEXT_COLOR[2]
 		ctx.fillText(textContent, 0, MEMOTEXT_RECT[1] + MEMOTEXT_RECT[3] / 2)
