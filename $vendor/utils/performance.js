@@ -5,15 +5,11 @@
 	 * 		1 - 画布图示模式
 	 */
 	const MODES = [0, 1]
-	/**
-	 * 画布尺寸
-	 * 		画布宽度(CANVAS_RECT[0])必须为 CANVAS_X_STEP_SIZE 的整数倍
-	 */
 	const MEMOTEXT_HEIGHT = (RAFTEXT_HEIGHT = RICTEXT_HEIGHT = 15)
 	const RAFPOLYL_HEIGHT = (RICPOLYL_HEIGHT = 25)
-	const CANVAS_X_STEP_SIZE = 3
-	const CANVAS_RECT = [102, MEMOTEXT_HEIGHT + RAFTEXT_HEIGHT + RAFPOLYL_HEIGHT + RICTEXT_HEIGHT + RICPOLYL_HEIGHT]
-	const STEP_SIZE = CANVAS_RECT[0] / CANVAS_X_STEP_SIZE
+	const STEP_SIZE = 3
+	const RECORD_SIZE = 35
+	const CANVAS_RECT = [(RECORD_SIZE - 1) * STEP_SIZE, MEMOTEXT_HEIGHT + RAFTEXT_HEIGHT + RAFPOLYL_HEIGHT + RICTEXT_HEIGHT + RICPOLYL_HEIGHT]
 	const FPS_THRESHOLD = [20, 30]
 	const TEXT_COLOR = ['rgba(255, 0, 0, 1)', 'rgba(255, 126, 82, 1)', 'rgba(0, 255, 0, 1)']
 	const TEXT_FONT = `11px arial, sans-serif`
@@ -260,10 +256,10 @@
 			runtimeProfile.rICYPositions.push(
 				MEMOTEXT_HEIGHT + RAFTEXT_HEIGHT + RAFPOLYL_HEIGHT + RICTEXT_HEIGHT + runtimeProfile.rICCountRatio * RICPOLYL_HEIGHT
 			)
-			if (runtimeProfile.rAFYPositions.length > STEP_SIZE + 1) {
+			if (runtimeProfile.rAFYPositions.length >= RECORD_SIZE + 1) {
 				runtimeProfile.rAFYPositions.shift()
 			}
-			if (runtimeProfile.rICYPositions.length > STEP_SIZE + 1) {
+			if (runtimeProfile.rICYPositions.length >= RECORD_SIZE + 1) {
 				runtimeProfile.rICYPositions.shift()
 			}
 			runtimeProfile.rAFCountCalc = runtimeProfile.rAFCountCalc.toFixed(2)
@@ -327,16 +323,16 @@
 	const drawPolyline = (positions, polylineBottomY, linearGradient) => {
 		const ctx = runtimeProfile.ctx
 		ctx.beginPath()
-		const sx = (STEP_SIZE - positions.length + 1) * CANVAS_X_STEP_SIZE
+		const sx = (RECORD_SIZE - positions.length) * STEP_SIZE
 		ctx.moveTo(sx, positions[0])
 		let i = 0
 		for (i = 1; i < positions.length; i++) {
-			ctx.lineTo(sx + i * CANVAS_X_STEP_SIZE, positions[i])
+			ctx.lineTo(sx + i * STEP_SIZE, positions[i])
 		}
 		ctx.stroke()
 		ctx.strokeStyle = 'rgba(19, 98, 251, 1.0)'
 		if (positions.length >= 2) {
-			ctx.lineTo(sx + (i - 1) * CANVAS_X_STEP_SIZE, polylineBottomY)
+			ctx.lineTo(sx + (i - 1) * STEP_SIZE, polylineBottomY)
 			ctx.lineTo(sx, polylineBottomY)
 			ctx.stroke()
 		}
