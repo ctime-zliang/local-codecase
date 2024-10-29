@@ -17,24 +17,24 @@
 	 * 		则
 	 * 			POLY_WIDHT = (RECORD_CONFIG[0] - 1) * RECORD_CONFIG[1]
 	 */
-	const RECORD_CONFIG = [35, 3]
+	const RECORD_CONFIG = [30, 3]
 	/**
 	 * 画布尺寸
 	 * 		[WIDTH, HEIGHT]
 	 */
-	const CANVAS_RECT = [(RECORD_CONFIG[0] - 1) * RECORD_CONFIG[1], 95]
+	const CANVAS_RECT = [(RECORD_CONFIG[0] - 1) * RECORD_CONFIG[1], 82]
 	/**
 	 * 分割区域尺寸
 	 * 		[START_X, START_Y, WIDTH, HEIGHT]
 	 */
-	const MEMOTEXT_RECT = [0, 0, 102, 15]
-	const RAFTEXT_RECT = [0, 15, 102, 15]
-	const RAFPOLY_RECT = [0, 30, 102, 25]
-	const RICTEXT_RECT = [0, 55, 102, 15]
-	const RICPOLY_RECT = [0, 70, 102, 25]
+	const MEMOTEXT_RECT = [0, 0, 90, 14]
+	const RAFTEXT_RECT = [0, 14, 90, 14]
+	const RAFPOLY_RECT = [0, 28, 90, 20]
+	const RICTEXT_RECT = [0, 48, 90, 14]
+	const RICPOLY_RECT = [0, 62, 90, 20]
 	const FPS_THRESHOLD = [20, 30]
 	const TEXT_COLOR = ['rgba(255, 0, 0, 1)', 'rgba(255, 126, 82, 1)', 'rgba(0, 255, 0, 1)']
-	const TEXT_FONT = `11px arial, sans-serif`
+	const TEXT_FONT = `10px arial, sans-serif`
 	const runtimeProfile = {}
 	const CONTAINER_STYLE = `
 		display: block;
