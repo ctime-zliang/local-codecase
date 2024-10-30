@@ -35,7 +35,6 @@
 	const FPS_THRESHOLD = [20, 30]
 	const TEXT_COLOR = ['rgba(255, 0, 0, 1)', 'rgba(255, 126, 82, 1)', 'rgba(0, 255, 0, 1)']
 	const TEXT_FONT = `10px arial, sans-serif`
-	const runtimeProfile = {}
 	const CONTAINER_STYLE = `
 		display: block;
 		position: fixed; 
@@ -71,6 +70,12 @@
         `,
 	}
 
+	const cacheProfile = {}
+	const viewProfile = {}
+
+	/****************************************************************************************************/
+	/****************************************************************************************************/
+
 	const createHtmlString = () => {
 		let htmlString = `
 			<div class="_performance-monitor-container" style="${CONTAINER_STYLE}">
@@ -97,14 +102,13 @@
 
 	const initViewStyle = cssText => {
 		const styleElement = document.createElement('style')
-		const headElement = document.head || document.getElementsByTagName('head')[0]
 		styleElement.type = 'text/css'
 		if (styleElement.styleSheet) {
 			styleElement.styleSheet.cssText = cssText
 		} else {
 			styleElement.appendChild(document.createTextNode(cssText))
 		}
-		headElement.appendChild(styleElement)
+		;(document.head || document.getElementsByTagName('head')[0]).appendChild(styleElement)
 	}
 
 	const initViewElement = () => {
@@ -116,9 +120,9 @@
 	}
 
 	const initDomElementHandler = () => {
-		runtimeProfile.containerElement = document.querySelector('._performance-monitor-container')
-		runtimeProfile.wrapperElement = runtimeProfile.containerElement.firstElementChild
-		runtimeProfile.mainCanvasElement = runtimeProfile.containerElement.getElementsByTagName('canvas')[0]
+		cacheProfile.containerElement = document.querySelector('._performance-monitor-container')
+		cacheProfile.wrapperElement = cacheProfile.containerElement.firstElementChild
+		cacheProfile.mainCanvasElement = cacheProfile.containerElement.getElementsByTagName('canvas')[0]
 	}
 
 	const bindEvent = hostElement => {
@@ -146,19 +150,19 @@
 			document.removeEventListener('mousemove', mousemoveHandler)
 		}
 		const mouseoverHandler = evte => {
-			runtimeProfile.containerElement.classList.add('_performance-monitor-container-hover')
+			cacheProfile.containerElement.classList.add('_performance-monitor-container-hover')
 		}
 		const mouseleaveHandler = evte => {
-			runtimeProfile.containerElement.classList.remove('_performance-monitor-container-hover')
+			cacheProfile.containerElement.classList.remove('_performance-monitor-container-hover')
 		}
 		const visiblitychangeHandler = evte => {
 			if (document.visibilityState === 'hidden') {
-				globalScope.clearTimeout(runtimeProfile.visiblityChangeTimer)
-				runtimeProfile.visibilityState = document.visibilityState
+				globalScope.clearTimeout(cacheProfile.visiblityChangeTimer)
+				cacheProfile.visibilityState = document.visibilityState
 				return
 			}
-			runtimeProfile.visiblityChangeTimer = globalScope.setTimeout(() => {
-				runtimeProfile.visibilityState = document.visibilityState
+			cacheProfile.visiblityChangeTimer = globalScope.setTimeout(() => {
+				cacheProfile.visibilityState = document.visibilityState
 			}, 300)
 		}
 		hostElement.addEventListener('mousedown', mousedownHandler)
@@ -169,36 +173,33 @@
 
 	/****************************************************************************************************/
 	/****************************************************************************************************/
-	/****************************************************************************************************/
-	/****************************************************************************************************/
-	/****************************************************************************************************/
 
 	const initProfile = () => {
 		const nowStamp = performance.now()
 		_V_INTERVAL = _V_INTERVAL >= 1000 ? 1000 : _V_INTERVAL
 		/* ... */
-		runtimeProfile.ctx = null
-		if (runtimeProfile.mainCanvasElement) {
-			runtimeProfile.ctx = runtimeProfile.mainCanvasElement.getContext('2d')
-			runtimeProfile.rAFLinearGradient = createLinearGradient(RAFPOLY_RECT[0], RAFPOLY_RECT[1], RAFPOLY_RECT[0], RAFPOLY_RECT[1] + RAFPOLY_RECT[3])
-			runtimeProfile.rICLinearGradient = createLinearGradient(RICPOLY_RECT[0], RICPOLY_RECT[1], RICPOLY_RECT[0], RICPOLY_RECT[1] + RICPOLY_RECT[3])
+		cacheProfile.ctx = null
+		if (cacheProfile.mainCanvasElement) {
+			cacheProfile.ctx = cacheProfile.mainCanvasElement.getContext('2d')
+			cacheProfile.rAFLinearGradient = createLinearGradient(RAFPOLY_RECT[0], RAFPOLY_RECT[1], RAFPOLY_RECT[0], RAFPOLY_RECT[1] + RAFPOLY_RECT[3])
+			cacheProfile.rICLinearGradient = createLinearGradient(RICPOLY_RECT[0], RICPOLY_RECT[1], RICPOLY_RECT[0], RICPOLY_RECT[1] + RICPOLY_RECT[3])
 		}
 		/* ... */
 		const maxBlockIntervalThreshold = _V_INTERVAL * 1.5
-		runtimeProfile.maxBlockInterval = maxBlockIntervalThreshold >= 1000 ? 1000 : maxBlockIntervalThreshold
-		runtimeProfile._prevRAFRefreshTimeStamp = runtimeProfile._prevRAFCountTimeStamp = nowStamp
-		runtimeProfile.rAFIntervalCount = runtimeProfile.rAFCountRatio = runtimeProfile.rAFCountCalc = 0
-		runtimeProfile.rAFYPositions = []
-		runtimeProfile.maxRAFCount = 60
-		runtimeProfile.maxTopRAFCount = parseInt(runtimeProfile.maxRAFCount + runtimeProfile.maxRAFCount * 0.05) >> 0
+		cacheProfile.maxBlockInterval = maxBlockIntervalThreshold >= 1000 ? 1000 : maxBlockIntervalThreshold
+		cacheProfile._prevRAFRefreshTimeStamp = cacheProfile._prevRAFCountTimeStamp = nowStamp
+		cacheProfile.rAFIntervalCount = cacheProfile.rAFCountRatio = cacheProfile.rAFCountCalc = 0
+		cacheProfile.rAFYPositions = []
+		cacheProfile.maxRAFCount = 60
+		cacheProfile.maxTopRAFCount = parseInt(cacheProfile.maxRAFCount + cacheProfile.maxRAFCount * 0.05) >> 0
 		/* ... */
-		runtimeProfile._prevRICRefreshTimeStamp = runtimeProfile._prevRICCountTimeStamp = nowStamp
-		runtimeProfile.rICIntervalCount = runtimeProfile.rICCountRatio = 0
-		runtimeProfile.rICYPositions = []
+		cacheProfile._prevRICRefreshTimeStamp = cacheProfile._prevRICCountTimeStamp = nowStamp
+		cacheProfile.rICIntervalCount = cacheProfile.rICCountRatio = 0
+		cacheProfile.rICYPositions = []
 	}
 
 	const createLinearGradient = (startX, startY, endX, endY) => {
-		const linearGradient = runtimeProfile.ctx.createLinearGradient(startX, startY, endX, endY)
+		const linearGradient = cacheProfile.ctx.createLinearGradient(startX, startY, endX, endY)
 		linearGradient.addColorStop(0, 'rgba(47, 224, 212, 0.9)')
 		linearGradient.addColorStop(0.6, 'rgba(2, 199, 252, 0.9)')
 		linearGradient.addColorStop(1, 'rgba(19, 135, 251, 0.9)')
@@ -209,61 +210,74 @@
 		return (byteSize / Math.pow(1024.0, 2)).toFixed(2)
 	}
 
+	/****************************************************************************************************/
+	/****************************************************************************************************/
+
 	const countRIC = deadline => {
-		runtimeProfile.rICIntervalCount++
+		cacheProfile.rICIntervalCount++
 		globalScope.requestIdleCallback(countRIC)
 	}
 
 	const countRAF = nowStamp => {
-		runtimeProfile.rAFIntervalCount++
-		runtimeProfile.rAFCountCalc = 1000 / (nowStamp - runtimeProfile._prevRAFCountTimeStamp)
-		const refreshDiffTime = nowStamp - runtimeProfile._prevRAFRefreshTimeStamp
+		cacheProfile.rAFIntervalCount++
+		cacheProfile.rAFCountCalc = 1000 / (nowStamp - cacheProfile._prevRAFCountTimeStamp)
+		const refreshDiffTime = nowStamp - cacheProfile._prevRAFRefreshTimeStamp
 		let needRfreshView = false
-		if (runtimeProfile.visibilityState === 'visible' && refreshDiffTime >= runtimeProfile.maxBlockInterval) {
+		if (cacheProfile.visibilityState === 'visible' && refreshDiffTime >= cacheProfile.maxBlockInterval) {
 			const si = (refreshDiffTime / _V_INTERVAL) >> 0
-			runtimeProfile.rAFYPositions = [].concat(runtimeProfile.rAFYPositions, new Array(si).fill(RAFPOLY_RECT[1] + RAFPOLY_RECT[3]))
-			runtimeProfile.rICYPositions = [].concat(runtimeProfile.rICYPositions, new Array(si).fill(RICPOLY_RECT[1] + RICPOLY_RECT[3]))
+			cacheProfile.rAFYPositions = [].concat(cacheProfile.rAFYPositions, new Array(si).fill(RAFPOLY_RECT[1] + RAFPOLY_RECT[3]))
+			cacheProfile.rICYPositions = [].concat(cacheProfile.rICYPositions, new Array(si).fill(RICPOLY_RECT[1] + RICPOLY_RECT[3]))
 			needRfreshView = true
 		}
 		if (Math.abs(refreshDiffTime - _V_INTERVAL) <= 5 || refreshDiffTime >= _V_INTERVAL) {
-			runtimeProfile.rAFCountRatio = runtimeProfile.rAFIntervalCount / (refreshDiffTime / 1000)
-			if (runtimeProfile.maxRAFCount <= runtimeProfile.rAFCountRatio) {
-				runtimeProfile.maxRAFCount = runtimeProfile.rAFCountRatio
-				runtimeProfile.maxTopRAFCount = (runtimeProfile.maxRAFCount + runtimeProfile.maxRAFCount * 0.05) >> 0
+			cacheProfile.rAFCountRatio = cacheProfile.rAFIntervalCount / (refreshDiffTime / 1000)
+			if (cacheProfile.maxRAFCount <= cacheProfile.rAFCountRatio) {
+				cacheProfile.maxRAFCount = cacheProfile.rAFCountRatio
+				cacheProfile.maxTopRAFCount = (cacheProfile.maxRAFCount + cacheProfile.maxRAFCount * 0.05) >> 0
 			}
-			runtimeProfile.rICCountRatio = runtimeProfile.rICIntervalCount / (runtimeProfile.maxRAFCount * (refreshDiffTime / 1000))
-			runtimeProfile.rAFYPositions.push(RAFPOLY_RECT[1] + ((runtimeProfile.maxTopRAFCount - runtimeProfile.rAFCountRatio) / runtimeProfile.maxTopRAFCount) * RAFPOLY_RECT[3])
-			runtimeProfile.rICYPositions.push(RICPOLY_RECT[1] + runtimeProfile.rICCountRatio * RICPOLY_RECT[3])
-			if (runtimeProfile.rAFYPositions.length >= RECORD_CONFIG[0] + 1) {
-				runtimeProfile.rAFYPositions.shift()
+			cacheProfile.rICCountRatio = cacheProfile.rICIntervalCount / (cacheProfile.maxRAFCount * (refreshDiffTime / 1000))
+			cacheProfile.rAFYPositions.push(RAFPOLY_RECT[1] + ((cacheProfile.maxTopRAFCount - cacheProfile.rAFCountRatio) / cacheProfile.maxTopRAFCount) * RAFPOLY_RECT[3])
+			cacheProfile.rICYPositions.push(RICPOLY_RECT[1] + cacheProfile.rICCountRatio * RICPOLY_RECT[3])
+			if (cacheProfile.rAFYPositions.length >= RECORD_CONFIG[0] + 1) {
+				cacheProfile.rAFYPositions.shift()
 			}
-			if (runtimeProfile.rICYPositions.length >= RECORD_CONFIG[0] + 1) {
-				runtimeProfile.rICYPositions.shift()
+			if (cacheProfile.rICYPositions.length >= RECORD_CONFIG[0] + 1) {
+				cacheProfile.rICYPositions.shift()
 			}
-			runtimeProfile.rAFCountCalc = runtimeProfile.rAFCountCalc.toFixed(2)
-			runtimeProfile.rAFCountRatio = runtimeProfile.rAFCountRatio.toFixed(2)
-			runtimeProfile.rICCountRatio = runtimeProfile.rICCountRatio.toFixed(4)
-			runtimeProfile._prevRAFRefreshTimeStamp = nowStamp
+			cacheProfile._prevRAFRefreshTimeStamp = nowStamp
 			needRfreshView = true
 		}
-		runtimeProfile._prevRAFCountTimeStamp = nowStamp
+		cacheProfile._prevRAFCountTimeStamp = nowStamp
 		if (needRfreshView) {
-			renderView()
+			updateViewProfile()
+			drawViewCanvas()
+			cacheProfile.rICIntervalCount = cacheProfile.rAFIntervalCount = 0
 		}
 		globalScope.requestAnimationFrame(countRAF)
 	}
 
-	const resetCount = () => {
-		runtimeProfile.rICIntervalCount = runtimeProfile.rAFIntervalCount = 0
+	/****************************************************************************************************/
+	/****************************************************************************************************/
+
+	const updateViewProfile = () => {
+		const memoryInfo = performance.memory || {}
+		viewProfile.totalJSHeapSize = memoryInfo.totalJSHeapSize || 0
+		viewProfile.usedJSHeapSize = memoryInfo.usedJSHeapSize || 0
+		/* ... */
+		viewProfile.rAFCountCalc = cacheProfile.rAFCountCalc.toFixed(2)
+		viewProfile.rAFCountRatio = cacheProfile.rAFCountRatio.toFixed(2)
+		viewProfile.rICCountRatio = cacheProfile.rICCountRatio.toFixed(4)
+		viewProfile.rAFIntervalCount = cacheProfile.rAFIntervalCount
+		viewProfile.rICIntervalCount = cacheProfile.rICIntervalCount
+		viewProfile.rAFYPositions = [...cacheProfile.rAFYPositions]
+		viewProfile.rICYPositions = [...cacheProfile.rICYPositions]
 	}
 
-	const renderView = () => {
-		drawCanvas()
-		resetCount()
-	}
+	/****************************************************************************************************/
+	/****************************************************************************************************/
 
 	const resetCanvasStatus = () => {
-		const ctx = runtimeProfile.ctx
+		const ctx = cacheProfile.ctx
 		ctx.clearRect(0, 0, CANVAS_RECT[0], CANVAS_RECT[1])
 		ctx.lineWidth = 1
 		ctx.font = TEXT_FONT
@@ -271,33 +285,29 @@
 	}
 
 	const drawMemoryText = () => {
-		const ctx = runtimeProfile.ctx
-		const memoryInfo = performance.memory || {}
-		const totalTextContent = `${transMemoryUnit(memoryInfo.totalJSHeapSize || 0)}`
-		const usedTextContent = `${transMemoryUnit(memoryInfo.usedJSHeapSize || 0)}`
-		const textContent = usedTextContent + '/' + totalTextContent + ' M'
+		const ctx = cacheProfile.ctx
+		const textContent = `${transMemoryUnit(viewProfile.usedJSHeapSize)}/${transMemoryUnit(viewProfile.totalJSHeapSize)} M`
 		ctx.fillStyle = TEXT_COLOR[2]
 		ctx.fillText(textContent, 0, MEMOTEXT_RECT[1] + MEMOTEXT_RECT[3] / 2)
 	}
 
 	const drawRAFText = () => {
-		const textContent = `${runtimeProfile.rAFCountRatio}/${runtimeProfile.rAFCountCalc}/${runtimeProfile.rAFIntervalCount}`
-		const refValue = runtimeProfile.rAFCountCalc >> 0
-		const ctx = runtimeProfile.ctx
+		const ctx = cacheProfile.ctx
+		const textContent = `${viewProfile.rAFCountRatio}/${viewProfile.rAFCountCalc}/${viewProfile.rAFIntervalCount}`
+		const refValue = viewProfile.rAFCountCalc >> 0
 		ctx.fillStyle = refValue < FPS_THRESHOLD[0] ? TEXT_COLOR[0] : refValue >= FPS_THRESHOLD[0] && refValue < FPS_THRESHOLD[1] ? TEXT_COLOR[1] : TEXT_COLOR[2]
 		ctx.fillText(textContent, 0, RAFTEXT_RECT[1] + RAFTEXT_RECT[3] / 2)
 	}
 
 	const drawRICText = () => {
-		const rationPercent = (Math.max(0, 1 - +runtimeProfile.rICCountRatio) * 100).toFixed(2)
-		const textContent = `${runtimeProfile.rICIntervalCount}/${rationPercent}%`
-		const ctx = runtimeProfile.ctx
+		const ctx = cacheProfile.ctx
+		const textContent = `${viewProfile.rICIntervalCount}/${(Math.max(0, 1 - +viewProfile.rICCountRatio) * 100).toFixed(2)}%`
 		ctx.fillStyle = TEXT_COLOR[2]
 		ctx.fillText(textContent, 0, RICTEXT_RECT[1] + RICTEXT_RECT[3] / 2)
 	}
 
 	const drawPolyline = (positions, polylineBottomY, linearGradient) => {
-		const ctx = runtimeProfile.ctx
+		const ctx = cacheProfile.ctx
 		ctx.beginPath()
 		const sx = (RECORD_CONFIG[0] - positions.length) * RECORD_CONFIG[1]
 		ctx.moveTo(sx, positions[0])
@@ -316,14 +326,17 @@
 		ctx.fill()
 	}
 
-	const drawCanvas = () => {
+	const drawViewCanvas = () => {
 		resetCanvasStatus()
 		drawMemoryText()
 		drawRAFText()
-		drawPolyline(runtimeProfile.rAFYPositions, RAFPOLY_RECT[1] + RAFPOLY_RECT[3], runtimeProfile.rAFLinearGradient)
+		drawPolyline(viewProfile.rAFYPositions, RAFPOLY_RECT[1] + RAFPOLY_RECT[3], cacheProfile.rAFLinearGradient)
 		drawRICText()
-		drawPolyline(runtimeProfile.rICYPositions, RICPOLY_RECT[1] + RICPOLY_RECT[3], runtimeProfile.rICLinearGradient)
+		drawPolyline(viewProfile.rICYPositions, RICPOLY_RECT[1] + RICPOLY_RECT[3], cacheProfile.rICLinearGradient)
 	}
+
+	/****************************************************************************************************/
+	/****************************************************************************************************/
 
 	const main = () => {
 		initStorage()
@@ -334,7 +347,7 @@
 		initViewElement()
 		initDomElementHandler()
 		initProfile()
-		bindEvent(runtimeProfile.containerElement)
+		bindEvent(cacheProfile.containerElement)
 		globalScope.requestAnimationFrame(countRAF)
 		globalScope.requestAnimationFrame(countRIC)
 	}
