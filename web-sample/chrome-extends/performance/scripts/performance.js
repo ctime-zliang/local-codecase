@@ -226,7 +226,7 @@
 		if (cacheProfile.visibilityState === 'visible' && refreshDiffTime >= cacheProfile.maxBlockInterval) {
 			const si = (refreshDiffTime / _V_INTERVAL) >> 0
 			cacheProfile.rAFYPositions = [].concat(cacheProfile.rAFYPositions, new Array(si).fill(RAFPOLY_RECT[1] + RAFPOLY_RECT[3]))
-			cacheProfile.rICYPositions = [].concat(cacheProfile.rICYPositions, new Array(si).fill(RICPOLY_RECT[1] + RICPOLY_RECT[3]))
+			cacheProfile.rICYPositions = [].concat(cacheProfile.rICYPositions, new Array(si).fill(RICPOLY_RECT[1]))
 			needRfreshView = true
 		}
 		if (Math.abs(refreshDiffTime - _V_INTERVAL) <= 5 || refreshDiffTime >= _V_INTERVAL) {
@@ -239,10 +239,10 @@
 			cacheProfile.rAFYPositions.push(RAFPOLY_RECT[1] + ((cacheProfile.maxTopRAFCount - cacheProfile.rAFCountRatio) / cacheProfile.maxTopRAFCount) * RAFPOLY_RECT[3])
 			cacheProfile.rICYPositions.push(RICPOLY_RECT[1] + cacheProfile.rICCountRatio * RICPOLY_RECT[3])
 			if (cacheProfile.rAFYPositions.length >= RECORD_CONFIG[0] + 1) {
-				cacheProfile.rAFYPositions.shift()
+				cacheProfile.rAFYPositions = cacheProfile.rAFYPositions.slice(cacheProfile.rAFYPositions.length - RECORD_CONFIG[0], cacheProfile.rAFYPositions.length)
 			}
 			if (cacheProfile.rICYPositions.length >= RECORD_CONFIG[0] + 1) {
-				cacheProfile.rICYPositions.shift()
+				cacheProfile.rICYPositions = cacheProfile.rICYPositions.slice(cacheProfile.rICYPositions.length - RECORD_CONFIG[0], cacheProfile.rICYPositions.length)
 			}
 			cacheProfile._prevRAFRefreshTimeStamp = nowStamp
 			needRfreshView = true
