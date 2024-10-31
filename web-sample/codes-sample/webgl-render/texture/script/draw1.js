@@ -160,6 +160,13 @@ class Program1 {
 		this.initFormView()
 		this.eventHandle()
 		/* ... */
+		/**
+		 * 顶点按照如下方式排列
+		 * 		vertices(0) ----- vertices(3)
+		 *   		|                 |
+		 * 	 		|                 |
+		 * 		vertices(1) ----- vertices(2)
+		 */
 		// prettier-ignore
 		const vertices = [
 			-1.0, 1.0, 0.0,
@@ -186,12 +193,22 @@ class Program1 {
 			0, 0, 1.0,
 			0, 0, 1.0
 		]
+		/**
+		 * 纹理顶点坐标按如下方式排列
+		 * 		textureCoords(0) ----- textureCoords(3)
+		 * 			|						|
+		 * 			|						|
+		 * 		textureCoords(1) ----- textureCoords(2)
+		 *
+		 * 纹理的起始坐标点为图像的左上角, X 轴往右为正方向, Y 轴往下为正反向
+		 * 按照顶点坐标的顺序排列
+		 */
 		// prettier-ignore
 		const textureCoords = [
 			0.0, 0.0,
-			1.0, 0.0,
 			0.0, 1.0,
-			1.0, 1.0
+			1.0, 1.0,
+			1.0, 0.0
 		]
 		const objModel = new ObjModel1()
 		objModel.vertexDatas = {
@@ -513,6 +530,17 @@ function drawCanvas1(containerElement) {
 				},
 				{
 					data: colors,
+				}
+			)
+			ven$initAttributeVariable(
+				gl,
+				glAttributes.a_textureCoord,
+				texCoordBuffer,
+				{
+					size: 2,
+				},
+				{
+					data: textureCoords,
 				}
 			)
 			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer)
