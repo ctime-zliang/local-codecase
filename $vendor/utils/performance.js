@@ -34,6 +34,7 @@
 	const RAFREFRESHTEXT_RECT = [CANVAS_RECT[0] * 0.6, 48, undefined, 14]
 	const RICCOUNTPOLY_RECT = [0, 62, 90, 20]
 	const FPS_THRESHOLD = [20, 30]
+	const MEMO_RATIO_THRESHOLD = [0.6, 0.9]
 	const TEXT_COLOR = ['rgba(255, 0, 0, 1)', 'rgba(255, 126, 82, 1)', 'rgba(0, 255, 0, 1)']
 	const TEXT_FONT = `10px arial, sans-serif`
 	const CONTAINER_STYLE = `
@@ -264,6 +265,7 @@
 
 	const updateViewProfile = () => {
 		const memoryInfo = performance.memory || {}
+		viewProfile.jsHeapSizeLimit = memoryInfo.jsHeapSizeLimit || 0
 		viewProfile.totalJSHeapSize = memoryInfo.totalJSHeapSize || 0
 		viewProfile.usedJSHeapSize = memoryInfo.usedJSHeapSize || 0
 		/* ... */
@@ -291,7 +293,12 @@
 	const drawMemoryText = () => {
 		const ctx = cacheProfile.ctx
 		const textContent = `${transMemoryUnit(viewProfile.usedJSHeapSize)}/${transMemoryUnit(viewProfile.totalJSHeapSize)} M`
-		ctx.fillStyle = TEXT_COLOR[2]
+		ctx.fillStyle =
+			viewProfile.usedJSHeapSize >= viewProfile.jsHeapSizeLimit * MEMO_RATIO_THRESHOLD[1]
+				? TEXT_COLOR[0]
+				: viewProfile.usedJSHeapSize >= viewProfile.jsHeapSizeLimit * MEMO_RATIO_THRESHOLD[0] && viewProfile.usedJSHeapSize < viewProfile.jsHeapSizeLimit * MEMO_RATIO_THRESHOLD[1]
+				? TEXT_COLOR[1]
+				: TEXT_COLOR[2]
 		ctx.fillText(textContent, MEMOTEXT_RECT[0], MEMOTEXT_RECT[1] + MEMOTEXT_RECT[3] / 2)
 	}
 
