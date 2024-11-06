@@ -40,42 +40,6 @@ function ven$createProgram(gl, vertexShaderSource, fragmentShaderSource) {
 	return null
 }
 
-function ven$initAttributeVariable(gl, a_attribute, buffer, optional, bufferData = {}) {
-	if (a_attribute <= -1) {
-		return
-	}
-	const { size, type = gl.FLOAT, normalize = false, stride = 0, offset = 0 } = optional
-	const { target = gl.ARRAY_BUFFER, data, usage = gl.STATIC_DRAW } = bufferData || {}
-	gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
-	if (data) {
-		gl.bufferData(target, data, usage)
-	}
-	gl.vertexAttribPointer(a_attribute, size, type, normalize, stride, offset)
-	gl.enableVertexAttribArray(a_attribute)
-}
-
-function ven$initArrayBufferForLaterUse(gl, data = new Float32Array([])) {
-	const buffer = gl.createBuffer()
-	if (!buffer) {
-		console.error('failed to create the buffer object.')
-		return null
-	}
-	gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
-	gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW)
-	return buffer
-}
-
-function ven$initElementArrayBufferForLaterUse(gl, data = new Float32Array([])) {
-	const buffer = gl.createBuffer()
-	if (!buffer) {
-		console.error('failed to create the buffer object.')
-		return null
-	}
-	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer)
-	gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, data, gl.STATIC_DRAW)
-	return buffer
-}
-
 function ven$getWebGLVariableLocation(
 	gl,
 	program,
@@ -95,6 +59,59 @@ function ven$getWebGLVariableLocation(
 		result.glUniforms[item] = gl.getUniformLocation(program, item)
 	}
 	return result
+}
+
+/**
+ * 初始化缓冲区
+ * 		- 创建缓冲区对象
+ * 		- 绑定缓冲区对象
+ * 			标记此对象内存空间的"使用目标" gl.ARRAY_BUFFER | gl.ELEMENT_ARRAY_BUFFER
+ * 		- 写入缓冲区对象
+ * 			无法直接向创建的缓冲区写入数据, 而只能向"使用目标"派发数据, 从而间接地实现向缓冲区填充数据
+ * 			因此向缓冲区写入数据之前, 需要将其与特定的"使用目标"关联
+ * 			(亦可以将"使用目标"类比于向缓冲区空间输送数据的"管道")
+ */
+function ven$initArrayBufferForLaterUse(gl, data = new Float32Array([])) {
+	const buffer = gl.createBuffer()
+	if (!buffer) {
+		console.error('failed to create the buffer object.')
+		return null
+	}
+	gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
+	gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW)
+	return buffer
+}
+function ven$initElementArrayBufferForLaterUse(gl, data = new Float32Array([])) {
+	const buffer = gl.createBuffer()
+	if (!buffer) {
+		console.error('failed to create the buffer object.')
+		return null
+	}
+	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer)
+	gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, data, gl.STATIC_DRAW)
+	return buffer
+}
+
+/**
+ * 分配 GLSL 变量值
+ * 		- 将缓冲区对象 buffer 与"使用目标" gl.ARRAY_BUFFER 关联
+ * 		- 将与 gl.ARRAY_BUFFER 关联的缓冲区对象的应用分配给 GLSL 变量
+ * 			- 为 GLSL 变量 a_attribute 设置特定的缓冲区数据读取规则
+ * 		- 为缓冲区对象 buffer 填充数据(当存在传入的数据时)
+ * 		- 启用该 GLSL 变量 a_attribute
+ */
+function ven$initAttributeVariable(gl, a_attribute, buffer, optional, bufferData = {}) {
+	if (a_attribute <= -1) {
+		return
+	}
+	const { size, type = gl.FLOAT, normalize = false, stride = 0, offset = 0 } = optional
+	const { data, usage = gl.STATIC_DRAW } = bufferData || {}
+	gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
+	if (data) {
+		gl.bufferData(gl.ARRAY_BUFFER, data, usage)
+	}
+	gl.vertexAttribPointer(a_attribute, size, type, normalize, stride, offset)
+	gl.enableVertexAttribArray(a_attribute)
 }
 
 function ven$initFramebufferObject(gl, offScreenWidth, offScreenHeight) {
