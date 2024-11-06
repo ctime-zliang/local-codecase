@@ -159,64 +159,58 @@ class Program1 {
 		}
 		this.initFormView()
 		this.eventHandle()
-		/* ... */
-		/**
-		 * 顶点按照如下方式排列
-		 * 		vertices(0) ----- vertices(3)
-		 *   		|                 |
-		 * 	 		|                 |
-		 * 		vertices(1) ----- vertices(2)
-		 */
-		// prettier-ignore
-		const vertices = [
-			-1.0, 1.0, 0.0,
-			-1.0, -1.0, 0.0,
-			1.0, -1.0, 0.0,
-			1.0, 1.0, 0.0
-		]
-		// prettier-ignore
-		const indices = [
-			0, 1, 2,
-			0, 2, 3
-		]
-		// prettier-ignore
-		const colors = [
-			1.0, 1.0, 1.0, 1.0, 
-			1.0, 1.0, 1.0, 1.0, 
-			1.0, 1.0, 1.0, 1.0, 
-			1.0, 1.0, 1.0, 1.0
-		]
-		// prettier-ignore
-		const normals = [
-			0, 0, 1.0,
-			0, 0, 1.0,
-			0, 0, 1.0,
-			0, 0, 1.0
-		]
-		/**
-		 * 纹理顶点坐标按如下方式排列
-		 * 		textureCoords(0) ----- textureCoords(3)
-		 * 			|						|
-		 * 			|						|
-		 * 		textureCoords(1) ----- textureCoords(2)
-		 *
-		 * 纹理的起始坐标点为图像的左上角, X 轴往右为正方向, Y 轴往下为正反向
-		 * 按照顶点坐标的顺序排列
-		 */
-		// prettier-ignore
-		const textureCoords = [
-			0.0, 0.0,
-			0.0, 1.0,
-			1.0, 1.0,
-			1.0, 0.0
-		]
 		const objModel = new ObjModel1()
 		objModel.vertexDatas = {
-			colors: new Float32Array(colors),
-			vertices: new Float32Array(vertices),
-			normals: new Float32Array(normals),
-			indices: new Uint16Array(indices),
-			textureCoords: new Float32Array(textureCoords),
+			// prettier-ignore
+			colors: new Float32Array([
+				1.0, 1.0, 1.0, 1.0, 
+				1.0, 1.0, 1.0, 1.0, 
+				1.0, 1.0, 1.0, 1.0, 
+				1.0, 1.0, 1.0, 1.0
+			]),
+			/**
+			 * 顶点按照如下方式排列
+			 * 		vertices(0) ----- vertices(3)
+			 *   		|                 |
+			 * 	 		|                 |
+			 * 		vertices(1) ----- vertices(2)
+			 */
+			// prettier-ignore
+			vertices: new Float32Array([
+				-1.0, 1.0, 0.0,
+				-1.0, -1.0, 0.0,
+				1.0, -1.0, 0.0,
+				1.0, 1.0, 0.0
+			]),
+			// prettier-ignore
+			indices: new Uint16Array([
+				0, 1, 2,
+				0, 2, 3
+			]),
+			// prettier-ignore
+			normals: new Float32Array([
+				0, 0, 1.0,
+				0, 0, 1.0,
+				0, 0, 1.0,
+				0, 0, 1.0
+			]),
+			/**
+			 * 纹理坐标系统的原点为左下角, X 轴向右, Y 轴向上
+			 * 		在 loadImageResourceTexture 函数中将翻转 Y 轴
+			 *
+			 * 		将纹理坐标与顶点坐标一一对应即可
+			 * 			vertices(0)/(0.0, 1.0) ----- vertices(3)/(1.0, 1.0)
+			 * 				|							|
+			 * 				| 							|
+			 * 			vertices(1)/(0.0, 0.0) ----- vertices(2)/(1.0, 0.0)
+			 */
+			// prettier-ignore
+			textureCoords: new Float32Array([
+				0.0, 1.0,
+				0.0, 0.0,
+				1.0, 0.0,
+				1.0, 1.0
+			]),
 		}
 		Program1.setFileModelInstances([objModel])
 	}
@@ -433,12 +427,19 @@ class Program1 {
 	}
 
 	static loadImageTexture(glControl) {
-		ven$loadImageResourceTexture(glControl.gl, '../common/images/frog-256x256.jpg', (gl, texture) => {
-			gl.uniform1i(glControl.commonLight.glUniforms.u_texture, 0)
-			gl.activeTexture(gl.TEXTURE0)
-			// gl.bindTexture(gl.TEXTURE_2D, null)
-			this.isRender = true
-		})
+		ven$loadImageResourceTexture(
+			glControl.gl,
+			'../common/images/frog-256x256.jpg',
+			(gl, texture) => {
+				gl.uniform1i(glControl.commonLight.glUniforms.u_texture, 0)
+				gl.activeTexture(gl.TEXTURE0)
+				// gl.bindTexture(gl.TEXTURE_2D, null)
+				this.isRender = true
+			},
+			{
+				isFlipY: true,
+			}
+		)
 	}
 }
 

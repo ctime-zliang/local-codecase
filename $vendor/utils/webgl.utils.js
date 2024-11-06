@@ -179,12 +179,18 @@ function ven$initFramebufferObject(gl, offScreenWidth, offScreenHeight) {
 	}
 }
 
-function ven$loadImageResourceTexture(gl, src, callback) {
+function ven$loadImageResourceTexture(gl, src, callback, optional) {
+	const defaultOptional = {
+		isFlipY: false,
+	}
+	const iOptional = { ...defaultOptional, ...(optional || {}) }
 	const texture = gl.createTexture()
 	const img = new Image()
 	img.crossOrigin = 'anonymous'
 	img.onload = function (e) {
-		// gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1)
+		if (iOptional.isFlipY) {
+			gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1)
+		}
 		gl.bindTexture(gl.TEXTURE_2D, texture)
 		/**
 		 * 纹理参数设置
