@@ -151,7 +151,7 @@
 		const mouseupHandler = evte => {
 			profile.isMoudeDown = false
 			document.removeEventListener('mousemove', mousemoveHandler)
-			document.removeEventListener('mousemove', mousemoveHandler)
+			document.removeEventListener('mouseup', mouseupHandler)
 		}
 		const mouseoverHandler = evte => {
 			cacheProfile.containerElement.classList.add('_performance-monitor-container-hover')
