@@ -94,7 +94,7 @@
 	const initStorage = () => {
 		try {
 			const _performance_mode = globalScope.localStorage.getItem('_performance_mode')
-			if (isNaN(+_performance_mode) || !MODES.includes(+_performance_mode)) {
+			if (_performance_mode === null || isNaN(+_performance_mode) || !MODES.includes(+_performance_mode)) {
 				globalScope.localStorage.setItem('_performance_mode', _V_MODE)
 				return
 			}
@@ -408,7 +408,7 @@
 	const main = () => {
 		initStorage()
 		initRect()
-		if (isNaN(+_V_MODE) || !MODES.includes(+_V_MODE)) {
+		if (_V_MODE === MODES[0] || isNaN(+_V_MODE) || !MODES.includes(+_V_MODE)) {
 			return
 		}
 		/* ... */
