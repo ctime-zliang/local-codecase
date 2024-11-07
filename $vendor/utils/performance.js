@@ -105,18 +105,18 @@
 	}
 
 	const initViewStyle = cssText => {
-		const styleElement = document.createElement('style')
+		const styleElement = globalScope.document.createElement('style')
 		styleElement.type = 'text/css'
 		if (styleElement.styleSheet) {
 			styleElement.styleSheet.cssText = cssText
 		} else {
-			styleElement.appendChild(document.createTextNode(cssText))
+			styleElement.appendChild(globalScope.document.createTextNode(cssText))
 		}
-		;(document.head || document.getElementsByTagName('head')[0]).appendChild(styleElement)
+		;(globalScope.document.head || globalScope.document.getElementsByTagName('head')[0]).appendChild(styleElement)
 	}
 
 	const initViewElement = () => {
-		const rootElement = document.body || document.getElementsByTagName('body')[0]
+		const rootElement = globalScope.document.body || globalScope.document.getElementsByTagName('body')[0]
 		if (!rootElement) {
 			throw new Error('document.body element not found.')
 		}
@@ -124,7 +124,7 @@
 	}
 
 	const initDomElementHandler = () => {
-		cacheProfile.containerElement = document.querySelector('._performance-monitor-container')
+		cacheProfile.containerElement = globalScope.document.querySelector('._performance-monitor-container')
 		cacheProfile.wrapperElement = cacheProfile.containerElement.firstElementChild
 		cacheProfile.mainCanvasElement = cacheProfile.containerElement.getElementsByTagName('canvas')[0]
 	}
@@ -135,23 +135,23 @@
 			profile.isMoudeDown = true
 			profile.distX = evte.clientX - hostElement.offsetLeft
 			profile.distY = evte.clientY - hostElement.offsetTop
-			document.addEventListener('mousemove', mousemoveHandler)
-			document.addEventListener('mouseup', mouseupHandler)
+			globalScope.document.addEventListener('mousemove', mousemoveHandler)
+			globalScope.document.addEventListener('mouseup', mouseupHandler)
 		}
 		const mousemoveHandler = evte => {
 			if (!profile.isMoudeDown) {
 				return
 			}
 			const rect = hostElement.getBoundingClientRect()
-			const [xa, ya] = [document.documentElement.clientWidth - rect.width, document.documentElement.clienHeight - rect.height]
+			const [xa, ya] = [globalScope.document.documentElement.clientWidth - rect.width, globalScope.document.documentElement.clienHeight - rect.height]
 			let [moveX, moveY] = [evte.clientX - profile.distX, evte.clientY - profile.distY]
 			hostElement.style.left = ((moveX = moveX <= 0 ? 0 : moveX), (moveX = moveX >= xa ? xa : moveX), moveX) + 'px'
 			hostElement.style.top = ((moveY = moveY <= 0 ? 0 : moveY), (moveY = moveY >= ya ? ya : moveY), moveY) + 'px'
 		}
 		const mouseupHandler = evte => {
 			profile.isMoudeDown = false
-			document.removeEventListener('mousemove', mousemoveHandler)
-			document.removeEventListener('mouseup', mouseupHandler)
+			globalScope.document.removeEventListener('mousemove', mousemoveHandler)
+			globalScope.document.removeEventListener('mouseup', mouseupHandler)
 		}
 		const mouseoverHandler = evte => {
 			cacheProfile.containerElement.classList.add('_performance-monitor-container-hover')
@@ -160,19 +160,19 @@
 			cacheProfile.containerElement.classList.remove('_performance-monitor-container-hover')
 		}
 		const visiblitychangeHandler = evte => {
-			if (document.visibilityState === 'hidden') {
+			if (globalScope.document.visibilityState === 'hidden') {
 				globalScope.clearTimeout(cacheProfile.visiblityChangeTimer)
-				cacheProfile.visibilityState = document.visibilityState
+				cacheProfile.visibilityState = globalScope.document.visibilityState
 				return
 			}
 			cacheProfile.visiblityChangeTimer = globalScope.setTimeout(() => {
-				cacheProfile.visibilityState = document.visibilityState
+				cacheProfile.visibilityState = globalScope.document.visibilityState
 			}, 300)
 		}
 		hostElement.addEventListener('mousedown', mousedownHandler)
 		hostElement.addEventListener('mouseover', mouseoverHandler)
 		hostElement.addEventListener('mouseleave', mouseleaveHandler)
-		document.addEventListener('visibilitychange', visiblitychangeHandler)
+		globalScope.document.addEventListener('visibilitychange', visiblitychangeHandler)
 	}
 
 	/****************************************************************************************************/
