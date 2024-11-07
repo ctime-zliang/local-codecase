@@ -2,9 +2,10 @@
 	/**
 	 * 模式
 	 * 		0 - 不显示
-	 * 		1 - 画布图示模式
+	 * 		1 - 显示全量指标
+	 * 		2 - 显示[Memo + rAF]
 	 */
-	const MODES = [0, 1]
+	const MODES = [0, 1, 2]
 	let _V_MODE = MODES[1]
 	let _V_INTERVAL = 200
 	/**
@@ -22,17 +23,18 @@
 	 * 画布尺寸
 	 * 		[WIDTH, HEIGHT]
 	 */
-	const CANVAS_RECT = [(RECORD_CONFIG[0] - 1) * RECORD_CONFIG[1], 82]
+	const CANVAS_RECT = [(RECORD_CONFIG[0] - 1) * RECORD_CONFIG[1], 0]
 	/**
 	 * 分割区域尺寸
 	 * 		[START_X, START_Y, WIDTH, HEIGHT]
 	 */
-	const MEMOTEXT_RECT = [0, 0, 90, 14]
-	const RAFCOUNTTEXT_RECT = [0, 14, undefined, 14]
-	const RAFCCOUNTPOLY_RECT = [0, 28, 90, 20]
-	const RICCOUNTTEXT_RECT = [0, 48, undefined, 14]
-	const RAFREFRESHTEXT_RECT = [CANVAS_RECT[0] * 0.6, 48, undefined, 14]
-	const RICCOUNTPOLY_RECT = [0, 62, 90, 20]
+	const MEMOTEXT_RECT = [0, 0, 0, 0]
+	const RAFCOUNTTEXT_RECT = [0, 0, 0, 0]
+	const RAFCCOUNTPOLY_RECT = [0, 0, 0, 0]
+	const RICCOUNTTEXT_RECT = [0, 0, 0, 0]
+	const RAFREFRESHTEXT_RECT = [0, 0, 0, 0]
+	const RICCOUNTPOLY_RECT = [0, 0, 0, 0]
+	/* ... */
 	const FPS_THRESHOLD = [20, 30]
 	const MEMO_RATIO_THRESHOLD = [0.6, 0.9]
 	const TEXT_COLOR = ['rgba(255, 0, 0, 1)', 'rgba(255, 126, 82, 1)', 'rgba(0, 255, 0, 1)']
@@ -175,6 +177,39 @@
 
 	/****************************************************************************************************/
 	/****************************************************************************************************/
+
+	const initRect = () => {
+		if (_V_MODE === MODES[0]) {
+			console.warn(`[performance] the performance panel has been blocked.`)
+			return
+		}
+		if (_V_MODE === MODES[1]) {
+			// prettier-ignore
+			[0, 0, null, 14].forEach((item, index) => { MEMOTEXT_RECT[index] = item });
+			// prettier-ignore
+			[0, 14, null, 14].forEach((item, index) => { RAFCOUNTTEXT_RECT[index] = item });
+			// prettier-ignore
+			[0, 28, null, 20].forEach((item, index) => { RAFCCOUNTPOLY_RECT[index] = item});
+			// prettier-ignore
+			[0, 48, null, 14].forEach((item, index) => { RICCOUNTTEXT_RECT[index] = item });
+			// prettier-ignore
+			[52, 48, null, 14].forEach((item, index) => { RAFREFRESHTEXT_RECT[index] = item });
+			// prettier-ignore
+			[0, 62, null, 20].forEach((item, index) => { RICCOUNTPOLY_RECT[index] = item });
+			CANVAS_RECT[1] = 62 + 20
+			return
+		}
+		if (_V_MODE === MODES[2]) {
+			// prettier-ignore
+			[0, 0, null, 14].forEach((item, index) => { MEMOTEXT_RECT[index] = item });
+			// prettier-ignore
+			[0, 14, null, 14].forEach((item, index) => { RAFCOUNTTEXT_RECT[index] = item });
+			// prettier-ignore
+			[0, 28, null, 20].forEach((item, index) => { RAFCCOUNTPOLY_RECT[index] = item});
+			CANVAS_RECT[1] = 28 + 20
+			return
+		}
+	}
 
 	const initProfile = () => {
 		const nowStamp = performance.now()
@@ -345,13 +380,26 @@
 	}
 
 	const drawViewCanvas = () => {
-		resetCanvasStatus()
-		drawMemoryText()
-		drawRAFText()
-		drawPolyline(viewProfile.rAFYPositions, RAFCCOUNTPOLY_RECT[1] + RAFCCOUNTPOLY_RECT[3], cacheProfile.rAFLinearGradient)
-		drawRICText()
-		drawRAFRefreshText()
-		drawPolyline(viewProfile.rICYPositions, RICCOUNTPOLY_RECT[1] + RICCOUNTPOLY_RECT[3], cacheProfile.rICLinearGradient)
+		if (_V_MODE === MODES[0]) {
+			return
+		}
+		if (_V_MODE === MODES[1]) {
+			resetCanvasStatus()
+			drawMemoryText()
+			drawRAFText()
+			drawPolyline(viewProfile.rAFYPositions, RAFCCOUNTPOLY_RECT[1] + RAFCCOUNTPOLY_RECT[3], cacheProfile.rAFLinearGradient)
+			drawRICText()
+			drawRAFRefreshText()
+			drawPolyline(viewProfile.rICYPositions, RICCOUNTPOLY_RECT[1] + RICCOUNTPOLY_RECT[3], cacheProfile.rICLinearGradient)
+			return
+		}
+		if (_V_MODE === MODES[2]) {
+			resetCanvasStatus()
+			drawMemoryText()
+			drawRAFText()
+			drawPolyline(viewProfile.rAFYPositions, RAFCCOUNTPOLY_RECT[1] + RAFCCOUNTPOLY_RECT[3], cacheProfile.rAFLinearGradient)
+			return
+		}
 	}
 
 	/****************************************************************************************************/
@@ -359,9 +407,11 @@
 
 	const main = () => {
 		initStorage()
+		initRect()
 		if (isNaN(+_V_MODE) || !MODES.includes(+_V_MODE)) {
 			return
 		}
+		/* ... */
 		initViewStyle(styleProfile.cssText)
 		initViewElement()
 		initDomElementHandler()
