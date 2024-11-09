@@ -45,7 +45,7 @@
 		top: 2px;
 		left: 2px;
 		cursor: move;
-		padding: 2px 4px 4px 4px;
+		padding: 4px 4px 2px 4px;
 		opacity: 1;
 		border: 1px solid rgba(50, 50, 50, 1);
 		background-color: rgba(25, 25, 25, 0.85);
