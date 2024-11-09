@@ -18,3 +18,9 @@ chrome.action.onClicked.addListener(() => {
 		chrome.tabs.sendMessage(tab.id, { action: 'PLUGIN_ICON_CLICKED' })
 	})
 })
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+	getCurrentTab(tab => {
+		chrome.tabs.sendMessage(tab.id, { ...request })
+	})
+})
