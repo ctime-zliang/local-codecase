@@ -92,7 +92,7 @@
 					drawViewCanvas()
 					chrome.runtime.sendMessage({
 						action: 'USER_CHANGE_MODE',
-						data: { modeValue: cacheProfile.radioList[index].value },
+						data: { modeValue: cacheProfile.radioList[hoverIndex].value },
 					})
 				}
 				return
