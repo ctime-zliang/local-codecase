@@ -38,7 +38,7 @@
 	const FPS_THRESHOLD = [20, 30]
 	const MEMO_RATIO_THRESHOLD = [0.6, 0.9]
 	const TEXT_COLOR = ['rgba(255, 0, 0, 1)', 'rgba(255, 126, 82, 1)', 'rgba(0, 255, 0, 1)']
-	const TEXT_FONT = `10px arial, sans-serif`
+	const STYLE_CLASSNAME_PREFIEX = '_performance-monitor-container'
 	const CONTAINER_STYLE = `
 		display: block;
 		position: fixed; 
@@ -50,11 +50,7 @@
 		border: 1px solid rgba(50, 50, 50, 1);
 		background-color: rgba(25, 25, 25, 0.85);
 		box-shadow: rgba(75, 75, 75, 0.35) 0 0 5px;
-		box-sizing: border-box !important;
-		z-index: 99999999;
-		-webkit-user-select: none;
-		-moz-user-select: none;
-		user-select: none;
+		z-index: 999999999;
 		-webkit-transform: translate3d(0, 0, 1px) scale(1.0);
 		-moz-transform: translate3d(0, 0, 1px) scale(1.0);
 		transform: translate3d(0, 0, 1px) scale(1.0);
@@ -65,10 +61,10 @@
 	`
 	const styleProfile = {
 		cssText: `
-            ._performance-monitor-container {
+            .${STYLE_CLASSNAME_PREFIEX} {
                 ${CONTAINER_STYLE}
             }
-			._performance-monitor-container-hover {
+			.${STYLE_CLASSNAME_PREFIEX}-hover {
                 ${CONTAINER_HOVER_STYLE}
             }
         `,
@@ -79,19 +75,14 @@
 
 	/****************************************************************************************************/
 	/****************************************************************************************************/
+	/****************************************************************************************************/
+	/****************************************************************************************************/
 
 	const createHtmlString = () => {
-		let htmlString = `
-			<div class="_performance-monitor-container" style="${CONTAINER_STYLE}">
-				<div style="width: ${CANVAS_RECT[0]}px !important; height: ${CANVAS_RECT[1]}px !important;">
-					<canvas width="${CANVAS_RECT[0]}" height="${CANVAS_RECT[1]}" style="width: ${CANVAS_RECT[0]}px; height: ${CANVAS_RECT[1]}px;"></canvas>
-				</div>
-			</div>
-		`
-		return htmlString
+		return `<div class="${STYLE_CLASSNAME_PREFIEX}"><canvas width="${CANVAS_RECT[0]}" height="${CANVAS_RECT[1]}"></canvas></div>`
 	}
 
-	const initStorage = () => {
+	const handleStorage = () => {
 		try {
 			const _performance_mode = globalScope.localStorage.getItem('_performance_mode')
 			if (_performance_mode === null || isNaN(+_performance_mode) || !MODES.includes(+_performance_mode)) {
@@ -99,67 +90,86 @@
 				return
 			}
 			_V_MODE = +_performance_mode
-		} catch (e) {
-			console.warn(e)
-		}
+		} catch (e) {}
 	}
 
-	const initViewStyle = cssText => {
+	const initViewStyle = () => {
 		const styleElement = globalScope.document.createElement('style')
 		styleElement.type = 'text/css'
 		if (styleElement.styleSheet) {
-			styleElement.styleSheet.cssText = cssText
+			styleElement.styleSheet.cssText = styleProfile.cssText
 		} else {
-			styleElement.appendChild(globalScope.document.createTextNode(cssText))
+			styleElement.appendChild(globalScope.document.createTextNode(styleProfile.cssText))
 		}
 		;(globalScope.document.head || globalScope.document.getElementsByTagName('head')[0]).appendChild(styleElement)
 	}
 
 	const initViewElement = () => {
-		const rootElement = globalScope.document.body || globalScope.document.getElementsByTagName('body')[0]
-		if (!rootElement) {
-			throw new Error('document.body element not found.')
-		}
-		rootElement.appendChild(document.createRange().createContextualFragment(createHtmlString()))
+		;(globalScope.document.body || globalScope.document.getElementsByTagName('body')[0]).appendChild(document.createRange().createContextualFragment(createHtmlString()))
 	}
 
 	const initDomElementHandler = () => {
-		cacheProfile.containerElement = globalScope.document.querySelector('._performance-monitor-container')
-		cacheProfile.wrapperElement = cacheProfile.containerElement.firstElementChild
+		cacheProfile.containerElement = globalScope.document.querySelector(`.${STYLE_CLASSNAME_PREFIEX}`)
 		cacheProfile.mainCanvasElement = cacheProfile.containerElement.getElementsByTagName('canvas')[0]
 	}
 
-	const bindEvent = hostElement => {
-		const profile = {}
-		const mousedownHandler = evte => {
-			profile.isMoudeDown = true
-			profile.distX = evte.clientX - hostElement.offsetLeft
-			profile.distY = evte.clientY - hostElement.offsetTop
-			globalScope.document.addEventListener('mousemove', mousemoveHandler)
-			globalScope.document.addEventListener('mouseup', mouseupHandler)
+	/****************************************************************************************************/
+	/****************************************************************************************************/
+
+	const updateContainerVisible = () => {
+		if (!isDisplayableMode()) {
+			cacheProfile.containerElement.style.display = 'none'
+			return
 		}
-		const mousemoveHandler = evte => {
+		cacheProfile.containerElement.style.display = 'block'
+	}
+
+	const updateCanvasRect = () => {
+		cacheProfile.mainCanvasElement.width = CANVAS_RECT[0]
+		cacheProfile.mainCanvasElement.height = CANVAS_RECT[1]
+	}
+
+	const bindEvent = () => {
+		chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+			if (message.action === 'USER_CHANGE_MODE') {
+				if (MODES.includes(+message.data.modeValue)) {
+					try {
+						globalScope.localStorage.setItem('_performance_mode', ((_V_MODE = +message.data.modeValue), _V_MODE))
+					} catch (e) {}
+					setup()
+				}
+			}
+		})
+		const profile = {}
+		const containerMouseDownHandler = evte => {
+			profile.isMoudeDown = true
+			profile.distX = evte.clientX - cacheProfile.containerElement.offsetLeft
+			profile.distY = evte.clientY - cacheProfile.containerElement.offsetTop
+			globalScope.document.addEventListener('mousemove', containerMousemoveHandler)
+			globalScope.document.addEventListener('mouseup', containerMouseUpHandler)
+		}
+		const containerMouseMoveHandler = evte => {
 			if (!profile.isMoudeDown) {
 				return
 			}
-			const rect = hostElement.getBoundingClientRect()
-			const [xa, ya] = [globalScope.document.documentElement.clientWidth - rect.width, globalScope.document.documentElement.clienHeight - rect.height]
+			const containerClientRect = cacheProfile.containerElement.getBoundingClientRect()
+			const [xa, ya] = [globalScope.document.documentElement.clientWidth - containerClientRect.width, globalScope.document.documentElement.clienHeight - containerClientRect.height]
 			let [moveX, moveY] = [evte.clientX - profile.distX, evte.clientY - profile.distY]
-			hostElement.style.left = ((moveX = moveX <= 0 ? 0 : moveX), (moveX = moveX >= xa ? xa : moveX), moveX) + 'px'
-			hostElement.style.top = ((moveY = moveY <= 0 ? 0 : moveY), (moveY = moveY >= ya ? ya : moveY), moveY) + 'px'
+			cacheProfile.containerElement.style.left = ((moveX = moveX <= 0 ? 0 : moveX), (moveX = moveX >= xa ? xa : moveX), moveX) + 'px'
+			cacheProfile.containerElement.style.top = ((moveY = moveY <= 0 ? 0 : moveY), (moveY = moveY >= ya ? ya : moveY), moveY) + 'px'
 		}
-		const mouseupHandler = evte => {
+		const containerMouseUpHandler = evte => {
 			profile.isMoudeDown = false
-			globalScope.document.removeEventListener('mousemove', mousemoveHandler)
-			globalScope.document.removeEventListener('mouseup', mouseupHandler)
+			globalScope.document.removeEventListener('mousemove', containerMouseMoveHandler)
+			globalScope.document.removeEventListener('mouseup', containerMouseUpHandler)
 		}
-		const mouseoverHandler = evte => {
-			cacheProfile.containerElement.classList.add('_performance-monitor-container-hover')
+		const containerMouseOverHandler = evte => {
+			cacheProfile.containerElement.classList.add(`${STYLE_CLASSNAME_PREFIEX}-hover`)
 		}
-		const mouseleaveHandler = evte => {
-			cacheProfile.containerElement.classList.remove('_performance-monitor-container-hover')
+		const containerMouseLeaveHandler = evte => {
+			cacheProfile.containerElement.classList.remove(`${STYLE_CLASSNAME_PREFIEX}-hover`)
 		}
-		const visiblitychangeHandler = evte => {
+		const documentVisiblityChangeHandler = evte => {
 			if (globalScope.document.visibilityState === 'hidden') {
 				globalScope.clearTimeout(cacheProfile.visiblityChangeTimer)
 				cacheProfile.visibilityState = globalScope.document.visibilityState
@@ -169,49 +179,37 @@
 				cacheProfile.visibilityState = globalScope.document.visibilityState
 			}, 300)
 		}
-		hostElement.addEventListener('mousedown', mousedownHandler)
-		hostElement.addEventListener('mouseover', mouseoverHandler)
-		hostElement.addEventListener('mouseleave', mouseleaveHandler)
-		globalScope.document.addEventListener('visibilitychange', visiblitychangeHandler)
+		cacheProfile.containerElement.addEventListener('mousedown', containerMouseDownHandler)
+		cacheProfile.containerElement.addEventListener('mouseover', containerMouseOverHandler)
+		cacheProfile.containerElement.addEventListener('mouseleave', containerMouseLeaveHandler)
+		globalScope.document.addEventListener('visibilitychange', documentVisiblityChangeHandler)
 	}
 
-	/****************************************************************************************************/
-	/****************************************************************************************************/
-
-	const initRect = () => {
-		if (_V_MODE === MODES[0]) {
-			console.warn(`[performance] the performance panel has been blocked.`)
+	const setRect = () => {
+		if (_V_MODE <= MODES[0]) {
+			CANVAS_RECT[1] = 0
 			return
 		}
 		if (_V_MODE === MODES[1]) {
-			// prettier-ignore
-			[0, 0, null, 14].forEach((item, index) => { MEMOTEXT_RECT[index] = item });
-			// prettier-ignore
-			[0, 14, null, 14].forEach((item, index) => { RAFCOUNTTEXT_RECT[index] = item });
-			// prettier-ignore
-			[0, 28, null, 20].forEach((item, index) => { RAFCCOUNTPOLY_RECT[index] = item});
-			// prettier-ignore
-			[0, 48, null, 14].forEach((item, index) => { RICCOUNTTEXT_RECT[index] = item });
-			// prettier-ignore
-			[52, 48, null, 14].forEach((item, index) => { RAFREFRESHTEXT_RECT[index] = item });
-			// prettier-ignore
-			[0, 62, null, 20].forEach((item, index) => { RICCOUNTPOLY_RECT[index] = item });
+			new Array(0, 0, null, 14).forEach((item, index) => (MEMOTEXT_RECT[index] = item))
+			new Array(0, 14, null, 14).forEach((item, index) => (RAFCOUNTTEXT_RECT[index] = item))
+			new Array(0, 28, null, 20).forEach((item, index) => (RAFCCOUNTPOLY_RECT[index] = item))
+			new Array(0, 48, null, 14).forEach((item, index) => (RICCOUNTTEXT_RECT[index] = item))
+			new Array(52, 48, null, 14).forEach((item, index) => (RAFREFRESHTEXT_RECT[index] = item))
+			new Array(0, 62, null, 20).forEach((item, index) => (RICCOUNTPOLY_RECT[index] = item))
 			CANVAS_RECT[1] = 62 + 20
 			return
 		}
 		if (_V_MODE === MODES[2]) {
-			// prettier-ignore
-			[0, 0, null, 14].forEach((item, index) => { MEMOTEXT_RECT[index] = item });
-			// prettier-ignore
-			[0, 14, null, 14].forEach((item, index) => { RAFCOUNTTEXT_RECT[index] = item });
-			// prettier-ignore
-			[0, 28, null, 20].forEach((item, index) => { RAFCCOUNTPOLY_RECT[index] = item});
+			new Array(0, 0, null, 14).forEach((item, index) => (MEMOTEXT_RECT[index] = item))
+			new Array(0, 14, null, 14).forEach((item, index) => (RAFCOUNTTEXT_RECT[index] = item))
+			new Array(0, 28, null, 20).forEach((item, index) => (RAFCCOUNTPOLY_RECT[index] = item))
 			CANVAS_RECT[1] = 28 + 20
 			return
 		}
 	}
 
-	const initProfile = () => {
+	const setProfile = () => {
 		const nowStamp = performance.now()
 		_V_INTERVAL = _V_INTERVAL >= 1000 ? 1000 : _V_INTERVAL
 		/* ... */
@@ -230,7 +228,7 @@
 		cacheProfile.rAFIntervalCount = cacheProfile.rAFCountRatio = cacheProfile.rAFCountCalc = 0
 		cacheProfile.rAFYPositions = []
 		cacheProfile.maxRAFCount = 60
-		cacheProfile.maxTopRAFCount = parseInt(cacheProfile.maxRAFCount + cacheProfile.maxRAFCount * 0.05) >> 0
+		cacheProfile.maxTopRAFCount = (cacheProfile.maxRAFCount + cacheProfile.maxRAFCount * 0.05) >> 0
 		/* ... */
 		cacheProfile._prevRICRefreshTimeStamp = cacheProfile._prevRICCountTimeStamp = nowStamp
 		cacheProfile.rICIntervalCount = cacheProfile.rICCountRatio = 0
@@ -245,19 +243,37 @@
 		return linearGradient
 	}
 
-	const transMemoryUnit = byteSize => {
-		return (byteSize / Math.pow(1024.0, 2)).toFixed(2)
+	const resetCanvasStatus = () => {
+		const ctx = cacheProfile.ctx
+		ctx.clearRect(0, 0, CANVAS_RECT[0], CANVAS_RECT[1])
+		ctx.lineWidth = 1
+		ctx.font = `10px arial, sans-serif`
+		ctx.textBaseline = 'top'
+	}
+
+	const isDisplayableMode = () => {
+		return MODES.slice(1).includes(_V_MODE)
 	}
 
 	/****************************************************************************************************/
 	/****************************************************************************************************/
+	/****************************************************************************************************/
+	/****************************************************************************************************/
 
 	const countRIC = deadline => {
+		if (!isDisplayableMode()) {
+			globalScope.requestIdleCallback(countRIC)
+			return
+		}
 		cacheProfile.rICIntervalCount++
 		globalScope.requestIdleCallback(countRIC)
 	}
 
 	const countRAF = nowStamp => {
+		if (!isDisplayableMode()) {
+			globalScope.requestAnimationFrame(countRAF)
+			return
+		}
 		cacheProfile.rAFIntervalCount++
 		cacheProfile.rAFCountCalc = 1000 / (nowStamp - cacheProfile._prevRAFCountTimeStamp)
 		cacheProfile._refreshRAFDiffTime = nowStamp - cacheProfile._prevRAFRefreshTimeStamp
@@ -295,9 +311,6 @@
 		globalScope.requestAnimationFrame(countRAF)
 	}
 
-	/****************************************************************************************************/
-	/****************************************************************************************************/
-
 	const updateViewProfile = () => {
 		const memoryInfo = performance.memory || {}
 		viewProfile.jsHeapSizeLimit = memoryInfo.jsHeapSizeLimit || 0
@@ -316,32 +329,25 @@
 
 	/****************************************************************************************************/
 	/****************************************************************************************************/
-
-	const resetCanvasStatus = () => {
-		const ctx = cacheProfile.ctx
-		ctx.clearRect(0, 0, CANVAS_RECT[0], CANVAS_RECT[1])
-		ctx.lineWidth = 1
-		ctx.font = TEXT_FONT
-		ctx.textBaseline = 'middle'
-	}
+	/****************************************************************************************************/
 
 	const drawMemoryText = () => {
 		const ctx = cacheProfile.ctx
-		const textContent = `${transMemoryUnit(viewProfile.usedJSHeapSize)}/${transMemoryUnit(viewProfile.totalJSHeapSize)} M`
+		const textContent = `${(viewProfile.usedJSHeapSize / Math.pow(1024.0, 2)).toFixed(2)}/${(viewProfile.totalJSHeapSize / Math.pow(1024.0, 2)).toFixed(2)} M`
 		ctx.fillStyle =
 			viewProfile.usedJSHeapSize >= viewProfile.jsHeapSizeLimit * MEMO_RATIO_THRESHOLD[1]
 				? TEXT_COLOR[0]
 				: viewProfile.usedJSHeapSize >= viewProfile.jsHeapSizeLimit * MEMO_RATIO_THRESHOLD[0] && viewProfile.usedJSHeapSize < viewProfile.jsHeapSizeLimit * MEMO_RATIO_THRESHOLD[1]
 				? TEXT_COLOR[1]
 				: TEXT_COLOR[2]
-		ctx.fillText(textContent, MEMOTEXT_RECT[0], MEMOTEXT_RECT[1] + MEMOTEXT_RECT[3] / 2)
+		ctx.fillText(textContent, MEMOTEXT_RECT[0], MEMOTEXT_RECT[1])
 	}
 
 	const drawRAFRefreshText = () => {
 		const ctx = cacheProfile.ctx
 		const textContent = `${viewProfile.refreshRAFDiffTime}`
 		ctx.fillStyle = TEXT_COLOR[2]
-		ctx.fillText(textContent, RAFREFRESHTEXT_RECT[0], RAFREFRESHTEXT_RECT[1] + RAFREFRESHTEXT_RECT[3] / 2)
+		ctx.fillText(textContent, RAFREFRESHTEXT_RECT[0], RAFREFRESHTEXT_RECT[1])
 	}
 
 	const drawRAFText = () => {
@@ -349,14 +355,14 @@
 		const textContent = `${viewProfile.rAFCountRatio}/${viewProfile.rAFCountCalc}/${viewProfile.rAFIntervalCount}`
 		const refValue = viewProfile.rAFCountCalc >> 0
 		ctx.fillStyle = refValue < FPS_THRESHOLD[0] ? TEXT_COLOR[0] : refValue >= FPS_THRESHOLD[0] && refValue < FPS_THRESHOLD[1] ? TEXT_COLOR[1] : TEXT_COLOR[2]
-		ctx.fillText(textContent, RAFCOUNTTEXT_RECT[0], RAFCOUNTTEXT_RECT[1] + RAFCOUNTTEXT_RECT[3] / 2)
+		ctx.fillText(textContent, RAFCOUNTTEXT_RECT[0], RAFCOUNTTEXT_RECT[1])
 	}
 
 	const drawRICText = () => {
 		const ctx = cacheProfile.ctx
 		const textContent = `${viewProfile.rICIntervalCount}/${(Math.max(0, 1 - +viewProfile.rICCountRatio) * 100).toFixed(2)}%`
 		ctx.fillStyle = TEXT_COLOR[2]
-		ctx.fillText(textContent, RICCOUNTTEXT_RECT[0], RICCOUNTTEXT_RECT[1] + RICCOUNTTEXT_RECT[3] / 2)
+		ctx.fillText(textContent, RICCOUNTTEXT_RECT[0], RICCOUNTTEXT_RECT[1])
 	}
 
 	const drawPolyline = (positions, polylineBottomY, linearGradient) => {
@@ -380,11 +386,8 @@
 	}
 
 	const drawViewCanvas = () => {
-		if (_V_MODE === MODES[0]) {
-			return
-		}
+		resetCanvasStatus()
 		if (_V_MODE === MODES[1]) {
-			resetCanvasStatus()
 			drawMemoryText()
 			drawRAFText()
 			drawPolyline(viewProfile.rAFYPositions, RAFCCOUNTPOLY_RECT[1] + RAFCCOUNTPOLY_RECT[3], cacheProfile.rAFLinearGradient)
@@ -394,7 +397,6 @@
 			return
 		}
 		if (_V_MODE === MODES[2]) {
-			resetCanvasStatus()
 			drawMemoryText()
 			drawRAFText()
 			drawPolyline(viewProfile.rAFYPositions, RAFCCOUNTPOLY_RECT[1] + RAFCCOUNTPOLY_RECT[3], cacheProfile.rAFLinearGradient)
@@ -404,19 +406,23 @@
 
 	/****************************************************************************************************/
 	/****************************************************************************************************/
+	/****************************************************************************************************/
+	/****************************************************************************************************/
+
+	const setup = () => {
+		handleStorage()
+		setRect()
+		updateCanvasRect()
+		setProfile()
+		updateContainerVisible()
+	}
 
 	const main = () => {
-		initStorage()
-		initRect()
-		if (_V_MODE === MODES[0] || isNaN(+_V_MODE) || !MODES.includes(+_V_MODE)) {
-			return
-		}
-		/* ... */
-		initViewStyle(styleProfile.cssText)
+		initViewStyle()
 		initViewElement()
 		initDomElementHandler()
-		initProfile()
-		bindEvent(cacheProfile.containerElement)
+		bindEvent()
+		setup()
 		globalScope.requestAnimationFrame(countRAF)
 		globalScope.requestAnimationFrame(countRIC)
 	}

@@ -163,7 +163,10 @@ window.$handler = {
 				break
 			}
 			case '1': {
-				angleInner = window.$math.getAngle({ x: pathPoints[2].x - posRect.newTranslateX, y: pathPoints[2].y - posRect.newTranslateY }, { x: pathPoints[0].x - posRect.newTranslateX, y: pathPoints[0].y - posRect.newTranslateY })
+				angleInner = window.$math.getAngle(
+					{ x: pathPoints[2].x - posRect.newTranslateX, y: pathPoints[2].y - posRect.newTranslateY },
+					{ x: pathPoints[0].x - posRect.newTranslateX, y: pathPoints[0].y - posRect.newTranslateY }
+				)
 				distSymLine = Math.abs(posRect.newTranslateY - pathPoints[0].y)
 				if (angleInner > 0 && angleInner <= 90 && posRect.newTranslateX <= pathPoints[2].x) {
 					PathPointsArr[7].x = posRect.newTranslateX
@@ -250,7 +253,10 @@ window.$handler = {
 			}
 
 			case '7': {
-				angleInner = window.$math.getAngle({ x: pathPoints[0].x - posRect.newTranslateX, y: pathPoints[0].y - posRect.newTranslateY }, { x: pathPoints[6].x - posRect.newTranslateX, y: pathPoints[6].y - posRect.newTranslateY })
+				angleInner = window.$math.getAngle(
+					{ x: pathPoints[0].x - posRect.newTranslateX, y: pathPoints[0].y - posRect.newTranslateY },
+					{ x: pathPoints[6].x - posRect.newTranslateX, y: pathPoints[6].y - posRect.newTranslateY }
+				)
 				distSymLine = Math.abs(posRect.newTranslateY - pathPoints[0].y)
 
 				if (angleInner > 0 && angleInner <= 90 && posRect.newTranslateX <= pathPoints[6].x) {

@@ -1,6 +1,6 @@
 {
 	"pluginDesc": {
-		"message": "一个简单的 Web 页面帧率查看插件"
+		"message": "一个简单的 Web 页面性能指标检测插件"
 	},
 	"helloWorld": {
 		"message": "Hello World!"

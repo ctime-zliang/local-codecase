@@ -1,6 +1,6 @@
 {
 	"pluginDesc": {
-		"message": "A simple chrome extension about FPS count on web page"
+		"message": "A simple chrome extension about performance count on web page"
 	},
 	"helloWorld": {
 		"message": "Hello World!"

@@ -13,18 +13,18 @@
 	},
 	"action": {
 		"default_icon": "icons/modular.png",
-		"default_title": "Performance Monitor",
-		"default_popup": "popup.html"
+		"default_title": "Performance Monitor"
 	},
 	"content_scripts": [
 		{
 			"matches": ["<all_urls>"],
-			"js": ["scripts/performance.js"],
+			"js": ["scripts/performance.js", "scripts/userview.js"],
 			"css": [],
 			"run_at": "document_start"
 		}
 	],
 	"host_permissions": ["http://*/*", "https://*/*"],
 	"web_accessible_resources": [],
-	"default_locale": "zh_CN"
+	"default_locale": "zh_CN",
+	"permissions": ["storage", "activeTab", "scripting", "tabs", "runtime"]
 }
