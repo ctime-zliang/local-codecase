@@ -77,11 +77,7 @@
 			}
 			if (message.action === 'PLUGIN_ICON_CLICKED') {
 				togglePanelShow(((cacheProfile.isShowUserViewPanel = !cacheProfile.isShowUserViewPanel), cacheProfile.isShowUserViewPanel))
-				if (cacheProfile.isShowUserViewPanel) {
-					document.addEventListener('click', documentClickHandler, true)
-				} else {
-					document.removeEventListener('click', documentClickHandler)
-				}
+				;(cacheProfile.isShowUserViewPanel ? document.addEventListener.bind(document) : document.removeEventListener.bind(ocument))('click', documentClickHandler, true)
 			}
 		})
 		const documentClickHandler = evte => {
@@ -208,11 +204,11 @@
 		ctx.font = `14px arial, sans-serif`
 		ctx.fillStyle = '#ffffff'
 		ctx.fillText(title, x, y)
-		const radioLeftPadding = 15
+		const radioLineLeftPadding = 15
 		const radioRectList = []
 		for (let i = 0; i < radioList.length; i++) {
 			radioRectList.push({
-				...drawRadioElement({ ...radioList[i], x: x + radioLeftPadding, y: y + 22 + 24 * i }),
+				...drawRadioElement({ ...radioList[i], x: x + radioLineLeftPadding, y: y + 22 + 24 * i }),
 				id: radioList[i].id,
 			})
 		}

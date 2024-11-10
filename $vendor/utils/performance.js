@@ -38,16 +38,18 @@
 	const FPS_THRESHOLD = [20, 30]
 	const MEMO_RATIO_THRESHOLD = [0.6, 0.9]
 	const TEXT_COLOR = ['rgba(255, 0, 0, 1)', 'rgba(255, 126, 82, 1)', 'rgba(0, 255, 0, 1)']
+	const FONT_SIZE = 10
 	const STYLE_CLASSNAME_PREFIEX = '_performance-monitor-container'
 	const CONTAINER_STYLE = `
-		display: block;
+		display: flex;
 		position: fixed; 
 		top: 2px;
 		left: 2px;
 		cursor: move;
-		padding: 4px 4px 2px 4px;
+		padding: 3px 4px 4px 4px;
 		opacity: 1;
 		border: 1px solid rgba(50, 50, 50, 1);
+		border-radius: 2px;
 		background-color: rgba(25, 25, 25, 0.85);
 		box-shadow: rgba(75, 75, 75, 0.35) 0 0 5px;
 		z-index: 999999999;
@@ -121,7 +123,7 @@
 			cacheProfile.containerElement.style.display = 'none'
 			return
 		}
-		cacheProfile.containerElement.style.display = 'block'
+		cacheProfile.containerElement.style.display = 'flex'
 	}
 
 	const updateCanvasRect = () => {
@@ -202,14 +204,12 @@
 	const setProfile = () => {
 		const nowStamp = performance.now()
 		_V_INTERVAL = _V_INTERVAL >= 1000 ? 1000 : _V_INTERVAL
-		/* ... */
 		cacheProfile.ctx = null
 		if (cacheProfile.mainCanvasElement) {
 			cacheProfile.ctx = cacheProfile.mainCanvasElement.getContext('2d')
 			cacheProfile.rAFLinearGradient = createLinearGradient(RAFCCOUNTPOLY_RECT[0], RAFCCOUNTPOLY_RECT[1], RAFCCOUNTPOLY_RECT[0], RAFCCOUNTPOLY_RECT[1] + RAFCCOUNTPOLY_RECT[3])
 			cacheProfile.rICLinearGradient = createLinearGradient(RICCOUNTPOLY_RECT[0], RICCOUNTPOLY_RECT[1], RICCOUNTPOLY_RECT[0], RICCOUNTPOLY_RECT[1] + RICCOUNTPOLY_RECT[3])
 		}
-		/* ... */
 		const maxBlockIntervalThreshold = _V_INTERVAL * 1.5
 		cacheProfile.maxBlockInterval = maxBlockIntervalThreshold >= 1000 ? 1000 : maxBlockIntervalThreshold
 		/* ... */
@@ -237,7 +237,7 @@
 		const ctx = cacheProfile.ctx
 		ctx.clearRect(0, 0, CANVAS_RECT[0], CANVAS_RECT[1])
 		ctx.lineWidth = 1
-		ctx.font = `10px arial, sans-serif`
+		ctx.font = `${FONT_SIZE}px arial, sans-serif`
 		ctx.textBaseline = 'top'
 	}
 
@@ -330,14 +330,14 @@
 				: viewProfile.usedJSHeapSize >= viewProfile.jsHeapSizeLimit * MEMO_RATIO_THRESHOLD[0] && viewProfile.usedJSHeapSize < viewProfile.jsHeapSizeLimit * MEMO_RATIO_THRESHOLD[1]
 				? TEXT_COLOR[1]
 				: TEXT_COLOR[2]
-		ctx.fillText(textContent, MEMOTEXT_RECT[0], MEMOTEXT_RECT[1])
+		ctx.fillText(textContent, MEMOTEXT_RECT[0], MEMOTEXT_RECT[1] + (MEMOTEXT_RECT[3] - FONT_SIZE) / 2)
 	}
 
 	const drawRAFRefreshText = () => {
 		const ctx = cacheProfile.ctx
 		const textContent = `${viewProfile.refreshRAFDiffTime}`
 		ctx.fillStyle = TEXT_COLOR[2]
-		ctx.fillText(textContent, RAFREFRESHTEXT_RECT[0], RAFREFRESHTEXT_RECT[1])
+		ctx.fillText(textContent, RAFREFRESHTEXT_RECT[0], RAFREFRESHTEXT_RECT[1] + (RAFREFRESHTEXT_RECT[3] - FONT_SIZE) / 2)
 	}
 
 	const drawRAFText = () => {
@@ -345,14 +345,14 @@
 		const textContent = `${viewProfile.rAFCountRatio}/${viewProfile.rAFCountCalc}/${viewProfile.rAFIntervalCount}`
 		const refValue = viewProfile.rAFCountCalc >> 0
 		ctx.fillStyle = refValue < FPS_THRESHOLD[0] ? TEXT_COLOR[0] : refValue >= FPS_THRESHOLD[0] && refValue < FPS_THRESHOLD[1] ? TEXT_COLOR[1] : TEXT_COLOR[2]
-		ctx.fillText(textContent, RAFCOUNTTEXT_RECT[0], RAFCOUNTTEXT_RECT[1])
+		ctx.fillText(textContent, RAFCOUNTTEXT_RECT[0], RAFCOUNTTEXT_RECT[1] + (RAFCOUNTTEXT_RECT[3] - FONT_SIZE) / 2)
 	}
 
 	const drawRICText = () => {
 		const ctx = cacheProfile.ctx
 		const textContent = `${viewProfile.rICIntervalCount}/${(Math.max(0, 1 - +viewProfile.rICCountRatio) * 100).toFixed(2)}%`
 		ctx.fillStyle = TEXT_COLOR[2]
-		ctx.fillText(textContent, RICCOUNTTEXT_RECT[0], RICCOUNTTEXT_RECT[1])
+		ctx.fillText(textContent, RICCOUNTTEXT_RECT[0], RICCOUNTTEXT_RECT[1] + (RICCOUNTTEXT_RECT[3] - FONT_SIZE) / 2)
 	}
 
 	const drawPolyline = (positions, polylineBottomY, linearGradient) => {
