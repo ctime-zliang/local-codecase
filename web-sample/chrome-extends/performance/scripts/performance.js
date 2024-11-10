@@ -412,8 +412,8 @@
 	const setup = () => {
 		handleStorage()
 		setRect()
-		updateCanvasRect()
 		setProfile()
+		updateCanvasRect()
 		updateContainerVisible()
 	}
 

@@ -71,24 +71,31 @@
 	const bindEvent = () => {
 		chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 			if (message.action === 'PAGE_LOADED') {
-				cacheProfile.mode = +globalScope.localStorage.getItem('_performance_mode')
 				cacheProfile.tabId = message.data.tabId
 				setup()
 			}
 			if (message.action === 'PLUGIN_ICON_CLICKED') {
-				togglePanelShow(((cacheProfile.isShowUserViewPanel = !cacheProfile.isShowUserViewPanel), cacheProfile.isShowUserViewPanel))
-				;(cacheProfile.isShowUserViewPanel ? document.addEventListener.bind(document) : document.removeEventListener.bind(ocument))('click', documentClickHandler, true)
+				cacheProfile.isShowUserViewPanel = !cacheProfile.isShowUserViewPanel
+				togglePanelShow(cacheProfile.isShowUserViewPanel)
+				if (cacheProfile.isShowUserViewPanel) {
+					setup()
+					document.addEventListener('click', documentClickHandler, true)
+				} else {
+					document.removeEventListener('click', documentClickHandler)
+				}
 			}
 		})
 		const documentClickHandler = evte => {
 			if (cacheProfile.containerElement.contains(evte.target)) {
 				const hoverIndex = getSelectedIndex(getRelativeClient(evte.clientX, evte.clientY))
 				if (hoverIndex >= 0) {
+					const modeValue = cacheProfile.radioList[hoverIndex].value
+					globalScope.localStorage.setItem('_performance_mode', modeValue)
 					setRectListSelectStatus(hoverIndex)
 					drawViewCanvas()
 					chrome.runtime.sendMessage({
 						action: 'USER_CHANGE_MODE',
-						data: { modeValue: cacheProfile.radioList[hoverIndex].value },
+						data: { modeValue },
 					})
 				}
 				return
@@ -106,18 +113,24 @@
 		cacheProfile.containerElement.addEventListener('mousemove', containerMouseMoveHandler)
 	}
 
-	const setProfile = () => {
-		cacheProfile.isShowUserViewPanel = false
-		cacheProfile.ctx = null
-		if (cacheProfile.mainCanvasElement) {
-			cacheProfile.ctx = cacheProfile.mainCanvasElement.getContext('2d')
-		}
+	const setData = () => {
 		cacheProfile.radioList = [
 			{ id: String(Math.random()), label: 'Hidden', value: 0, isSelected: cacheProfile.mode <= 0, isHover: false },
 			{ id: String(Math.random()), label: 'Full Info', value: 1, isSelected: cacheProfile.mode === 1, isHover: false },
 			{ id: String(Math.random()), label: 'RAF & Memo', value: 2, isSelected: cacheProfile.mode === 2, isHover: false },
 		]
 		cacheProfile.radioRectList = []
+	}
+
+	const setProfile = () => {
+		if (typeof cacheProfile.isShowUserViewPanel === 'undefined') {
+			cacheProfile.isShowUserViewPanel = false
+		}
+		cacheProfile.mode = +globalScope.localStorage.getItem('_performance_mode')
+		cacheProfile.ctx = null
+		if (cacheProfile.mainCanvasElement) {
+			cacheProfile.ctx = cacheProfile.mainCanvasElement.getContext('2d')
+		}
 	}
 
 	const resetCanvasStatus = () => {
@@ -235,6 +248,7 @@
 
 	const setup = () => {
 		setProfile()
+		setData()
 		drawViewCanvas()
 	}
 
