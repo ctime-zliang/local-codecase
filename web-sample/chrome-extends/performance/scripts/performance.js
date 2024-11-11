@@ -153,7 +153,7 @@
 			})
 		}
 		const documentMouseMoveHandler = evte => {
-			if (!isDisplayableMode()) {
+			if (!isDisplayableMode() || !cacheProfile.panelRect) {
 				return
 			}
 			if (evte.clientX >= cacheProfile.panelRect.left && evte.clientX <= cacheProfile.panelRect.right && evte.clientY >= cacheProfile.panelRect.top && evte.clientY <= cacheProfile.panelRect.bottom) {
