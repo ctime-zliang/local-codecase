@@ -257,7 +257,6 @@
 		initViewElement()
 		initDomElementHandler()
 		bindEvent()
-		setup()
 	}
 
 	globalScope.addEventListener('DOMContentLoaded', () => {
