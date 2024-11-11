@@ -96,22 +96,22 @@
 	}
 
 	const initViewStyle = () => {
-		const styleElement = globalScope.document.createElement('style')
+		const styleElement = document.createElement('style')
 		styleElement.type = 'text/css'
 		if (styleElement.styleSheet) {
 			styleElement.styleSheet.cssText = styleProfile.cssText
 		} else {
-			styleElement.appendChild(globalScope.document.createTextNode(styleProfile.cssText))
+			styleElement.appendChild(document.createTextNode(styleProfile.cssText))
 		}
-		;(globalScope.document.head || globalScope.document.getElementsByTagName('head')[0]).appendChild(styleElement)
+		;(document.head || document.getElementsByTagName('head')[0]).appendChild(styleElement)
 	}
 
 	const initViewElement = () => {
-		;(globalScope.document.body || globalScope.document.getElementsByTagName('body')[0]).appendChild(document.createRange().createContextualFragment(createHtmlString()))
+		;(document.body || document.getElementsByTagName('body')[0]).appendChild(document.createRange().createContextualFragment(createHtmlString()))
 	}
 
 	const initDomElementHandler = () => {
-		cacheProfile.containerElement = globalScope.document.querySelector(`.${STYLE_CLASSNAME_PREFIEX}`)
+		cacheProfile.containerElement = document.querySelector(`.${STYLE_CLASSNAME_PREFIEX}`)
 		cacheProfile.mainCanvasElement = cacheProfile.containerElement.getElementsByTagName('canvas')[0]
 	}
 
@@ -137,23 +137,23 @@
 			profile.isMoudeDown = true
 			profile.distX = evte.clientX - cacheProfile.containerElement.offsetLeft
 			profile.distY = evte.clientY - cacheProfile.containerElement.offsetTop
-			globalScope.document.addEventListener('mousemove', containerMousemoveHandler)
-			globalScope.document.addEventListener('mouseup', containerMouseUpHandler)
+			document.addEventListener('mousemove', containerMousemoveHandler)
+			document.addEventListener('mouseup', containerMouseUpHandler)
 		}
 		const containerMouseMoveHandler = evte => {
 			if (!profile.isMoudeDown) {
 				return
 			}
 			const containerClientRect = cacheProfile.containerElement.getBoundingClientRect()
-			const [xa, ya] = [globalScope.document.documentElement.clientWidth - containerClientRect.width, globalScope.document.documentElement.clienHeight - containerClientRect.height]
+			const [xa, ya] = [document.documentElement.clientWidth - containerClientRect.width, document.documentElement.clienHeight - containerClientRect.height]
 			let [moveX, moveY] = [evte.clientX - profile.distX, evte.clientY - profile.distY]
 			cacheProfile.containerElement.style.left = ((moveX = moveX <= 0 ? 0 : moveX), (moveX = moveX >= xa ? xa : moveX), moveX) + 'px'
 			cacheProfile.containerElement.style.top = ((moveY = moveY <= 0 ? 0 : moveY), (moveY = moveY >= ya ? ya : moveY), moveY) + 'px'
 		}
 		const containerMouseUpHandler = evte => {
 			profile.isMoudeDown = false
-			globalScope.document.removeEventListener('mousemove', containerMouseMoveHandler)
-			globalScope.document.removeEventListener('mouseup', containerMouseUpHandler)
+			document.removeEventListener('mousemove', containerMouseMoveHandler)
+			document.removeEventListener('mouseup', containerMouseUpHandler)
 		}
 		const containerMouseOverHandler = evte => {
 			cacheProfile.containerElement.classList.add(`${STYLE_CLASSNAME_PREFIEX}-hover`)
@@ -162,27 +162,19 @@
 			cacheProfile.containerElement.classList.remove(`${STYLE_CLASSNAME_PREFIEX}-hover`)
 		}
 		const documentVisiblityChangeHandler = evte => {
-			if (globalScope.document.visibilityState === 'hidden') {
+			if (document.visibilityState === 'hidden') {
 				globalScope.clearTimeout(cacheProfile.visiblityChangeTimer)
-				cacheProfile.visibilityState = globalScope.document.visibilityState
+				cacheProfile.visibilityState = document.visibilityState
 				return
 			}
 			cacheProfile.visiblityChangeTimer = globalScope.setTimeout(() => {
-				cacheProfile.visibilityState = globalScope.document.visibilityState
+				cacheProfile.visibilityState = document.visibilityState
 			}, 300)
 		}
 		cacheProfile.containerElement.addEventListener('mousedown', containerMouseDownHandler)
 		cacheProfile.containerElement.addEventListener('mouseover', containerMouseOverHandler)
 		cacheProfile.containerElement.addEventListener('mouseleave', containerMouseLeaveHandler)
-		globalScope.document.addEventListener('visibilitychange', documentVisiblityChangeHandler)
-	}
-
-	const setRecord = () => {
-		globalScope.__PERFORMANCE_RECORD__ = {
-			rafCount: [],
-			idleRatio: [],
-			memory: [],
-		}
+		document.addEventListener('visibilitychange', documentVisiblityChangeHandler)
 	}
 
 	const setRect = () => {
@@ -231,6 +223,12 @@
 		cacheProfile._prevRICRefreshTimeStamp = cacheProfile._prevRICCountTimeStamp = nowStamp
 		cacheProfile.rICIntervalCount = cacheProfile.rdleRatio = 0
 		cacheProfile.rdleRatioYPositions = []
+		/* ... */
+		cacheProfile._performance_record = {
+			rafCount: [],
+			idleRatio: [],
+			memory: [],
+		}
 	}
 
 	const createLinearGradient = (startX, startY, endX, endY) => {
@@ -326,20 +324,20 @@
 	}
 
 	const updateRecord = () => {
-		const __PERFORMANCE_RECORD__ = globalScope.__PERFORMANCE_RECORD__
 		const recordSize = RECORD_CONFIG[0] * 2
-		__PERFORMANCE_RECORD__.rafCount.push([viewProfile.rAFCountCalc, viewProfile.rAFCountRatio])
-		if (__PERFORMANCE_RECORD__.rafCount.length >= recordSize + 1) {
-			__PERFORMANCE_RECORD__.rafCount = __PERFORMANCE_RECORD__.rafCount.slice(__PERFORMANCE_RECORD__.rafCount.length - recordSize, __PERFORMANCE_RECORD__.rafCount.length)
+		cacheProfile._performance_record.rafCount.push([viewProfile.rAFCountCalc, viewProfile.rAFCountRatio])
+		if (cacheProfile._performance_record.rafCount.length >= recordSize + 1) {
+			cacheProfile._performance_record.rafCount = cacheProfile._performance_record.rafCount.slice(cacheProfile._performance_record.rafCount.length - recordSize, cacheProfile._performance_record.rafCount.length)
 		}
-		__PERFORMANCE_RECORD__.idleRatio.push([viewProfile.rdleRatio])
-		if (__PERFORMANCE_RECORD__.idleRatio.length >= recordSize + 1) {
-			__PERFORMANCE_RECORD__.idleRatio = __PERFORMANCE_RECORD__.idleRatio.slice(__PERFORMANCE_RECORD__.idleRatio.length - recordSize, __PERFORMANCE_RECORD__.idleRatio.length)
+		cacheProfile._performance_record.idleRatio.push([viewProfile.rdleRatio])
+		if (cacheProfile._performance_record.idleRatio.length >= recordSize + 1) {
+			cacheProfile._performance_record.idleRatio = cacheProfile._performance_record.idleRatio.slice(cacheProfile._performance_record.idleRatio.length - recordSize, cacheProfile._performance_record.idleRatio.length)
 		}
-		__PERFORMANCE_RECORD__.memory.push([viewProfile.usedJSHeapSize])
-		if (__PERFORMANCE_RECORD__.memory.length >= recordSize + 1) {
-			__PERFORMANCE_RECORD__.memory = __PERFORMANCE_RECORD__.memory.slice(__PERFORMANCE_RECORD__.memory.length - recordSize, __PERFORMANCE_RECORD__.memory.length)
+		cacheProfile._performance_record.memory.push([viewProfile.usedJSHeapSize])
+		if (cacheProfile._performance_record.memory.length >= recordSize + 1) {
+			cacheProfile._performance_record.memory = cacheProfile._performance_record.memory.slice(cacheProfile._performance_record.memory.length - recordSize, cacheProfile._performance_record.memory.length)
 		}
+		globalScope.__PERFORMANCE_RECORD__ = cacheProfile._performance_record
 	}
 
 	/****************************************************************************************************/
@@ -430,7 +428,6 @@
 		setProfile()
 		updateCanvasRect()
 		updateContainerVisible()
-		setRecord()
 	}
 
 	const main = () => {

@@ -47,22 +47,22 @@
 	}
 
 	const initViewStyle = () => {
-		const styleElement = globalScope.document.createElement('style')
+		const styleElement = document.createElement('style')
 		styleElement.type = 'text/css'
 		if (styleElement.styleSheet) {
 			styleElement.styleSheet.cssText = styleProfile.cssText
 		} else {
-			styleElement.appendChild(globalScope.document.createTextNode(styleProfile.cssText))
+			styleElement.appendChild(document.createTextNode(styleProfile.cssText))
 		}
-		;(globalScope.document.head || globalScope.document.getElementsByTagName('head')[0]).appendChild(styleElement)
+		;(document.head || document.getElementsByTagName('head')[0]).appendChild(styleElement)
 	}
 
 	const initViewElement = () => {
-		;(globalScope.document.body || globalScope.document.getElementsByTagName('body')[0]).appendChild(document.createRange().createContextualFragment(createHtmlString()))
+		;(document.body || document.getElementsByTagName('body')[0]).appendChild(document.createRange().createContextualFragment(createHtmlString()))
 	}
 
 	const initDomElementHandler = () => {
-		cacheProfile.containerElement = globalScope.document.querySelector(`.${STYLE_CLASSNAME_PREFIEX}`)
+		cacheProfile.containerElement = document.querySelector(`.${STYLE_CLASSNAME_PREFIEX}`)
 		cacheProfile.mainCanvasElement = cacheProfile.containerElement.getElementsByTagName('canvas')[0]
 	}
 
@@ -262,4 +262,4 @@
 	globalScope.addEventListener('DOMContentLoaded', () => {
 		globalScope.setTimeout(main, 100)
 	})
-})(window)
+})(window.top)
