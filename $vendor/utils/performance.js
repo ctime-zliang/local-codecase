@@ -58,6 +58,7 @@
 		transform: translate3d(0, 0, 1px) scale(1.0);
 	`
 	const CONTAINER_HOVER_STYLE = `
+		display: none !important;
 		opacity: 0.35 !important;
 		background-color: rgba(25, 25, 25, 0) !important;
 	`
@@ -66,7 +67,7 @@
             .${STYLE_CLASSNAME_PREFIEX} {
                 ${CONTAINER_STYLE}
             }
-			.${STYLE_CLASSNAME_PREFIEX}-hover {
+			.${STYLE_CLASSNAME_PREFIEX}-hidden {
                 ${CONTAINER_HOVER_STYLE}
             }
         `,
@@ -132,34 +133,21 @@
 	}
 
 	const bindEvent = () => {
-		const profile = {}
-		const containerMouseDownHandler = evte => {
-			profile.isMoudeDown = true
-			profile.distX = evte.clientX - cacheProfile.containerElement.offsetLeft
-			profile.distY = evte.clientY - cacheProfile.containerElement.offsetTop
-			document.addEventListener('mousemove', containerMousemoveHandler)
-			document.addEventListener('mouseup', containerMouseUpHandler)
+		const containerMouseEnterHandler = evte => {
+			cacheProfile.panelRect = cacheProfile.containerElement.getBoundingClientRect()
+			globalScope.setTimeout(() => {
+				cacheProfile.containerElement.classList.add(`${STYLE_CLASSNAME_PREFIEX}-hidden`)
+			})
 		}
-		const containerMouseMoveHandler = evte => {
-			if (!profile.isMoudeDown) {
+		const documentMouseMoveHandler = evte => {
+			if (!isDisplayableMode()) {
 				return
 			}
-			const containerClientRect = cacheProfile.containerElement.getBoundingClientRect()
-			const [xa, ya] = [document.documentElement.clientWidth - containerClientRect.width, document.documentElement.clienHeight - containerClientRect.height]
-			let [moveX, moveY] = [evte.clientX - profile.distX, evte.clientY - profile.distY]
-			cacheProfile.containerElement.style.left = ((moveX = moveX <= 0 ? 0 : moveX), (moveX = moveX >= xa ? xa : moveX), moveX) + 'px'
-			cacheProfile.containerElement.style.top = ((moveY = moveY <= 0 ? 0 : moveY), (moveY = moveY >= ya ? ya : moveY), moveY) + 'px'
-		}
-		const containerMouseUpHandler = evte => {
-			profile.isMoudeDown = false
-			document.removeEventListener('mousemove', containerMouseMoveHandler)
-			document.removeEventListener('mouseup', containerMouseUpHandler)
-		}
-		const containerMouseOverHandler = evte => {
-			cacheProfile.containerElement.classList.add(`${STYLE_CLASSNAME_PREFIEX}-hover`)
-		}
-		const containerMouseLeaveHandler = evte => {
-			cacheProfile.containerElement.classList.remove(`${STYLE_CLASSNAME_PREFIEX}-hover`)
+			if (evte.clientX >= cacheProfile.panelRect.left && evte.clientX <= cacheProfile.panelRect.right && evte.clientY >= cacheProfile.panelRect.top && evte.clientY <= cacheProfile.panelRect.bottom) {
+				cacheProfile.containerElement.classList.add(`${STYLE_CLASSNAME_PREFIEX}-hidden`)
+			} else {
+				cacheProfile.containerElement.classList.remove(`${STYLE_CLASSNAME_PREFIEX}-hidden`)
+			}
 		}
 		const documentVisiblityChangeHandler = evte => {
 			if (document.visibilityState === 'hidden') {
@@ -175,10 +163,9 @@
 				document.visibilityState
 			)
 		}
-		cacheProfile.containerElement.addEventListener('mousedown', containerMouseDownHandler)
-		cacheProfile.containerElement.addEventListener('mouseover', containerMouseOverHandler)
-		cacheProfile.containerElement.addEventListener('mouseleave', containerMouseLeaveHandler)
+		cacheProfile.containerElement.addEventListener('mouseenter', containerMouseEnterHandler, true)
 		document.addEventListener('visibilitychange', documentVisiblityChangeHandler)
+		document.addEventListener('mousemove', documentMouseMoveHandler, true)
 	}
 
 	const setRect = () => {
@@ -209,6 +196,7 @@
 		const nowStamp = performance.now()
 		_V_INTERVAL = _V_INTERVAL >= 1000 ? 1000 : _V_INTERVAL
 		cacheProfile.visibilityState = 'visible'
+		cacheProfile.panelRect = null
 		cacheProfile.ctx = null
 		if (cacheProfile.mainCanvasElement) {
 			cacheProfile.ctx = cacheProfile.mainCanvasElement.getContext('2d')
