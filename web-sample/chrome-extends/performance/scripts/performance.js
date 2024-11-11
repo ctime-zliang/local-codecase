@@ -221,6 +221,7 @@
 	const setProfile = () => {
 		const nowStamp = performance.now()
 		_V_INTERVAL = _V_INTERVAL >= 1000 ? 1000 : _V_INTERVAL
+		cacheProfile.visibilityState = 'visible'
 		cacheProfile.ctx = null
 		if (cacheProfile.mainCanvasElement) {
 			cacheProfile.ctx = cacheProfile.mainCanvasElement.getContext('2d')
