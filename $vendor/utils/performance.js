@@ -167,9 +167,13 @@
 				cacheProfile.visibilityState = document.visibilityState
 				return
 			}
-			cacheProfile.visiblityChangeTimer = globalScope.setTimeout(() => {
-				cacheProfile.visibilityState = document.visibilityState
-			}, 300)
+			cacheProfile.visiblityChangeTimer = globalScope.setTimeout(
+				statusText => {
+					cacheProfile.visibilityState = statusText
+				},
+				300,
+				document.visibilityState
+			)
 		}
 		cacheProfile.containerElement.addEventListener('mousedown', containerMouseDownHandler)
 		cacheProfile.containerElement.addEventListener('mouseover', containerMouseOverHandler)
