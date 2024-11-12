@@ -6,6 +6,27 @@
 	 * 		2 - 显示[Memo + rAF]
 	 */
 	const MODES = [0, 1, 2]
+	/**
+	 * 分割区域尺寸
+	 * 		[START_X, START_Y, WIDTH, HEIGHT]
+	 */
+	const MODESRECT = [
+		[[0, 0, null, 0]],
+		[
+			[0, 0, null, 14], // 内存数值 配置项
+			[0, 14, null, 14], // RAF 文本数值 配置项
+			[0, 28, null, 20], // RAF 折线图示 配置项
+			[0, 48, null, 14], // RIC 文本数值 配置项
+			[52, 48, null, 14], // 刷新间隔文本数值 配置项
+			[0, 62, null, 20], // RIC 折线图示 配置项
+		],
+		[
+			[0, 0, null, 14], // 内存数值 配置项
+			[0, 14, null, 14], // RAF 文本数值 配置项
+			[0, 28, null, 20], // RAF 折线图示 配置项
+		],
+	]
+	const ELEMENTS_RECT = []
 	let _V_MODE = MODES[1]
 	let _V_INTERVAL = 200
 	/**
@@ -24,16 +45,6 @@
 	 * 		[WIDTH, HEIGHT]
 	 */
 	const CANVAS_RECT = [(RECORD_CONFIG[0] - 1) * RECORD_CONFIG[1], 0]
-	/**
-	 * 分割区域尺寸
-	 * 		[START_X, START_Y, WIDTH, HEIGHT]
-	 */
-	const MEMOTEXT_RECT = [0, 0, 0, 0]
-	const RAFCOUNTTEXT_RECT = [0, 0, 0, 0]
-	const RAFCCOUNTPOLY_RECT = [0, 0, 0, 0]
-	const RICCOUNTTEXT_RECT = [0, 0, 0, 0]
-	const RAFREFRESHTEXT_RECT = [0, 0, 0, 0]
-	const RICCOUNTPOLY_RECT = [0, 0, 0, 0]
 	/* ... */
 	const FPS_THRESHOLD = [20, 30]
 	const MEMO_RATIO_THRESHOLD = [0.6, 0.9]
@@ -182,27 +193,11 @@
 	}
 
 	const setRect = () => {
-		if (_V_MODE <= MODES[0]) {
-			CANVAS_RECT[1] = 0
-			return
-		}
-		if (_V_MODE === MODES[1]) {
-			new Array(0, 0, null, 14).forEach((item, index) => (MEMOTEXT_RECT[index] = item))
-			new Array(0, 14, null, 14).forEach((item, index) => (RAFCOUNTTEXT_RECT[index] = item))
-			new Array(0, 28, null, 20).forEach((item, index) => (RAFCCOUNTPOLY_RECT[index] = item))
-			new Array(0, 48, null, 14).forEach((item, index) => (RICCOUNTTEXT_RECT[index] = item))
-			new Array(52, 48, null, 14).forEach((item, index) => (RAFREFRESHTEXT_RECT[index] = item))
-			new Array(0, 62, null, 20).forEach((item, index) => (RICCOUNTPOLY_RECT[index] = item))
-			CANVAS_RECT[1] = 62 + 20
-			return
-		}
-		if (_V_MODE === MODES[2]) {
-			new Array(0, 0, null, 14).forEach((item, index) => (MEMOTEXT_RECT[index] = item))
-			new Array(0, 14, null, 14).forEach((item, index) => (RAFCOUNTTEXT_RECT[index] = item))
-			new Array(0, 28, null, 20).forEach((item, index) => (RAFCCOUNTPOLY_RECT[index] = item))
-			CANVAS_RECT[1] = 28 + 20
-			return
-		}
+		const _A_ = ELEMENTS_RECT.splice(0)
+		MODESRECT[_V_MODE].forEach((arrItem, idx) => {
+			ELEMENTS_RECT[idx] = [...arrItem]
+		})
+		CANVAS_RECT[1] = ELEMENTS_RECT[ELEMENTS_RECT.length - 1][1] + ELEMENTS_RECT[ELEMENTS_RECT.length - 1][3]
 	}
 
 	const setProfile = () => {
@@ -213,8 +208,13 @@
 		cacheProfile.ctx = null
 		if (cacheProfile.mainCanvasElement) {
 			cacheProfile.ctx = cacheProfile.mainCanvasElement.getContext('2d')
-			cacheProfile.rAFLinearGradient = createLinearGradient(RAFCCOUNTPOLY_RECT[0], RAFCCOUNTPOLY_RECT[1], RAFCCOUNTPOLY_RECT[0], RAFCCOUNTPOLY_RECT[1] + RAFCCOUNTPOLY_RECT[3])
-			cacheProfile.rICLinearGradient = createLinearGradient(RICCOUNTPOLY_RECT[0], RICCOUNTPOLY_RECT[1], RICCOUNTPOLY_RECT[0], RICCOUNTPOLY_RECT[1] + RICCOUNTPOLY_RECT[3])
+			if (_V_MODE === MODES[1]) {
+				cacheProfile.rAFLinearGradient = createLinearGradient(ELEMENTS_RECT[2][0], ELEMENTS_RECT[2][1], ELEMENTS_RECT[2][0], ELEMENTS_RECT[2][1] + ELEMENTS_RECT[2][3])
+				cacheProfile.rICLinearGradient = createLinearGradient(ELEMENTS_RECT[5][0], ELEMENTS_RECT[5][1], ELEMENTS_RECT[5][0], ELEMENTS_RECT[5][1] + ELEMENTS_RECT[5][3])
+			}
+			if (_V_MODE === MODES[2]) {
+				cacheProfile.rAFLinearGradient = createLinearGradient(ELEMENTS_RECT[2][0], ELEMENTS_RECT[2][1], ELEMENTS_RECT[2][0], ELEMENTS_RECT[2][1] + ELEMENTS_RECT[2][3])
+			}
 		}
 		const maxBlockIntervalThreshold = _V_INTERVAL * 1.5
 		cacheProfile.maxBlockInterval = maxBlockIntervalThreshold >= 1000 ? 1000 : maxBlockIntervalThreshold
@@ -229,12 +229,6 @@
 		cacheProfile._prevRICRefreshTimeStamp = cacheProfile._prevRICCountTimeStamp = nowStamp
 		cacheProfile.rICIntervalCount = cacheProfile.rdleRatio = 0
 		cacheProfile.rdleRatioYPositions = []
-		/* ... */
-		cacheProfile._performance_record = {
-			rafCount: [],
-			idleRatio: [],
-			memory: [],
-		}
 	}
 
 	const createLinearGradient = (startX, startY, endX, endY) => {
@@ -282,8 +276,8 @@
 		let needRfreshView = false
 		if (cacheProfile.visibilityState === 'visible' && cacheProfile._refreshRAFDiffTime >= cacheProfile.maxBlockInterval) {
 			const si = (cacheProfile._refreshRAFDiffTime / _V_INTERVAL) >> 0
-			cacheProfile.rAFYPositions = [].concat(cacheProfile.rAFYPositions, new Array(si).fill(RAFCCOUNTPOLY_RECT[1] + RAFCCOUNTPOLY_RECT[3]))
-			cacheProfile.rdleRatioYPositions = [].concat(cacheProfile.rdleRatioYPositions, new Array(si).fill(RICCOUNTPOLY_RECT[1]))
+			cacheProfile.rAFYPositions = [].concat(cacheProfile.rAFYPositions, new Array(si).fill(ELEMENTS_RECT[2][1] + ELEMENTS_RECT[2][3]))
+			cacheProfile.rdleRatioYPositions = [].concat(cacheProfile.rdleRatioYPositions, new Array(si).fill(ELEMENTS_RECT[5][1]))
 			needRfreshView = true
 		}
 		if (Math.abs(cacheProfile._refreshRAFDiffTime - _V_INTERVAL) <= 5 || cacheProfile._refreshRAFDiffTime >= _V_INTERVAL) {
@@ -293,8 +287,8 @@
 				cacheProfile.maxTopRAFCount = (cacheProfile.maxRAFCount + cacheProfile.maxRAFCount * 0.05) >> 0
 			}
 			cacheProfile.rdleRatio = cacheProfile.rICIntervalCount / (cacheProfile.maxRAFCount * (cacheProfile._refreshRAFDiffTime / 1000))
-			cacheProfile.rAFYPositions.push(RAFCCOUNTPOLY_RECT[1] + ((cacheProfile.maxTopRAFCount - cacheProfile.rAFCountRatio) / cacheProfile.maxTopRAFCount) * RAFCCOUNTPOLY_RECT[3])
-			cacheProfile.rdleRatioYPositions.push(RICCOUNTPOLY_RECT[1] + cacheProfile.rdleRatio * RICCOUNTPOLY_RECT[3])
+			cacheProfile.rAFYPositions.push(ELEMENTS_RECT[2][1] + ((cacheProfile.maxTopRAFCount - cacheProfile.rAFCountRatio) / cacheProfile.maxTopRAFCount) * ELEMENTS_RECT[2][3])
+			cacheProfile.rdleRatioYPositions.push(ELEMENTS_RECT[5][1] + cacheProfile.rdleRatio * ELEMENTS_RECT[5][3])
 			if (cacheProfile.rAFYPositions.length >= RECORD_CONFIG[0] + 1) {
 				cacheProfile.rAFYPositions = cacheProfile.rAFYPositions.slice(cacheProfile.rAFYPositions.length - RECORD_CONFIG[0], cacheProfile.rAFYPositions.length)
 			}
@@ -308,7 +302,6 @@
 		if (needRfreshView) {
 			updateViewProfile()
 			drawViewCanvas()
-			updateRecord()
 			cacheProfile.rICIntervalCount = cacheProfile.rAFIntervalCount = 0
 		}
 		globalScope.requestAnimationFrame(countRAF)
@@ -329,23 +322,6 @@
 		viewProfile.rdleRatioYPositions = [...cacheProfile.rdleRatioYPositions]
 	}
 
-	const updateRecord = () => {
-		const recordSize = RECORD_CONFIG[0] * 2
-		cacheProfile._performance_record.rafCount.push([viewProfile.rAFCountCalc, viewProfile.rAFCountRatio])
-		if (cacheProfile._performance_record.rafCount.length >= recordSize + 1) {
-			cacheProfile._performance_record.rafCount = cacheProfile._performance_record.rafCount.slice(cacheProfile._performance_record.rafCount.length - recordSize, cacheProfile._performance_record.rafCount.length)
-		}
-		cacheProfile._performance_record.idleRatio.push([viewProfile.rdleRatio])
-		if (cacheProfile._performance_record.idleRatio.length >= recordSize + 1) {
-			cacheProfile._performance_record.idleRatio = cacheProfile._performance_record.idleRatio.slice(cacheProfile._performance_record.idleRatio.length - recordSize, cacheProfile._performance_record.idleRatio.length)
-		}
-		cacheProfile._performance_record.memory.push([viewProfile.usedJSHeapSize])
-		if (cacheProfile._performance_record.memory.length >= recordSize + 1) {
-			cacheProfile._performance_record.memory = cacheProfile._performance_record.memory.slice(cacheProfile._performance_record.memory.length - recordSize, cacheProfile._performance_record.memory.length)
-		}
-		globalScope.__PERFORMANCE_RECORD__ = cacheProfile._performance_record
-	}
-
 	/****************************************************************************************************/
 	/****************************************************************************************************/
 	/****************************************************************************************************/
@@ -359,14 +335,14 @@
 				: viewProfile.usedJSHeapSize >= viewProfile.jsHeapSizeLimit * MEMO_RATIO_THRESHOLD[0] && viewProfile.usedJSHeapSize < viewProfile.jsHeapSizeLimit * MEMO_RATIO_THRESHOLD[1]
 				? TEXT_COLOR[1]
 				: TEXT_COLOR[2]
-		ctx.fillText(textContent, MEMOTEXT_RECT[0], MEMOTEXT_RECT[1] + (MEMOTEXT_RECT[3] - FONT_SIZE) / 2)
+		ctx.fillText(textContent, ELEMENTS_RECT[0][0], ELEMENTS_RECT[0][1] + (ELEMENTS_RECT[0][3] - FONT_SIZE) / 2)
 	}
 
 	const drawRAFRefreshText = () => {
 		const ctx = cacheProfile.ctx
 		const textContent = `${viewProfile.refreshRAFDiffTime}`
 		ctx.fillStyle = TEXT_COLOR[2]
-		ctx.fillText(textContent, RAFREFRESHTEXT_RECT[0], RAFREFRESHTEXT_RECT[1] + (RAFREFRESHTEXT_RECT[3] - FONT_SIZE) / 2)
+		ctx.fillText(textContent, ELEMENTS_RECT[4][0], ELEMENTS_RECT[4][1] + (ELEMENTS_RECT[4][3] - FONT_SIZE) / 2)
 	}
 
 	const drawRAFText = () => {
@@ -374,14 +350,14 @@
 		const textContent = `${viewProfile.rAFCountRatio}/${viewProfile.rAFCountCalc}/${viewProfile.rAFIntervalCount}`
 		const refValue = viewProfile.rAFCountCalc >> 0
 		ctx.fillStyle = refValue < FPS_THRESHOLD[0] ? TEXT_COLOR[0] : refValue >= FPS_THRESHOLD[0] && refValue < FPS_THRESHOLD[1] ? TEXT_COLOR[1] : TEXT_COLOR[2]
-		ctx.fillText(textContent, RAFCOUNTTEXT_RECT[0], RAFCOUNTTEXT_RECT[1] + (RAFCOUNTTEXT_RECT[3] - FONT_SIZE) / 2)
+		ctx.fillText(textContent, ELEMENTS_RECT[1][0], ELEMENTS_RECT[1][1] + (ELEMENTS_RECT[1][3] - FONT_SIZE) / 2)
 	}
 
 	const drawRICText = () => {
 		const ctx = cacheProfile.ctx
 		const textContent = `${viewProfile.rICIntervalCount}/${(Math.max(0, 1 - +viewProfile.rdleRatio) * 100).toFixed(2)}%`
 		ctx.fillStyle = TEXT_COLOR[2]
-		ctx.fillText(textContent, RICCOUNTTEXT_RECT[0], RICCOUNTTEXT_RECT[1] + (RICCOUNTTEXT_RECT[3] - FONT_SIZE) / 2)
+		ctx.fillText(textContent, ELEMENTS_RECT[3][0], ELEMENTS_RECT[3][1] + (ELEMENTS_RECT[3][3] - FONT_SIZE) / 2)
 	}
 
 	const drawPolyline = (positions, polylineBottomY, linearGradient) => {
@@ -409,16 +385,16 @@
 		if (_V_MODE === MODES[1]) {
 			drawMemoryText()
 			drawRAFText()
-			drawPolyline(viewProfile.rAFYPositions, RAFCCOUNTPOLY_RECT[1] + RAFCCOUNTPOLY_RECT[3], cacheProfile.rAFLinearGradient)
+			drawPolyline(viewProfile.rAFYPositions, ELEMENTS_RECT[2][1] + ELEMENTS_RECT[2][3], cacheProfile.rAFLinearGradient)
 			drawRICText()
 			drawRAFRefreshText()
-			drawPolyline(viewProfile.rdleRatioYPositions, RICCOUNTPOLY_RECT[1] + RICCOUNTPOLY_RECT[3], cacheProfile.rICLinearGradient)
+			drawPolyline(viewProfile.rdleRatioYPositions, ELEMENTS_RECT[5][1] + ELEMENTS_RECT[5][3], cacheProfile.rICLinearGradient)
 			return
 		}
 		if (_V_MODE === MODES[2]) {
 			drawMemoryText()
 			drawRAFText()
-			drawPolyline(viewProfile.rAFYPositions, RAFCCOUNTPOLY_RECT[1] + RAFCCOUNTPOLY_RECT[3], cacheProfile.rAFLinearGradient)
+			drawPolyline(viewProfile.rAFYPositions, ELEMENTS_RECT[2][1] + ELEMENTS_RECT[2][3], cacheProfile.rAFLinearGradient)
 			return
 		}
 	}
