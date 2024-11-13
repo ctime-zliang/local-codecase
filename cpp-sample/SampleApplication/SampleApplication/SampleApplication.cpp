@@ -154,17 +154,46 @@ void showFibonacciNumbers()
     std::cout << "Program end!" << "\n" << std::endl;
 }
 
+void showFibNumber()
+{
+    int inputNumber = 0;
+    std::cout << "Input index for Fib-Number: " << std::endl;
+    std::cin >> inputNumber;
+    std::cout << "The result is: " << getFibNumber(inputNumber) << "\n" << std::endl;
+}
+
+void pointHandle()
+{
+    int age = 18;
+    int* p = &age;
+    *p = 28;
+    std::cout << "The <Int>age value is: " << age << "\n" << std::endl;
+}
+
+void dynamicMemory()
+{
+    int* p = new int;
+    std::cout << "Input a number:" << std::endl;
+    std::cin >> *p;
+    std::cout << "The number of you input is: " << *p << std::endl;
+    std::cout << "will clear memory!" << std::endl;
+    delete p;
+}
+
 int main()
 {
     showAreaProgram();
     // showInputSumProgram();
-    showFixedArray();
+    // showFixedArray();
     // showDynamicArray();
     // showMultidimenArray();
     showCPPSTDString();
-    showEnumDefine();
-    forloopShowArray();
-    showFibonacciNumbers();
+    // showEnumDefine();
+    // forloopShowArray();
+    // showFibonacciNumbers();
+    // showFibNumber();
+    // pointHandle();
+    // dynamicMemory();
     return 0;
 }
 
