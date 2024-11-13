@@ -142,6 +142,16 @@
 	}
 
 	const bindEvent = () => {
+		chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+			if (message.action === 'USER_CHANGE_MODE') {
+				if (MODES.includes(+message.data.modeValue)) {
+					try {
+						globalScope.localStorage.setItem('_performance_mode', ((_V_MODE = +message.data.modeValue), _V_MODE))
+					} catch (e) {}
+					setup()
+				}
+			}
+		})
 		const containerMouseEnterHandler = evte => {
 			cacheProfile.panelRect = cacheProfile.containerElement.getBoundingClientRect()
 			globalScope.setTimeout(() => cacheProfile.containerElement.classList.add(`${STYLE_CLASSNAME_PREFIEX}-hidden`))
