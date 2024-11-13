@@ -39,7 +39,7 @@
 	 * 		则
 	 * 			POLY_WIDHT = (RECORD_CONFIG[0] - 1) * RECORD_CONFIG[1]
 	 */
-	const RECORD_CONFIG = [34, 3]
+	const RECORD_CONFIG = [30, 3]
 	/**
 	 * 画布尺寸
 	 */
@@ -406,7 +406,7 @@
 			cacheProfile.ctx.fillText(textContent, fillStartX, fillStartY)
 		},
 		drawRAFText(fillStartX, fillStartY) {
-			const textContent = `A ${viewProfile.rAFRatioCycleAverage}/S ${viewProfile.rAFRatioInstant}/${viewProfile.rAFIntervalCount}`
+			const textContent = `${viewProfile.rAFRatioCycleAverage}/${viewProfile.rAFRatioInstant}/${viewProfile.rAFIntervalCount}`
 			const refValue = viewProfile.rAFRatioInstant >> 0
 			cacheProfile.ctx.fillStyle = refValue < FPS_THRESHOLD[0] ? TEXT_COLOR[0] : refValue >= FPS_THRESHOLD[0] && refValue < FPS_THRESHOLD[1] ? TEXT_COLOR[1] : TEXT_COLOR[2]
 			cacheProfile.ctx.fillText(textContent, fillStartX, fillStartY)

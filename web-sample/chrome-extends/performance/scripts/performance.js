@@ -19,7 +19,7 @@
 		i = []
 	let l = t[1],
 		o = 200
-	const n = [34, 3],
+	const n = [30, 3],
 		r = [(n[0] - 1) * n[1], 0],
 		s = [20, 30],
 		c = [0.6, 0.9],
@@ -130,7 +130,7 @@
 				;(C.ctx.fillStyle = m[2]), C.ctx.fillText(a, e, t)
 			},
 			drawRAFText(e, t) {
-				const a = `A ${g.rAFRatioCycleAverage}/S ${g.rAFRatioInstant}/${g.rAFIntervalCount}`,
+				const a = `${g.rAFRatioCycleAverage}/${g.rAFRatioInstant}/${g.rAFIntervalCount}`,
 					i = 0 | g.rAFRatioInstant
 				;(C.ctx.fillStyle = i < s[0] ? m[0] : i >= s[0] && i < s[1] ? m[1] : m[2]), C.ctx.fillText(a, e, t)
 			},
