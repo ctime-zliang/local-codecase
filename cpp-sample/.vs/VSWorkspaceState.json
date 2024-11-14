@@ -1,9 +1,5 @@
 {
-  "ExpandedNodes": [
-    "",
-    "\\SampleApplication",
-    "\\SampleApplication\\SampleApplication"
-  ],
-  "SelectedNode": "\\SampleApplication\\SampleApplication\\SampleApplication.cpp",
-  "PreviewInSolutionExplorer": false
+	"ExpandedNodes": ["", "\\SampleApplication", "\\SampleApplication\\SampleApplication"],
+	"SelectedNode": "\\SampleApplication\\SampleApplication\\SampleApplication.cpp",
+	"PreviewInSolutionExplorer": false
 }

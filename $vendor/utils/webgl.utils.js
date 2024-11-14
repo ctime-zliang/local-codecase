@@ -208,6 +208,11 @@ function ven$loadImageResourceTexture(gl, src, callback, optional) {
 		if (iOptional.isFlipY) {
 			gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1)
 		}
+		/**
+		 * 绑定纹理对象
+		 * 		无法直接操作纹理对象
+		 * 		需要为创建的纹理对象绑定一个类型"目标"(纹理单元), 后通过该纹理单元往纹理对象填充数据
+		 */
 		gl.bindTexture(gl.TEXTURE_2D, texture)
 		/**
 		 * 纹理参数设置

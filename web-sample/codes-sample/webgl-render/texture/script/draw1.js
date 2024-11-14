@@ -170,17 +170,17 @@ class Program1 {
 			]),
 			/**
 			 * 顶点按照如下方式排列
-			 * 		vertices(0) ----- vertices(3)
-			 *   		|                 |
-			 * 	 		|                 |
-			 * 		vertices(1) ----- vertices(2)
+			 * 		vertices(3: -1.0, +1.0) ----- vertices(2: +1.0, +1.0)
+			 *   		|                 			|
+			 * 	 		|                 			|
+			 * 		vertices(0: -1.0, -1.0) ----- vertices(1: +1.0, -1.0)
 			 */
 			// prettier-ignore
 			vertices: new Float32Array([
-				-1.0, 1.0, 0.0,
 				-1.0, -1.0, 0.0,
 				1.0, -1.0, 0.0,
-				1.0, 1.0, 0.0
+				1.0, 1.0, 0.0,
+				-1.0, 1.0, 0.0,
 			]),
 			// prettier-ignore
 			indices: new Uint16Array([
@@ -195,21 +195,21 @@ class Program1 {
 				0, 0, 1.0
 			]),
 			/**
-			 * 纹理坐标系统的原点为左下角, X 轴向右, Y 轴向上
-			 * 		在 loadImageResourceTexture 函数中将翻转 Y 轴
+			 * (图片)纹理坐标系统的原点为左上角, X 轴向右, Y 轴向下
 			 *
 			 * 		将纹理坐标与顶点坐标一一对应即可
-			 * 			vertices(0)/(0.0, 1.0) ----- vertices(3)/(1.0, 1.0)
-			 * 				|							|
-			 * 				| 							|
-			 * 			vertices(1)/(0.0, 0.0) ----- vertices(2)/(1.0, 0.0)
+			 * 		当定义的纹理坐标顺序与顶点坐标顺序一致时, 则无需翻转 Y 轴
+			 * 			vertices(3: -1.0, +1.0)/(0.0, 0.0) ----- vertices(2: +1.0, +1.0)/(1.0, 0.0)
+			 * 				|										|
+			 * 				| 										|
+			 * 			vertices(0: -1.0, -1.0)/(0.0, 1.0) ----- vertices(1: +1.0, -1.0)/(1.0, 1.0)
 			 */
 			// prettier-ignore
 			textureCoords: new Float32Array([
 				0.0, 1.0,
-				0.0, 0.0,
+				1.0, 1.0,
 				1.0, 0.0,
-				1.0, 1.0
+				0.0, 0.0
 			]),
 		}
 		Program1.setFileModelInstances([objModel])
@@ -437,7 +437,7 @@ class Program1 {
 				this.isRender = true
 			},
 			{
-				isFlipY: true,
+				isFlipY: false,
 			}
 		)
 	}
