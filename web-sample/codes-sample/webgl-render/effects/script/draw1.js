@@ -905,10 +905,8 @@ function drawCanvas1(containerElement) {
 
 	const loadTextureAction = (gl, itemProgramControl, callback) => {
 		const { glUniforms } = itemProgramControl
-		ven$loadImageResourceTexture(gl, '../common/images/demo-1024x1024.jpg', (gl, texture) => {
-			gl.uniform1i(glUniforms.u_Sampler, 0)
-			gl.activeTexture(gl.TEXTURE0)
-			// gl.bindTexture(gl.TEXTURE_2D, null)
+		ven$loadImageResourceTexture(gl, 0, '../common/images/demo-1024x1024.jpg', (gl, index, texture) => {
+			gl.uniform1i(glUniforms.u_Sampler, index)
 			callback && callback()
 		})
 	}

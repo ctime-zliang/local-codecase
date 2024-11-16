@@ -196,11 +196,14 @@ function ven$initFramebufferObject(gl, offScreenWidth, offScreenHeight) {
 	}
 }
 
-function ven$loadImageResourceTexture(gl, src, callback, optional) {
+function ven$loadImageResourceTexture(gl, index, src, callback, optional) {
 	const defaultOptional = {
 		isFlipY: false,
 	}
 	const iOptional = { ...defaultOptional, ...(optional || {}) }
+	/**
+	 * 创建纹理对象
+	 */
 	const texture = gl.createTexture()
 	const img = new Image()
 	img.crossOrigin = 'anonymous'
@@ -208,6 +211,10 @@ function ven$loadImageResourceTexture(gl, src, callback, optional) {
 		if (iOptional.isFlipY) {
 			gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1)
 		}
+		/**
+		 * 激活纹理单元
+		 */
+		gl.activeTexture(gl[`TEXTURE${index}`])
 		/**
 		 * 绑定纹理对象
 		 * 		无法直接操作纹理对象
@@ -223,7 +230,7 @@ function ven$loadImageResourceTexture(gl, src, callback, optional) {
 		 * 使用 Image 对象实例填充纹理内容
 		 */
 		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img)
-		callback && callback(gl, texture)
+		callback && callback(gl, index, texture)
 	}
 	img.src = src
 	return texture

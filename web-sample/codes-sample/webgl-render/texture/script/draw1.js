@@ -308,8 +308,8 @@ class Program1 {
 		const lookAtMatrix4AtPositionZShowSpanElement = this.containerElement.querySelector(`[data-tag-name="lookAtMatrix4AtPositionZShow"]`)
 
 		canvasElement.addEventListener('contextmenu', function (e) {
-			e.preventDefault()
-			e.stopPropagation()
+			// e.preventDefault()
+			// e.stopPropagation()
 		})
 		renderStyleSelectorSelectElement.addEventListener('input', function (e) {
 			draw1Renderer(this.value, Program1.glControl)
@@ -429,11 +429,13 @@ class Program1 {
 	static loadImageTexture(glControl) {
 		ven$loadImageResourceTexture(
 			glControl.gl,
+			0,
 			'../common/images/frog-256x256.jpg',
-			(gl, texture) => {
-				gl.uniform1i(glControl.commonLight.glUniforms.u_texture, 0)
-				gl.activeTexture(gl.TEXTURE0)
-				// gl.bindTexture(gl.TEXTURE_2D, null)
+			(gl, index, texture) => {
+				/**
+				 * 将 0 号纹理单元传送给取样器变量
+				 */
+				gl.uniform1i(glControl.commonLight.glUniforms.u_texture, index)
 				this.isRender = true
 			},
 			{

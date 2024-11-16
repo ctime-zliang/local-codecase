@@ -475,10 +475,8 @@ function drawCanvas2(containerElement) {
 	Program2.glControl.commonLight.frameBuffer = frameBuffer
 	Program2.glControl.commonLight.frameTexture = frameTexture
 
-	const cubeTexture = ven$loadImageResourceTexture(Program2.glControl.gl, '../common/images/demo-1024x1024.jpg', (gl, texture) => {
-		gl.uniform1i(Program2.glControl.commonLight.glUniforms.u_Sampler, 0)
-		gl.activeTexture(gl.TEXTURE0)
-		// gl.bindTexture(gl.TEXTURE_2D, null)
+	const cubeTexture = ven$loadImageResourceTexture(Program2.glControl.gl, 0, '../common/images/demo-1024x1024.jpg', (gl, index, texture) => {
+		gl.uniform1i(Program2.glControl.commonLight.glUniforms.u_Sampler, index)
 		Program2.isRender = true
 	})
 	Program2.glControl.commonLight.cubeTexture = cubeTexture
