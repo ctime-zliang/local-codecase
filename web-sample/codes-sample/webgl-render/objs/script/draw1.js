@@ -714,7 +714,18 @@ function drawCanvas1(containerElement) {
 	Program1.glControl.commonLight.program = ven$createProgram(Program1.glControl.gl, COMMON_VERTEX_SHADER, COMMON_FRAGMENT_SHADER)
 	const commonWebGLVariableLocation = ven$getWebGLVariableLocation(Program1.glControl.gl, Program1.glControl.commonLight.program, {
 		glAttributes: ['a_Normal', 'a_Position', 'a_Color'],
-		glUniforms: ['u_illuType', 'u_LightColor', 'u_LightPosition', 'u_LightDirection', 'u_AmbientLightColor', 'u_lightIntensityGain', 'u_NormalMatrix', 'u_ModelMatrix', 'u_ViewMatrix', 'u_ProjMatrix'],
+		glUniforms: [
+			'u_illuType',
+			'u_LightColor',
+			'u_LightPosition',
+			'u_LightDirection',
+			'u_AmbientLightColor',
+			'u_lightIntensityGain',
+			'u_NormalMatrix',
+			'u_ModelMatrix',
+			'u_ViewMatrix',
+			'u_ProjMatrix',
+		],
 	})
 	Program1.glControl.commonLight.glAttributes = commonWebGLVariableLocation.glAttributes
 	Program1.glControl.commonLight.glUniforms = commonWebGLVariableLocation.glUniforms

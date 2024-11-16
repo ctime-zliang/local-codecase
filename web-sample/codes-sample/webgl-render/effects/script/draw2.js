@@ -504,7 +504,12 @@ function drawCanvas2(containerElement) {
 		},
 		setProfile(gl, itemProgramControl) {
 			const { glUniforms } = itemProgramControl
-			const projectionMatrix4 = Ven$CanvasMatrix4.setPerspective(Program2.profile.persProjection.fovy, Program2.profile.persProjection.aspect, Program2.profile.persProjection.near, Program2.profile.persProjection.far)
+			const projectionMatrix4 = Ven$CanvasMatrix4.setPerspective(
+				Program2.profile.persProjection.fovy,
+				Program2.profile.persProjection.aspect,
+				Program2.profile.persProjection.near,
+				Program2.profile.persProjection.far
+			)
 			const lookAtMatrix4 = Ven$CanvasMatrix4.setLookAt(
 				new Ven$Vector3(Program2.profile.lookAt.eyePosition.x, Program2.profile.lookAt.eyePosition.y, Program2.profile.lookAt.eyePosition.z),
 				new Ven$Vector3(Program2.profile.lookAt.atPosition.x, Program2.profile.lookAt.atPosition.y, Program2.profile.lookAt.atPosition.z),

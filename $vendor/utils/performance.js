@@ -150,7 +150,12 @@
 			if (!MODES.slice(1).includes(_V_MODE) || !cacheProfile.panelRect) {
 				return
 			}
-			if (evte.clientX >= cacheProfile.panelRect.left && evte.clientX <= cacheProfile.panelRect.right && evte.clientY >= cacheProfile.panelRect.top && evte.clientY <= cacheProfile.panelRect.bottom) {
+			if (
+				evte.clientX >= cacheProfile.panelRect.left &&
+				evte.clientX <= cacheProfile.panelRect.right &&
+				evte.clientY >= cacheProfile.panelRect.top &&
+				evte.clientY <= cacheProfile.panelRect.bottom
+			) {
 				cacheProfile.containerElement.classList.add(`${STYLE_CLASSNAME_PREFIEX}-hidden`)
 			} else {
 				cacheProfile.containerElement.classList.remove(`${STYLE_CLASSNAME_PREFIEX}-hidden`)
@@ -258,7 +263,9 @@
 			}
 		},
 		calcRAFPolylineData(polylineTopY, polylineHeight) {
-			cacheProfile.rAFRatioCycleAverageYPositions.push(polylineTopY + ((cacheProfile.maxRAFRatioCycleAverage - cacheProfile.rAFRatioCycleAverage) / cacheProfile.maxRAFRatioCycleAverage) * polylineHeight)
+			cacheProfile.rAFRatioCycleAverageYPositions.push(
+				polylineTopY + ((cacheProfile.maxRAFRatioCycleAverage - cacheProfile.rAFRatioCycleAverage) / cacheProfile.maxRAFRatioCycleAverage) * polylineHeight
+			)
 			if (cacheProfile.rAFRatioCycleAverageYPositions.length >= RECORD_CONFIG[0] + 1) {
 				cacheProfile.rAFRatioCycleAverageYPositions = cacheProfile.rAFRatioCycleAverageYPositions.slice(
 					cacheProfile.rAFRatioCycleAverageYPositions.length - RECORD_CONFIG[0],

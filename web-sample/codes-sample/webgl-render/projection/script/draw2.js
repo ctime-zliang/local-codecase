@@ -444,7 +444,12 @@ function drawCanvas2(containerElement) {
 			/**
 			 * 创建透视投影矩阵
 			 */
-			const projectionMatrix4 = Ven$CanvasMatrix4.setPerspective(Program2.profile.persProjection.fovy, Program2.profile.persProjection.aspect, Program2.profile.persProjection.near, Program2.profile.persProjection.far)
+			const projectionMatrix4 = Ven$CanvasMatrix4.setPerspective(
+				Program2.profile.persProjection.fovy,
+				Program2.profile.persProjection.aspect,
+				Program2.profile.persProjection.near,
+				Program2.profile.persProjection.far
+			)
 			gl.uniformMatrix4fv(glUniforms.u_ProjMatrix, false, new Float32Array(projectionMatrix4.data))
 			/**
 			 * 创建视图矩阵

@@ -388,7 +388,10 @@
 							//to bottom
 							obj['element'].BuiltInGetLastClientY = touches.clientY
 							if (!single) {
-								if (Math.abs(touches.clientX - startClient['clientX']) < Math.abs(touches.clientY - startClient['clientY']) && Math.abs(touches.clientX - startClient['clientX']) < obj['relataxis']) {
+								if (
+									Math.abs(touches.clientX - startClient['clientX']) < Math.abs(touches.clientY - startClient['clientY']) &&
+									Math.abs(touches.clientX - startClient['clientX']) < obj['relataxis']
+								) {
 									obj['fnDuring'] && obj['fnDuring'].call(obj['element'], touches, startClient, -1)
 								}
 							} else {
@@ -397,7 +400,10 @@
 						} else {
 							//to top
 							obj['element'].BuiltInGetLastClientY = touches.clientY
-							if (Math.abs(touches.clientX - startClient['clientX']) < Math.abs(touches.clientY - startClient['clientY']) && Math.abs(touches.clientX - startClient['clientX']) < obj['relataxis']) {
+							if (
+								Math.abs(touches.clientX - startClient['clientX']) < Math.abs(touches.clientY - startClient['clientY']) &&
+								Math.abs(touches.clientX - startClient['clientX']) < obj['relataxis']
+							) {
 								obj['fnDuring'] && obj['fnDuring'].call(obj['element'], touches, startClient, 1)
 							}
 						}
@@ -414,7 +420,10 @@
 						var touches = e.changedTouches[0],
 							isSwipe = false,
 							offset = obj['offsetY'] || obj['offset'] || 30
-						if (Math.abs(touches.clientX - startClient['clientX']) < Math.abs(touches.clientY - startClient['clientY']) && Math.abs(touches.clientX - startClient['clientX']) < obj['relataxis']) {
+						if (
+							Math.abs(touches.clientX - startClient['clientX']) < Math.abs(touches.clientY - startClient['clientY']) &&
+							Math.abs(touches.clientX - startClient['clientX']) < obj['relataxis']
+						) {
 							if (touches.clientY - startClient['clientY'] < -1 * offset) {
 								obj['fnBack'] && obj['fnBack'].call(obj['element'], touches, startClient)
 								isSwipe = true
@@ -449,7 +458,10 @@
 							//to top
 							obj['element'].BuiltInGetLastClientY = touches.clientY
 							if (!single) {
-								if (Math.abs(touches.clientX - startClient['clientX']) < Math.abs(touches.clientY - startClient['clientY']) && Math.abs(touches.clientX - startClient['clientX']) < obj['relataxis']) {
+								if (
+									Math.abs(touches.clientX - startClient['clientX']) < Math.abs(touches.clientY - startClient['clientY']) &&
+									Math.abs(touches.clientX - startClient['clientX']) < obj['relataxis']
+								) {
 									obj['fnDuring'] && obj['fnDuring'].call(obj['element'], touches, startClient, -1)
 								}
 							} else {
@@ -458,7 +470,10 @@
 						} else {
 							//to bottom
 							obj['element'].BuiltInGetLastClientY = touches.clientY
-							if (Math.abs(touches.clientX - startClient['clientX']) < Math.abs(touches.clientY - startClient['clientY']) && Math.abs(touches.clientX - startClient['clientX']) < obj['relataxis']) {
+							if (
+								Math.abs(touches.clientX - startClient['clientX']) < Math.abs(touches.clientY - startClient['clientY']) &&
+								Math.abs(touches.clientX - startClient['clientX']) < obj['relataxis']
+							) {
 								obj['fnDuring'] && obj['fnDuring'].call(obj['element'], touches, startClient, 1)
 							}
 						}
@@ -475,7 +490,10 @@
 						var touches = e.changedTouches[0],
 							isSwipe = false,
 							offset = obj['offsetY'] || obj['offset'] || 30
-						if (Math.abs(touches.clientX - startClient['clientX']) < Math.abs(touches.clientY - startClient['clientY']) && Math.abs(touches.clientX - startClient['clientX']) < obj['relataxis']) {
+						if (
+							Math.abs(touches.clientX - startClient['clientX']) < Math.abs(touches.clientY - startClient['clientY']) &&
+							Math.abs(touches.clientX - startClient['clientX']) < obj['relataxis']
+						) {
 							if (touches.clientY - startClient['clientY'] > 1 * offset) {
 								obj['fnBack'] && obj['fnBack'].call(obj['element'], touches, startClient)
 								isSwipe = true
@@ -510,7 +528,10 @@
 							//to right
 							obj['element'].BuiltInGetLastClientX = touches.clientX
 							if (!single) {
-								if (Math.abs(touches.clientX - startClient['clientX']) > Math.abs(touches.clientY - startClient['clientY']) && Math.abs(touches.clientY - startClient['clientY']) < obj['relataxis']) {
+								if (
+									Math.abs(touches.clientX - startClient['clientX']) > Math.abs(touches.clientY - startClient['clientY']) &&
+									Math.abs(touches.clientY - startClient['clientY']) < obj['relataxis']
+								) {
 									obj['fnDuring'] && obj['fnDuring'].call(obj['element'], touches, startClient, -1)
 								}
 							} else {
@@ -519,7 +540,10 @@
 						} else {
 							//to left
 							obj['element'].BuiltInGetLastClientX = touches.clientX
-							if (Math.abs(touches.clientX - startClient['clientX']) > Math.abs(touches.clientY - startClient['clientY']) && Math.abs(touches.clientY - startClient['clientY']) < obj['relataxis']) {
+							if (
+								Math.abs(touches.clientX - startClient['clientX']) > Math.abs(touches.clientY - startClient['clientY']) &&
+								Math.abs(touches.clientY - startClient['clientY']) < obj['relataxis']
+							) {
 								obj['fnDuring'] && obj['fnDuring'].call(obj['element'], touches, startClient, 1)
 							}
 						}
@@ -536,7 +560,10 @@
 						var touches = e.changedTouches[0],
 							isSwipe = false,
 							offset = obj['offsetY'] || obj['offset'] || 30
-						if (Math.abs(touches.clientX - startClient['clientX']) > Math.abs(touches.clientY - startClient['clientY']) && Math.abs(touches.clientY - startClient['clientY']) < obj['relataxis']) {
+						if (
+							Math.abs(touches.clientX - startClient['clientX']) > Math.abs(touches.clientY - startClient['clientY']) &&
+							Math.abs(touches.clientY - startClient['clientY']) < obj['relataxis']
+						) {
 							if (touches.clientY - startClient['clientX'] < -1 * offset) {
 								obj['fnBack'] && obj['fnBack'].call(obj['element'], touches, startClient)
 								isSwipe = true
@@ -571,7 +598,10 @@
 							//to left
 							obj['element'].BuiltInGetLastClientX = touches.clientX
 							if (!single) {
-								if (Math.abs(touches.clientX - startClient['clientX']) > Math.abs(touches.clientY - startClient['clientY']) && Math.abs(touches.clientY - startClient['clientY']) < obj['relataxis']) {
+								if (
+									Math.abs(touches.clientX - startClient['clientX']) > Math.abs(touches.clientY - startClient['clientY']) &&
+									Math.abs(touches.clientY - startClient['clientY']) < obj['relataxis']
+								) {
 									obj['fnDuring'] && obj['fnDuring'].call(obj['element'], touches, startClient, -1)
 								}
 							} else {
@@ -580,7 +610,10 @@
 						} else {
 							//to right
 							obj['element'].BuiltInGetLastClientX = touches.clientX
-							if (Math.abs(touches.clientX - startClient['clientX']) > Math.abs(touches.clientY - startClient['clientY']) && Math.abs(touches.clientY - startClient['clientY']) < obj['relataxis']) {
+							if (
+								Math.abs(touches.clientX - startClient['clientX']) > Math.abs(touches.clientY - startClient['clientY']) &&
+								Math.abs(touches.clientY - startClient['clientY']) < obj['relataxis']
+							) {
 								obj['fnDuring'] && obj['fnDuring'].call(obj['element'], touches, startClient, 1)
 							}
 						}
@@ -597,7 +630,10 @@
 						var touches = e.changedTouches[0],
 							isSwipe = false,
 							offset = obj['offsetY'] || obj['offset'] || 30
-						if (Math.abs(touches.clientX - startClient['clientX']) > Math.abs(touches.clientY - startClient['clientY']) && Math.abs(touches.clientY - startClient['clientY']) < obj['relataxis']) {
+						if (
+							Math.abs(touches.clientX - startClient['clientX']) > Math.abs(touches.clientY - startClient['clientY']) &&
+							Math.abs(touches.clientY - startClient['clientY']) < obj['relataxis']
+						) {
 							if (touches.clientY - startClient['clientX'] > 1 * offset) {
 								obj['fnBack'] && obj['fnBack'].call(obj['element'], touches, startClient)
 								isSwipe = true

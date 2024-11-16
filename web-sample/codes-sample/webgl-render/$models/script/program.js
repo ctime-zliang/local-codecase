@@ -391,7 +391,8 @@ class Program {
 				const ratioDistX = 0.65 * itemDistNativeX
 				const ratioDistY = 0.65 * itemDistNativeY
 				const len = Math.sqrt(totalDistNativeX * totalDistNativeX + totalDistNativeY * totalDistNativeY)
-				const ratationQuaternion = len === 0 ? Ven$Quaternion.initQuaternion() : Ven$Quaternion.fromRotation(Ven$Angles.degreeToRadian(len * 0.65), new Ven$Vector3(totalDistNativeY / len, totalDistNativeX / len, 0))
+				const ratationQuaternion =
+					len === 0 ? Ven$Quaternion.initQuaternion() : Ven$Quaternion.fromRotation(Ven$Angles.degreeToRadian(len * 0.65), new Ven$Vector3(totalDistNativeY / len, totalDistNativeX / len, 0))
 				self.getModelInstances(self.glControl.modelInstances).forEach(modelInstanceItem => {
 					modelInstanceItem.modeControl.currentQuaternion = Ven$Quaternion.multiplyQuaternions(ratationQuaternion, modelInstanceItem.modeControl.lastQuaternion)
 					modelInstanceItem.modeControl.currentMatrixData = Ven$Quaternion.makeRotationFromQuaternion(modelInstanceItem.modeControl.currentQuaternion)

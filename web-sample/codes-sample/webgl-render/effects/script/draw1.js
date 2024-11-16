@@ -138,7 +138,15 @@ class ShereModel1 extends Model1 {
 					alphaRange: [1, 1],
 			  }
 			: undefined
-		return createShereDatas(this.modelParam.radius, this.modelParam.meridianCount, this.modelParam.latitudeCount, colorSetting, this.modelParam.offsetX, this.modelParam.offsetY, this.modelParam.offsetZ)
+		return createShereDatas(
+			this.modelParam.radius,
+			this.modelParam.meridianCount,
+			this.modelParam.latitudeCount,
+			colorSetting,
+			this.modelParam.offsetX,
+			this.modelParam.offsetY,
+			this.modelParam.offsetZ
+		)
 	}
 }
 
@@ -890,7 +898,18 @@ function drawCanvas1(containerElement) {
 	Program1.glControl.commonLight.program = ven$createProgram(Program1.glControl.gl, COMMON_VERTEX_SHADER, COMMON_FRAGMENT_SHADER)
 	const commonWebGLVariableLocation = ven$getWebGLVariableLocation(Program1.glControl.gl, Program1.glControl.commonLight.program, {
 		glAttributes: ['a_Normal', 'a_Position', 'a_Color'],
-		glUniforms: ['u_illuType', 'u_LightColor', 'u_LightPosition', 'u_LightDirection', 'u_AmbientLightColor', 'u_lightIntensityGain', 'u_NormalMatrix', 'u_ModelMatrix', 'u_ViewMatrix', 'u_ProjMatrix'],
+		glUniforms: [
+			'u_illuType',
+			'u_LightColor',
+			'u_LightPosition',
+			'u_LightDirection',
+			'u_AmbientLightColor',
+			'u_lightIntensityGain',
+			'u_NormalMatrix',
+			'u_ModelMatrix',
+			'u_ViewMatrix',
+			'u_ProjMatrix',
+		],
 	})
 	Program1.glControl.commonLight.glAttributes = commonWebGLVariableLocation.glAttributes
 	Program1.glControl.commonLight.glUniforms = commonWebGLVariableLocation.glUniforms
@@ -898,7 +917,19 @@ function drawCanvas1(containerElement) {
 	Program1.glControl.textureLight.program = ven$createProgram(Program1.glControl.gl, TEXTURE_VERTEX_SHADER, TEXTURE_FRAGMENT_SHADER)
 	const textureWebGLVariableLocation = ven$getWebGLVariableLocation(Program1.glControl.gl, Program1.glControl.textureLight.program, {
 		glAttributes: ['a_Normal', 'a_Position', 'a_Color', 'a_TexCoord'],
-		glUniforms: ['u_illuType', 'u_LightColor', 'u_LightPosition', 'u_LightDirection', 'u_AmbientLightColor', 'u_lightIntensityGain', 'u_NormalMatrix', 'u_ModelMatrix', 'u_ViewMatrix', 'u_ProjMatrix', 'u_Sampler'],
+		glUniforms: [
+			'u_illuType',
+			'u_LightColor',
+			'u_LightPosition',
+			'u_LightDirection',
+			'u_AmbientLightColor',
+			'u_lightIntensityGain',
+			'u_NormalMatrix',
+			'u_ModelMatrix',
+			'u_ViewMatrix',
+			'u_ProjMatrix',
+			'u_Sampler',
+		],
 	})
 	Program1.glControl.textureLight.glAttributes = textureWebGLVariableLocation.glAttributes
 	Program1.glControl.textureLight.glUniforms = textureWebGLVariableLocation.glUniforms

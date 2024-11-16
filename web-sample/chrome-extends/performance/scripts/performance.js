@@ -62,7 +62,8 @@
 				C.rdleRatioCycleAverageYPositions = [].concat(C.rdleRatioCycleAverageYPositions, new Array(e).fill(t))
 			},
 			calcRAFCommonData() {
-				;(C.rAFRatioCycleAverage = C.rAFIntervalCount / (C.refreshViewDiffTime / 1e3)), C.maxRAFRatioCycleAverage <= C.rAFRatioCycleAverage && (C.maxRAFRatioCycleAverage = C.rAFRatioCycleAverage)
+				;(C.rAFRatioCycleAverage = C.rAFIntervalCount / (C.refreshViewDiffTime / 1e3)),
+					C.maxRAFRatioCycleAverage <= C.rAFRatioCycleAverage && (C.maxRAFRatioCycleAverage = C.rAFRatioCycleAverage)
 			},
 			calcRAFPolylineData(e, t) {
 				C.rAFRatioCycleAverageYPositions.push(e + ((C.maxRAFRatioCycleAverage - C.rAFRatioCycleAverage) / C.maxRAFRatioCycleAverage) * t),
@@ -123,7 +124,8 @@
 		F = {
 			drawMemoryText(e, t) {
 				const a = `${(g.usedJSHeapSize / Math.pow(1024, 2)).toFixed(2)}/${(g.totalJSHeapSize / Math.pow(1024, 2)).toFixed(2)} M`
-				;(C.ctx.fillStyle = g.usedJSHeapSize >= g.jsHeapSizeLimit * c[1] ? m[0] : g.usedJSHeapSize >= g.jsHeapSizeLimit * c[0] && g.usedJSHeapSize < g.jsHeapSizeLimit * c[1] ? m[1] : m[2]), C.ctx.fillText(a, e, t)
+				;(C.ctx.fillStyle = g.usedJSHeapSize >= g.jsHeapSizeLimit * c[1] ? m[0] : g.usedJSHeapSize >= g.jsHeapSizeLimit * c[0] && g.usedJSHeapSize < g.jsHeapSizeLimit * c[1] ? m[1] : m[2]),
+					C.ctx.fillText(a, e, t)
 			},
 			drawRAFRefreshText(e, t) {
 				const a = `${g.refreshViewDiffTime}`
@@ -161,7 +163,9 @@
 				  F.drawRAFRefreshText(i[4][0], i[4][1] + (i[4][3] - d) / 2),
 				  void F.drawPolyline(g.rdleRatioCycleAverageYPositions, i[5][1] + i[5][3], C.rICLinearGradient))
 				: l === t[2]
-				? (F.drawMemoryText(i[0][0], i[0][1] + (i[0][3] - d) / 2), F.drawRAFText(i[1][0], i[1][1] + (i[1][3] - d) / 2), void F.drawPolyline(g.rAFRatioCycleAverageYPositions, i[2][1] + i[2][3], C.rAFLinearGradient))
+				? (F.drawMemoryText(i[0][0], i[0][1] + (i[0][3] - d) / 2),
+				  F.drawRAFText(i[1][0], i[1][1] + (i[1][3] - d) / 2),
+				  void F.drawPolyline(g.rAFRatioCycleAverageYPositions, i[2][1] + i[2][3], C.rAFLinearGradient))
 				: void 0
 		),
 		h = () => {
@@ -192,9 +196,13 @@
 		P = () => {
 			;(() => {
 				const e = document.createElement('style')
-				;(e.type = 'text/css'), e.styleSheet ? (e.styleSheet.cssText = y.cssText) : e.appendChild(document.createTextNode(y.cssText)), (document.head || document.getElementsByTagName('head')[0]).appendChild(e)
+				;(e.type = 'text/css'),
+					e.styleSheet ? (e.styleSheet.cssText = y.cssText) : e.appendChild(document.createTextNode(y.cssText)),
+					(document.head || document.getElementsByTagName('head')[0]).appendChild(e)
 			})(),
-				(document.body || document.getElementsByTagName('body')[0]).appendChild(document.createRange().createContextualFragment(`<div class="${A}"><canvas width="${r[0]}" height="${r[1]}"></canvas></div>`)),
+				(document.body || document.getElementsByTagName('body')[0]).appendChild(
+					document.createRange().createContextualFragment(`<div class="${A}"><canvas width="${r[0]}" height="${r[1]}"></canvas></div>`)
+				),
 				(C.containerElement = document.querySelector(`.${A}`)),
 				(C.mainCanvasElement = C.containerElement.getElementsByTagName('canvas')[0]),
 				chrome.runtime.onMessage.addListener((a, i, o) => {

@@ -494,7 +494,8 @@
 			const lastDotRecordInPointerdown2 = _$profile.lastDotsRecordInPointerdown[1]
 			/* ... */
 			const center = this.getCenter({ x: pointer1.clientX, y: pointer1.clientY }, { x: pointer2.clientX, y: pointer2.clientY })
-			const rotate = this.getAngle({ x: pointer1.clientX, y: pointer1.clientY }, { x: pointer2.clientX, y: pointer2.clientY }) - this.getAngle(lastDotRecordInPointerdown1, lastDotRecordInPointerdown2)
+			const rotate =
+				this.getAngle({ x: pointer1.clientX, y: pointer1.clientY }, { x: pointer2.clientX, y: pointer2.clientY }) - this.getAngle(lastDotRecordInPointerdown1, lastDotRecordInPointerdown2)
 			this.options.onRotate &&
 				this.options.onRotate.call(
 					undefined,
@@ -510,7 +511,9 @@
 					},
 					this
 				)
-			const scale = this.getDistance({ x: pointer1.clientX, y: pointer1.clientY }, { x: pointer2.clientX, y: pointer2.clientY }) / this.getDistance(lastDotRecordInPointerdown1, lastDotRecordInPointerdown2)
+			const scale =
+				this.getDistance({ x: pointer1.clientX, y: pointer1.clientY }, { x: pointer2.clientX, y: pointer2.clientY }) /
+				this.getDistance(lastDotRecordInPointerdown1, lastDotRecordInPointerdown2)
 			this.options.onPinch &&
 				this.options.onPinch.call(
 					undefined,

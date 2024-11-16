@@ -144,7 +144,15 @@ class ShereModel3 extends Model3 {
 					alphaRange: [1, 1],
 			  }
 			: undefined
-		return createShereDatas(this.modelParam.radius, this.modelParam.meridianCount, this.modelParam.latitudeCount, colorSetting, this.modelParam.offsetX, this.modelParam.offsetY, this.modelParam.offsetZ)
+		return createShereDatas(
+			this.modelParam.radius,
+			this.modelParam.meridianCount,
+			this.modelParam.latitudeCount,
+			colorSetting,
+			this.modelParam.offsetX,
+			this.modelParam.offsetY,
+			this.modelParam.offsetZ
+		)
 	}
 }
 
@@ -649,7 +657,12 @@ function drawCanvas3(containerElement) {
 					new Ven$Vector3(0, 1, 0)
 				)
 			} else {
-				projectionMatrix4 = Ven$CanvasMatrix4.setPerspective(Program3.profile.persProjection.fovy, canvasElement.width / canvasElement.height, Program3.profile.persProjection.near, Program3.profile.persProjection.far)
+				projectionMatrix4 = Ven$CanvasMatrix4.setPerspective(
+					Program3.profile.persProjection.fovy,
+					canvasElement.width / canvasElement.height,
+					Program3.profile.persProjection.near,
+					Program3.profile.persProjection.far
+				)
 				lookAtMatrix4 = Ven$CanvasMatrix4.setLookAt(
 					new Ven$Vector3(Program3.profile.lookAt.eyePosition.x, Program3.profile.lookAt.eyePosition.y, Program3.profile.lookAt.eyePosition.z),
 					new Ven$Vector3(Program3.profile.lookAt.atPosition.x, Program3.profile.lookAt.atPosition.y, Program3.profile.lookAt.atPosition.z),
