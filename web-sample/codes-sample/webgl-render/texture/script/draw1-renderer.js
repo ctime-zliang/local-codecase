@@ -30,29 +30,31 @@ function draw1Renderer(type, glControl, callback) {
                 void main() {
                     gl_FragColor = v_Color;
                     vec4 color = texture2D(u_texture, v_textureCoord);
-                    float dotSize = 9.0;
                     // 在 X 轴方向上, 将片元 X 轴坐标值按 {dotSize} 长度划分组
-                    // 每组的第 0 - 2 个像素仅保留 R 通道
-                    // 每组的第 3 - 5 个像素仅保留 G 通道
-                    // 每组的第 6 - 8 个像素仅保留 B 通道
-                    if ((mod(gl_FragCoord.xy.x, dotSize)) < 3.0) {
+                    // 在每组内部按 {portionsSize} 长度继续划分等长小份
+                    // 第 1 份(每组的第 0 至 {dotSize / portionsSize * 1 - 1} 个像素)像素组仅保留 R 通道
+                    // 第 2 份(每组的第 {dotSize / portionsSize * 1 - 1 + 1} 至 {dotSize / portionsSize * 2 - 1} 个像素)像素组仅保留 G 通道
+                    // 第 3 份(每组的第 {dotSize / portionsSize * 2 - 1 + 1} 至 {dotSize / portionsSize * 3 - 1} 个像素)像素组仅保留 B 通道
+                    float dotGroupSize = 9.0;
+                    float portionsSize = 3.0;
+                    if ((mod(gl_FragCoord.xy.x, dotGroupSize)) < portionsSize * 1.0) {
                         color.rgb.r *= 1.0;
                         color.rgb.g *= 0.0;
                         color.rgb.b *= 0.0;
-                    } else if ((mod(gl_FragCoord.xy.x, dotSize)) < 6.0) {
+                    } else if ((mod(gl_FragCoord.xy.x, dotGroupSize)) < portionsSize * 2.0) {
                         color.rgb.r *= 0.0;
                         color.rgb.g *= 1.0;
                         color.rgb.b *= 0.0;
-                    } else if ((mod(gl_FragCoord.xy.x, dotSize)) < 9.0) {
+                    } else if ((mod(gl_FragCoord.xy.x, dotGroupSize)) < portionsSize * 3.0) {
                         color.rgb.r *= 0.0;
                         color.rgb.g *= 0.0;
                         color.rgb.b *= 1.0;
                     }
+                    // 在 Y 轴方向上, 将片元 Y 轴坐标值按 {dotGroupSize} 长度划分组
+                    // 每组的第 0 - {ySplit - 1} 个像素不渲染
+                    // 即在 Y 轴方向上, 片元将出现长度为 {ySplit} 的间隔
                     float ySplit = 6.0;
-                    if (mod(gl_FragCoord.xy.y, dotSize) < ySplit) {
-                        // 在 Y 轴方向上, 将片元 Y 轴坐标值按 {dotSize} 长度划分组
-                        // 每组的第 0 - {ySplit - 1} 个像素不渲染
-                        // 即在 Y 轴方向上, 片元将出现长度为 {ySplit} 的间隔
+                    if (mod(gl_FragCoord.xy.y, dotGroupSize) < ySplit) {
                         discard;
                     }
                     gl_FragColor = vec4(color.rgb, 1.0);
