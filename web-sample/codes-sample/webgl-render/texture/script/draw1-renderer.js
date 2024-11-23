@@ -88,7 +88,7 @@ function draw1Renderer(type, glControl, callback) {
             `
 			const COMMON_FRAGMENT_SHADER = `
                 precision mediump float;
-                #define SUBPIXEL_SIZE 10.0
+                #define SUBPIXEL_SIZE 20.0
                 varying vec4 v_Color;
                 varying vec2 v_textureCoord;
                 // 纹理参数(组)
@@ -98,9 +98,7 @@ function draw1Renderer(type, glControl, callback) {
                 void main() {
                     gl_FragColor = v_Color;
                     vec2 p = gl_FragCoord.xy / SUBPIXEL_SIZE;
-                    vec2 uv = floor(p) * SUBPIXEL_SIZE / u_resolution.xy;
-                    uv.x = -uv.x;
-                    vec4 color = texture2D(u_texture, -uv);    
+                    vec4 color = texture2D(u_texture, v_textureCoord);    
                     vec4 result = vec4(0.0, 0.0, 0.0, 1.0);
                     vec2 remainder = floor(mod(p, 2.0) + 0.5);
                     if (remainder.x == 1.0) {
