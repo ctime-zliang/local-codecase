@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Instanced Points Example</title>
+		<style>
+			body {
+				margin: 0;
+			}
+			canvas {
+				width: 100%;
+				height: 100%;
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id="glCanvas"></canvas>
+		<script>
+			const glCanvas = document.getElementById('glCanvas')
+			glCanvas.width = window.innerWidth
+			glCanvas.height = window.innerHeight
+			const gl = glCanvas.getContext('webgl')
+
+			if (!gl) {
+				throw new Error('Unable to initialize WebGL. Your browser or machine may not support it.')
+			}
+
+			const ext = gl.getExtension('ANGLE_instanced_arrays')
+			if (!ext) {
+				throw new Error('ANGLE_instanced_arrays extension not supported.')
+			}
+
+			const vsSource = `
+attribute vec2 aOffset;
+attribute vec4 aVertexPosition;
+attribute vec4 aInstanceColor;
+
+varying vec4 vColor;
+
+void main() {
+  gl_Position = vec4(aVertexPosition.xy + aOffset, 0.0, 1.0);
+  vColor = aInstanceColor;
+  gl_PointSize = 10.0; // 设置点的大小
+}
+`
+
+			const fsSource = `
+precision mediump float;
+varying vec4 vColor;
+
+void main() {
+  gl_FragColor = vColor;
+}
+`
+
+			function initShaderProgram(gl, vsSource, fsSource) {
+				const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vsSource)
+				const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fsSource)
+
+				const shaderProgram = gl.createProgram()
+				gl.attachShader(shaderProgram, vertexShader)
+				gl.attachShader(shaderProgram, fragmentShader)
+				gl.linkProgram(shaderProgram)
+
+				return shaderProgram
+			}
+
+			function loadShader(gl, type, source) {
+				const shader = gl.createShader(type)
+				gl.shaderSource(shader, source)
+				gl.compileShader(shader)
+				return shader
+			}
+
+			const shaderProgram = initShaderProgram(gl, vsSource, fsSource)
+
+			const programInfo = {
+				program: shaderProgram,
+				attribLocations: {
+					vertexPosition: gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
+					instanceColor: gl.getAttribLocation(shaderProgram, 'aInstanceColor'),
+					offset: gl.getAttribLocation(shaderProgram, 'aOffset'),
+				},
+			}
+
+			const numPoints = 12
+			const offsets = []
+			const positions = new Float32Array(numPoints * 2)
+			const colors = new Float32Array(numPoints * 4)
+
+			for (let i = 0; i < numPoints; i++) {
+				offsets.push(i * 0.1 - 1.0, 0.0)
+				positions[i * 2] = Math.random() * 2 - 1 // x坐标，范围 -1 到 1
+				positions[i * 2 + 1] = Math.random() * 2 - 1 // y坐标，范围 -1 到 1
+				colors[i * 4] = Math.random() // r
+				colors[i * 4 + 1] = Math.random() // g
+				colors[i * 4 + 2] = Math.random() // b
+				colors[i * 4 + 3] = 1.0 // a
+			}
+
+			console.log(offsets, positions, colors)
+
+			const offsetBuffer = gl.createBuffer()
+			gl.bindBuffer(gl.ARRAY_BUFFER, offsetBuffer)
+			gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(offsets), gl.STATIC_DRAW)
+
+			const positionBuffer = gl.createBuffer()
+			gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer)
+			gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW)
+
+			const colorBuffer = gl.createBuffer()
+			gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer)
+			gl.bufferData(gl.ARRAY_BUFFER, colors, gl.STATIC_DRAW)
+
+			function drawScene() {
+				gl.clearColor(0.0, 0.0, 0.0, 1.0)
+				gl.clear(gl.COLOR_BUFFER_BIT)
+
+				gl.useProgram(programInfo.program)
+
+				gl.bindBuffer(gl.ARRAY_BUFFER, offsetBuffer)
+				gl.vertexAttribPointer(programInfo.attribLocations.offset, 2, gl.FLOAT, false, 0, 0)
+				gl.enableVertexAttribArray(programInfo.attribLocations.offset)
+
+				gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer)
+				gl.vertexAttribPointer(programInfo.attribLocations.vertexPosition, 2, gl.FLOAT, false, 0, 0)
+				gl.enableVertexAttribArray(programInfo.attribLocations.vertexPosition)
+
+				gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer)
+				gl.vertexAttribPointer(programInfo.attribLocations.instanceColor, 4, gl.FLOAT, false, 0, 0)
+				gl.enableVertexAttribArray(programInfo.attribLocations.instanceColor)
+
+				ext.vertexAttribDivisorANGLE(programInfo.attribLocations.instanceColor, 1)
+				ext.vertexAttribDivisorANGLE(programInfo.attribLocations.offset, 1)
+				ext.drawArraysInstancedANGLE(gl.TRIANGLES, 0, 3, (numPoints * 2) / 3)
+
+				// gl.drawArrays(gl.TRIANGLES, 0, numPoints)
+			}
+
+			drawScene()
+		</script>
+	</body>
+</html>

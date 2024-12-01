@@ -92,9 +92,9 @@ class TriangleModel1 extends Model1 {
 				0.0, -0.75, -2.0, 1.0, 1.0, 0.4, 1.0, 
 				0.75, -0.75, -2.0, 1.0, 0.4, 0.4, 1.0,
 				/* 蓝色 */
-				0.625, 0.75, 0.0, 0.4, 0.4, 1.0, 1.0, 
-				0.25, -0.75, 0.0, 0.4, 0.4, 1.0, 1.0, 
-				1.0, -0.75, 0.0, 1.0, 0.4, 0.4, 1.0,
+				6.25, 7.5, 0.0, 0.4, 0.4, 1.0, 1.0, 
+				2.5, -7.5, 0.0, 0.4, 0.4, 1.0, 1.0, 
+				10, -7.5, 0.0, 1.0, 0.4, 0.4, 1.0,
 			]),
 		}
 	}
@@ -123,10 +123,10 @@ class Program1 {
 		 * 正交投影矩阵参数
 		 */
 		orthoProjection: {
-			left: -1,
-			right: 1,
-			bottom: -1,
-			top: 1,
+			left: -10,
+			right: 10,
+			bottom: -10,
+			top: 10,
 			near: -50,
 			far: 50,
 		},
@@ -440,6 +440,7 @@ function drawCanvas1(containerElement) {
 				new Ven$Vector3(0, 1, 0)
 			)
 			gl.uniformMatrix4fv(glUniforms.u_ViewMatrix, false, new Float32Array(lookAtMatrix4.data))
+			console.log(orthoMatrix4.multiply4(lookAtMatrix4))
 		},
 		render(gl, vertexFeatureSize, modelInstances, itemProgramControl) {
 			modelInstances.forEach(modelInstanceItem => {
