@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>WebGL线段绘制</title>
+	</head>
+	<body>
+		<canvas id="myCanvas" width="500" height="300"></canvas>
+		<script>
+			const canvas = document.getElementById('myCanvas')
+			const gl = canvas.getContext('webgl')
+
+			// 顶点着色器
+			const vertexShaderSource = `
+            attribute vec2 a_position;
+            uniform vec2 u_resolution;
+            void main() {
+                vec2 zeroToOne = a_position / u_resolution;
+                vec2 zeroToTwo = zeroToOne * 2.0;
+                vec2 clipSpace = zeroToTwo - 1.0;
+                gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
+            }
+        `
+
+			// 片段着色器
+			const fragmentShaderSource = `
+            precision mediump float;
+            uniform vec4 u_color;
+            void main() {
+                gl_FragColor = u_color;
+            }
+        `
+
+			// 创建着色器
+			function createShader(gl, type, source) {
+				const shader = gl.createShader(type)
+				gl.shaderSource(shader, source)
+				gl.compileShader(shader)
+				const success = gl.getShaderParameter(shader, gl.COMPILE_STATUS)
+				if (!success) {
+					console.error(gl.getShaderInfoLog(shader))
+					gl.deleteShader(shader)
+					return null
+				}
+				return shader
+			}
+
+			const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource)
+			const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource)
+
+			// 创建程序
+			function createProgram(gl, vertexShader, fragmentShader) {
+				const program = gl.createProgram()
+				gl.attachShader(program, vertexShader)
+				gl.attachShader(program, fragmentShader)
+				gl.linkProgram(program)
+				const success = gl.getProgramParameter(program, gl.LINK_STATUS)
+				if (!success) {
+					console.error(gl.getProgramInfoLog(program))
+					gl.deleteProgram(program)
+					return null
+				}
+				return program
+			}
+
+			const program = createProgram(gl, vertexShader, fragmentShader)
+
+			// 获取变量位置
+			const positionAttributeLocation = gl.getAttribLocation(program, 'a_position')
+			const resolutionUniformLocation = gl.getUniformLocation(program, 'u_resolution')
+			const colorUniformLocation = gl.getUniformLocation(program, 'u_color')
+
+			// 创建缓冲
+			const positionBuffer = gl.createBuffer()
+			gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer)
+
+			// 绘制线段函数
+			function drawLine(x1, y1, x2, y2, lineWidth, color) {
+				gl.useProgram(program)
+
+				// 设置分辨率
+				gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height)
+
+				// 设置颜色
+				gl.uniform4fv(colorUniformLocation, color)
+
+				// 计算法线向量
+				const dx = x2 - x1
+				const dy = y2 - y1
+				const normalX = -dy
+				const normalY = dx
+				const length = Math.sqrt(normalX * normalX + normalY * normalY)
+				const normalizedNormalX = normalX / length
+				const normalizedNormalY = normalY / length
+
+				// 计算顶点位置
+				const offsetX = (normalizedNormalX * lineWidth) / 2
+				const offsetY = (normalizedNormalY * lineWidth) / 2
+				const positions = [x1 - offsetX, y1 - offsetY, x2 - offsetX, y2 - offsetY, x1 + offsetX, y1 + offsetY, x2 + offsetX, y2 + offsetY]
+
+				gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW)
+
+				// 启用属性
+				gl.enableVertexAttribArray(positionAttributeLocation)
+				gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0)
+
+				// 绘制
+				gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
+			}
+
+			// 绘制示例
+			drawLine(50, 50, 400, 200, 5, [1, 0, 0, 1]) // 红色线段
+			drawLine(100, 200, 300, 50, 10, [0, 0, 1, 1]) // 蓝色线段
+		</script>
+	</body>
+</html>
