@@ -131,7 +131,7 @@ void main() {
 
 				ext.vertexAttribDivisorANGLE(programInfo.attribLocations.instanceColor, 1)
 				ext.vertexAttribDivisorANGLE(programInfo.attribLocations.offset, 1)
-				ext.drawArraysInstancedANGLE(gl.TRIANGLES, 0, 3, (numPoints * 2) / 3)
+				ext.drawArraysInstancedANGLE(gl.TRIANGLES, 0, 3, 4)
 
 				// gl.drawArrays(gl.TRIANGLES, 0, numPoints)
 			}
