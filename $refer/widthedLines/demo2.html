@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>WebGL 粗线段</title>
+	</head>
+	<body>
+		<canvas id="myCanvas" width="500" height="500"></canvas>
+		<script>
+			const canvas = document.getElementById('myCanvas')
+			const gl = canvas.getContext('webgl')
+
+			const vertexShaderSource = `
+            attribute vec2 a_position;
+            attribute float a_offsetDirection;
+            uniform vec2 u_resolution;
+            uniform vec2 u_startPoint;
+            uniform vec2 u_endPoint;
+            uniform float u_lineWidth;
+            varying vec4 v_color;
+
+            void main() {
+                vec2 startPoint = u_startPoint / u_resolution * 2.0 - 1.0;
+                vec2 endPoint = u_endPoint / u_resolution * 2.0 - 1.0;
+                vec2 lineVector = endPoint - startPoint;
+                vec2 perpendicular = normalize(vec2(-lineVector.y, lineVector.x));
+                vec2 offset = perpendicular * u_lineWidth / u_resolution * a_offsetDirection;
+
+                gl_Position = vec4(startPoint + lineVector * a_position.x + offset, 0.0, 1.0);
+                v_color = vec4(1.0, 0.0, 0.0, 1.0);
+            }
+        `
+
+			const fragmentShaderSource = `
+            precision mediump float;
+            varying vec4 v_color;
+
+            void main() {
+                gl_FragColor = v_color;
+            }
+        `
+
+			// ... (其余代码与上一个版本类似，除了顶点数据和着色器 uniform 设置)
+			// ...
+
+			const vertexShader = gl.createShader(gl.VERTEX_SHADER)
+			gl.shaderSource(vertexShader, vertexShaderSource)
+			gl.compileShader(vertexShader)
+
+			const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER)
+			gl.shaderSource(fragmentShader, fragmentShaderSource)
+			gl.compileShader(fragmentShader)
+
+			const program = gl.createProgram()
+			gl.attachShader(program, vertexShader)
+			gl.attachShader(program, fragmentShader)
+			gl.linkProgram(program)
+			gl.useProgram(program)
+
+			const startPoint = [100, 200]
+			const endPoint = [400, 200]
+			const lineWidth = 20.0
+
+			const resolutionLocation = gl.getUniformLocation(program, 'u_resolution')
+			gl.uniform2f(resolutionLocation, canvas.width, canvas.height)
+
+			const startPointLocation = gl.getUniformLocation(program, 'u_startPoint')
+			gl.uniform2f(startPointLocation, startPoint[0], startPoint[1])
+
+			const endPointLocation = gl.getUniformLocation(program, 'u_endPoint')
+			gl.uniform2f(endPointLocation, endPoint[0], endPoint[1])
+
+			const lineWidthLocation = gl.getUniformLocation(program, 'u_lineWidth')
+			gl.uniform1f(lineWidthLocation, lineWidth)
+
+			const vertices = [0.0, 1.0, 0.0, 1.0]
+
+			const offsetDirection = [1.0, -1.0, 1.0, -1.0]
+
+			const positionBuffer = gl.createBuffer()
+			gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer)
+			gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW)
+
+			const positionLocation = gl.getAttribLocation(program, 'a_position')
+			gl.enableVertexAttribArray(positionLocation)
+			gl.vertexAttribPointer(positionLocation, 1, gl.FLOAT, false, 0, 0)
+
+			const offsetDirectionBuffer = gl.createBuffer()
+			gl.bindBuffer(gl.ARRAY_BUFFER, offsetDirectionBuffer)
+			gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(offsetDirection), gl.STATIC_DRAW)
+
+			const offsetDirectionLocation = gl.getAttribLocation(program, 'a_offsetDirection')
+			gl.enableVertexAttribArray(offsetDirectionLocation)
+			gl.vertexAttribPointer(offsetDirectionLocation, 1, gl.FLOAT, false, 0, 0)
+
+			gl.clearColor(0.0, 0.0, 0.0, 1.0)
+			gl.clear(gl.COLOR_BUFFER_BIT)
+			gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
+		</script>
+	</body>
+</html>

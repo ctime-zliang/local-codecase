@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>WebGL坐标轴</title>
+		<style>
+			body {
+				margin: 0;
+				overflow: hidden;
+			}
+			canvas {
+				display: block;
+			}
+		</style>
+		<script src="../asserts/gl-matrix.js"></script>
+	</head>
+	<body>
+		<canvas id="canvas"></canvas>
+		<script>
+			const canvas = document.getElementById('canvas')
+			canvas.width = window.innerWidth
+			canvas.height = window.innerHeight
+			const gl = canvas.getContext('webgl')
+
+			// 顶点着色器
+			const vsSource = `
+            attribute vec4 a_Position;
+            uniform mat4 u_ModelViewMatrix;
+            uniform mat4 u_ProjectionMatrix;
+            void main() {
+                gl_Position = u_ProjectionMatrix * u_ModelViewMatrix * a_Position;
+            }
+        `
+
+			// 片段着色器
+			const fsSource = `
+            precision mediump float;
+            uniform vec4 u_Color;
+            void main() {
+                gl_FragColor = u_Color;
+            }
+        `
+
+			const shaderProgram = initShaders(gl, vsSource, fsSource)
+			const programInfo = {
+				program: shaderProgram,
+				attribLocations: {
+					vertexPosition: gl.getAttribLocation(shaderProgram, 'a_Position'),
+				},
+				uniformLocations: {
+					projectionMatrix: gl.getUniformLocation(shaderProgram, 'u_ProjectionMatrix'),
+					modelViewMatrix: gl.getUniformLocation(shaderProgram, 'u_ModelViewMatrix'),
+					color: gl.getUniformLocation(shaderProgram, 'u_Color'),
+				},
+			}
+
+			// 绘制坐标轴
+			function drawAxis(gl, programInfo) {
+				const positions = new Float32Array([-1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 1.0, 0.0])
+
+				const buffer = gl.createBuffer()
+				gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
+				gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW)
+
+				gl.vertexAttribPointer(programInfo.attribLocations.vertexPosition, 3, gl.FLOAT, false, 0, 0)
+				gl.enableVertexAttribArray(programInfo.attribLocations.vertexPosition)
+
+				gl.uniform4fv(programInfo.uniformLocations.color, [1.0, 0.0, 0.0, 1.0]) // 黑色
+				gl.drawArrays(gl.LINES, 0, 4)
+			}
+
+			// 绘制网格
+			function drawGrid(gl, programInfo) {
+				const numLines = 20
+				const positions = []
+
+				for (let i = 0; i <= numLines; ++i) {
+					const x = -1 + (2 * i) / numLines
+					positions.push(x, -1, 0, x, 1, 0)
+					positions.push(-1, x, 0, 1, x, 0)
+				}
+
+				const buffer = gl.createBuffer()
+				gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
+				gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW)
+
+				gl.vertexAttribPointer(programInfo.attribLocations.vertexPosition, 3, gl.FLOAT, false, 0, 0)
+				gl.enableVertexAttribArray(programInfo.attribLocations.vertexPosition)
+
+				gl.uniform4fv(programInfo.uniformLocations.color, [0.8, 0.8, 0.8, 1.0]) // 灰色
+				gl.drawArrays(gl.LINES, 0, positions.length / 3)
+			}
+
+			function initShaders(gl, vsSource, fsSource) {
+				const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vsSource)
+				const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fsSource)
+
+				// 创建着色器程序
+				const shaderProgram = gl.createProgram()
+				gl.attachShader(shaderProgram, vertexShader)
+				gl.attachShader(shaderProgram, fragmentShader)
+				gl.linkProgram(shaderProgram)
+
+				// 创建失败，则输出错误信息
+				if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+					alert('无法初始化着色器程序: ' + gl.getProgramInfoLog(shaderProgram))
+					return null
+				}
+
+				return shaderProgram
+			}
+
+			function loadShader(gl, type, source) {
+				const shader = gl.createShader(type)
+				gl.shaderSource(shader, source)
+				gl.compileShader(shader)
+
+				if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+					alert('着色器编译错误: ' + gl.getShaderInfoLog(shader))
+					gl.deleteShader(shader)
+					return null
+				}
+
+				return shader
+			}
+
+			function drawScene(gl, programInfo) {
+				gl.clearColor(1.0, 1.0, 1.0, 1.0) // 白色背景
+				gl.clearDepth(1.0) // 清除深度缓冲区
+				gl.enable(gl.DEPTH_TEST) // 启用深度测试
+				gl.depthFunc(gl.LEQUAL) // 近的物体遮挡远的物体
+
+				gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+
+				const projectionMatrix = glMatrix.mat4.create()
+				glMatrix.mat4.ortho(projectionMatrix, -1, 1, -1, 1, 0.1, 100)
+
+				const modelViewMatrix = glMatrix.mat4.create()
+				glMatrix.mat4.translate(modelViewMatrix, modelViewMatrix, [0.0, 0.0, -5.0])
+
+				gl.useProgram(programInfo.program)
+
+				gl.uniformMatrix4fv(programInfo.uniformLocations.projectionMatrix, false, projectionMatrix)
+				gl.uniformMatrix4fv(programInfo.uniformLocations.modelViewMatrix, false, modelViewMatrix)
+
+				drawGrid(gl, programInfo)
+				drawAxis(gl, programInfo)
+			}
+
+			drawScene(gl, programInfo)
+		</script>
+	</body>
+</html>
