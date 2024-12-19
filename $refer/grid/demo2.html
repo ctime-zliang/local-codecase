@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>WebGL 网格和坐标轴</title>
+		<style>
+			body {
+				margin: 0;
+			}
+			canvas {
+				display: block;
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id="canvas"></canvas>
+		<script src="https://greggman.github.io/webgl-fundamentals/webgl-utils.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/2.8.1/gl-matrix-min.js"></script>
+		<script>
+			let cameraX = 0
+			let cameraY = 0
+			let zoom = 1
+
+			const canvas = document.getElementById('canvas')
+			const gl = canvas.getContext('webgl')
+
+			canvas.width = window.innerWidth
+			canvas.height = window.innerHeight
+
+			const vsSource = `
+    attribute vec4 aVertexPosition;
+    uniform mat4 uModelViewMatrix;
+    uniform mat4 uProjectionMatrix;
+    void main() {
+      gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
+    }
+  `
+
+			const fsSource = `
+    precision mediump float;
+    uniform vec4 uColor;
+    void main() {
+      gl_FragColor = uColor;
+    }
+  `
+
+			const shaderProgram = initShaderProgram(gl, vsSource, fsSource)
+
+			const programInfo = {
+				program: shaderProgram,
+				attribLocations: {
+					vertexPosition: gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
+				},
+				uniformLocations: {
+					projectionMatrix: gl.getUniformLocation(shaderProgram, 'uProjectionMatrix'),
+					modelViewMatrix: gl.getUniformLocation(shaderProgram, 'uModelViewMatrix'),
+					colorLocation: gl.getUniformLocation(shaderProgram, 'uColor'),
+				},
+			}
+
+			const axesPositions = new Float32Array([
+				0,
+				0,
+				0,
+				1,
+				0,
+				0, // x轴
+				0,
+				0,
+				0,
+				0,
+				1,
+				0, // y轴
+			])
+			const axesBuffers = initBuffers(gl, axesPositions)
+
+			function drawScene() {
+				gl.clearColor(1.0, 1.0, 1.0, 1.0)
+				gl.clearDepth(1.0)
+				gl.enable(gl.DEPTH_TEST)
+				gl.depthFunc(gl.LEQUAL)
+
+				gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+
+				const gridPositions = []
+				const gridSize = 20 * zoom
+				const gridSpacing = 0.2 * zoom
+
+				for (let i = -gridSize; i <= gridSize; i++) {
+					gridPositions.push(i * gridSpacing, -gridSize * gridSpacing, 0)
+					gridPositions.push(i * gridSpacing, gridSize * gridSpacing, 0)
+					gridPositions.push(-gridSize * gridSpacing, i * gridSpacing, 0)
+					gridPositions.push(gridSize * gridSpacing, i * gridSpacing, 0)
+				}
+
+				const gridBuffers = initBuffers(gl, new Float32Array(gridPositions))
+
+				const fieldOfView = (45 * Math.PI) / 180
+				const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight
+				const zNear = 0.1
+				const zFar = 100.0
+
+				const projectionMatrix = mat4.create()
+				mat4.perspective(projectionMatrix, fieldOfView, aspect, zNear, zFar)
+
+				const modelViewMatrix = mat4.create()
+				mat4.translate(modelViewMatrix, modelViewMatrix, [cameraX, cameraY, -6 / zoom])
+
+				// 绘制网格 (灰色)
+				{
+					gl.useProgram(programInfo.program)
+					gl.bindBuffer(gl.ARRAY_BUFFER, gridBuffers)
+					gl.vertexAttribPointer(programInfo.attribLocations.vertexPosition, 3, gl.FLOAT, false, 0, 0)
+					gl.enableVertexAttribArray(programInfo.attribLocations.vertexPosition)
+					gl.uniformMatrix4fv(programInfo.uniformLocations.projectionMatrix, false, projectionMatrix)
+					gl.uniformMatrix4fv(programInfo.uniformLocations.modelViewMatrix, false, modelViewMatrix)
+					gl.uniform4fv(programInfo.uniformLocations.colorLocation, [0.5, 0.5, 0.5, 1.0]) // 设置颜色为灰色
+					gl.drawArrays(gl.LINES, 0, gridPositions.length / 3)
+				}
+
+				// 绘制坐标轴
+				{
+					gl.useProgram(programInfo.program)
+					gl.bindBuffer(gl.ARRAY_BUFFER, axesBuffers)
+					gl.vertexAttribPointer(programInfo.attribLocations.vertexPosition, 3, gl.FLOAT, false, 0, 0)
+					gl.enableVertexAttribArray(programInfo.attribLocations.vertexPosition)
+					gl.uniformMatrix4fv(programInfo.uniformLocations.projectionMatrix, false, projectionMatrix)
+					gl.uniformMatrix4fv(programInfo.uniformLocations.modelViewMatrix, false, modelViewMatrix)
+
+					// 绘制 X 轴 (红色)
+					gl.uniform4fv(programInfo.uniformLocations.colorLocation, [1.0, 0.0, 0.0, 1.0])
+					gl.drawArrays(gl.LINES, 0, 2)
+
+					// 绘制 Y 轴 (绿色)
+					gl.uniform4fv(programInfo.uniformLocations.colorLocation, [0.0, 1.0, 0.0, 1.0])
+					gl.drawArrays(gl.LINES, 2, 2)
+				}
+			}
+
+			function initShaderProgram(gl, vsSource, fsSource) {
+				const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vsSource)
+				const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fsSource)
+
+				const shaderProgram = gl.createProgram()
+				gl.attachShader(shaderProgram, vertexShader)
+				gl.attachShader(shaderProgram, fragmentShader)
+				gl.linkProgram(shaderProgram)
+
+				if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+					alert('无法初始化着色器程序: ' + gl.getProgramInfoLog(shaderProgram))
+					return null
+				}
+
+				return shaderProgram
+			}
+
+			function loadShader(gl, type, source) {
+				const shader = gl.createShader(type)
+				gl.shaderSource(shader, source)
+				gl.compileShader(shader)
+
+				if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+					alert('着色器编译错误: ' + gl.getShaderInfoLog(shader))
+					gl.deleteShader(shader)
+					return null
+				}
+
+				return shader
+			}
+
+			function initBuffers(gl, positions) {
+				const positionBuffer = gl.createBuffer()
+				gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer)
+				gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW)
+				return positionBuffer
+			}
+
+			canvas.addEventListener('mousedown', e => {
+				let startX = e.clientX
+				let startY = e.clientY
+				const onMouseMove = e => {
+					const dx = e.clientX - startX
+					const dy = e.clientY - startY
+					cameraX += (dx * 0.002) / zoom
+					cameraY -= (dy * 0.002) / zoom
+					startX = e.clientX
+					startY = e.clientY
+					drawScene()
+				}
+
+				const onMouseUp = () => {
+					canvas.removeEventListener('mousemove', onMouseMove)
+					canvas.removeEventListener('mouseup', onMouseUp)
+				}
+
+				canvas.addEventListener('mousemove', onMouseMove)
+				canvas.addEventListener('mouseup', onMouseUp)
+			})
+
+			canvas.addEventListener('wheel', e => {
+				e.preventDefault()
+				zoom += e.deltaY * -0.001
+				zoom = Math.max(0.1, Math.min(zoom, 10))
+				drawScene()
+			})
+
+			drawScene()
+		</script>
+	</body>
+</html>
