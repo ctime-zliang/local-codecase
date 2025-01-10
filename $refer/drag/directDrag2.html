@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>SVG Line Drag Along Perpendicular</title>
+		<style>
+			body {
+				margin: 0;
+				overflow: hidden;
+			}
+			svg {
+				width: 100%;
+				height: 100vh;
+				background-color: #f0f0f0;
+			}
+			line {
+				stroke: #007bff;
+				stroke-width: 2;
+				cursor: pointer;
+			}
+		</style>
+	</head>
+	<body>
+		<svg id="svg">
+			<line id="drag-line" x1="200" y1="500" x2="700" y2="200" />
+		</svg>
+
+		<script>
+			const line = document.getElementById('drag-line')
+			let isDragging = false
+			let startX1, startY1, startX2, startY2
+			let downX
+			let downY
+			let moveX
+			let moveY
+			let startX, startY
+
+			// 计算垂线方向
+			function getPerpendicularDirection(x1, y1, x2, y2) {
+				const v1 = [x2 - x1, y2 - y1]
+				const v2 = [-v1[1], v1[0]]
+				const length = Math.sqrt(v1[0] * v1[0] + v1[1] * v1[1])
+				const perpDx = v2[0] / length // 垂线方向的 x 分量
+				const perpDy = v2[1] / length // 垂线方向的 y 分量
+				return [perpDx, perpDy]
+			}
+
+			// 鼠标按下时开始拖拽
+			line.addEventListener('mousedown', e => {
+				isDragging = true
+				downX = e.clientX
+				downY = e.clientY
+				startX = e.clientX
+				startY = e.clientY
+				// 记录线段初始位置
+				startX1 = parseFloat(line.getAttribute('x1'))
+				startY1 = parseFloat(line.getAttribute('y1'))
+				startX2 = parseFloat(line.getAttribute('x2'))
+				startY2 = parseFloat(line.getAttribute('y2'))
+			})
+
+			// 鼠标移动时更新线段位置
+			document.addEventListener('mousemove', e => {
+				if (!isDragging) return
+
+				const x1 = parseFloat(line.getAttribute('x1'))
+				const y1 = parseFloat(line.getAttribute('y1'))
+				const x2 = parseFloat(line.getAttribute('x2'))
+				const y2 = parseFloat(line.getAttribute('y2'))
+
+				const v1 = [x2 - x1, y2 - y1]
+				const alpha = Math.atan(v1[1] / v1[0])
+				const perpDirection = getPerpendicularDirection(x1, y1, x2, y2)
+
+				const deltaX = e.clientX - startX
+				const deltaY = e.clientY - startY
+
+				const vm = [e.clientX - startX, e.clientY - startY]
+
+				const A = [e.clientX - startX, e.clientY - startY]
+				const B = [perpDirection[0], perpDirection[1]]
+
+				/**/
+				const C0 = ((A[0] * B[0] + A[1] * B[1]) * B[0]) / (B[0] * B[0] + B[1] * B[1])
+				const C1 = ((A[0] * B[0] + A[1] * B[1]) * B[1]) / (B[0] * B[0] + B[1] * B[1])
+				const C = [C0, C1]
+
+				line.setAttribute('x1', x1 + C[0])
+				line.setAttribute('y1', y1 + C[1])
+				line.setAttribute('x2', x2 + C[0])
+				line.setAttribute('y2', y2 + C[1])
+
+				// line.setAttribute('x1', x1 + dx)
+				// line.setAttribute('y1', y1 + dy)
+				// line.setAttribute('x2', x2 + dx)
+				// line.setAttribute('y2', y2 + dy)
+
+				startX = e.clientX
+				startY = e.clientY
+			})
+
+			// 鼠标松开时停止拖拽
+			document.addEventListener('mouseup', () => {
+				isDragging = false
+			})
+		</script>
+	</body>
+</html>
