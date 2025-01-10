@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>SVG Line Drag Along Perpendicular</title>
+		<style>
+			body {
+				margin: 0;
+				overflow: hidden;
+			}
+			svg {
+				width: 100%;
+				height: 100vh;
+				background-color: #f0f0f0;
+			}
+			line {
+				stroke: #007bff;
+				stroke-width: 2;
+				cursor: pointer;
+			}
+		</style>
+	</head>
+	<body>
+		<svg id="svg">
+			<!-- 初始线段，起点 (50, 50)，终点 (150, 150) -->
+			<line id="drag-line" x1="500" y1="200" x2="200" y2="500" />
+		</svg>
+
+		<script>
+			const line = document.getElementById('drag-line')
+			let isDragging = false
+			let startX1, startY1, startX2, startY2
+			let downX
+			let downY
+			let moveX
+			let moveY
+
+			// 鼠标按下时开始拖拽
+			line.addEventListener('mousedown', e => {
+				isDragging = true
+				downX = e.clientX
+				downY = e.clientY
+				// 记录线段初始位置
+				startX1 = parseFloat(line.getAttribute('x1'))
+				startY1 = parseFloat(line.getAttribute('y1'))
+				startX2 = parseFloat(line.getAttribute('x2'))
+				startY2 = parseFloat(line.getAttribute('y2'))
+			})
+
+			// 鼠标移动时更新线段位置
+			document.addEventListener('mousemove', e => {
+				if (!isDragging) return
+
+				moveX = e.clientX - downX
+				moveY = e.clientY - downY
+
+				// 计算线段的方向向量
+				const dx = startX2 - startX1
+				const dy = startY2 - startY1
+
+				// 计算垂线方向向量并归一化
+				const length = Math.sqrt(dx * dx + dy * dy)
+				const perpDx = -dy / length // 垂线方向的 x 分量
+				const perpDy = dx / length // 垂线方向的 y 分量
+
+				// 计算鼠标移动的投影到垂线方向
+				const mouseDeltaX = moveX
+				const mouseDeltaY = moveY
+				const projection = mouseDeltaX * perpDx + mouseDeltaY * perpDy
+
+				// 更新线段的位置
+				const newX1 = startX1 + projection * perpDx
+				const newY1 = startY1 + projection * perpDy
+				const newX2 = startX2 + projection * perpDx
+				const newY2 = startY2 + projection * perpDy
+
+				// 设置线段的新位置
+				line.setAttribute('x1', newX1)
+				line.setAttribute('y1', newY1)
+				line.setAttribute('x2', newX2)
+				line.setAttribute('y2', newY2)
+			})
+
+			// 鼠标松开时停止拖拽
+			document.addEventListener('mouseup', () => {
+				isDragging = false
+			})
+		</script>
+	</body>
+</html>
