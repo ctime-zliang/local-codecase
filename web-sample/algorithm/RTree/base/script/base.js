@@ -200,5 +200,5 @@ function main2() {
 	}, 1500)
 }
 
-// main1()
-main2()
+main1()
+// main2()
