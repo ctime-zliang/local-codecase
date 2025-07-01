@@ -137,13 +137,18 @@
 		/****************************************************************************************************/
 		/****************************************************************************************************/
 		window.chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-			if (message.action === 'USER_CHANGE_MODE') {
+			if (message.action === 'USR_CHANGE_MODE') {
 				if (MODES.includes(+message.data.modeValue)) {
 					try {
 						globalScope.localStorage.setItem('_performance_mode', ((_V_MODE = +message.data.modeValue), _V_MODE))
 					} catch (e) {}
 					setup()
 				}
+				return
+			}
+			if (message.action === 'USR_GET_CPUINFO') {
+				console.log(message)
+				return
 			}
 		})
 		/****************************************************************************************************/

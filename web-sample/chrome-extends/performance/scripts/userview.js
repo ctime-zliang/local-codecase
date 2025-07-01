@@ -70,11 +70,11 @@
 
 	const bindEvent = () => {
 		chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-			if (message.action === 'PAGE_LOADED') {
+			if (message.action === 'SYS_PAGE_LOADED') {
 				cacheProfile.tabId = message.data.tabId
 				setup()
 			}
-			if (message.action === 'PLUGIN_ICON_CLICKED') {
+			if (message.action === 'SYS_PLUGIN_ICON_CLICKED') {
 				cacheProfile.isShowUserViewPanel = !cacheProfile.isShowUserViewPanel
 				togglePanelShow(cacheProfile.isShowUserViewPanel)
 				if (cacheProfile.isShowUserViewPanel) {
@@ -94,7 +94,7 @@
 					setRectListSelectStatus(hoverIndex)
 					drawViewCanvas()
 					chrome.runtime.sendMessage({
-						action: 'USER_CHANGE_MODE',
+						action: 'USR_CHANGE_MODE',
 						data: { modeValue },
 					})
 				}
