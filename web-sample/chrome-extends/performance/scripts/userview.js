@@ -1,5 +1,5 @@
 ;(globalScope => {
-	const CANVAS_RECT = [125, 100]
+	const CANVAS_RECT = [125, 75]
 	const STYLE_CLASSNAME_PREFIEX = '_performance-userview-container'
 	const CONTAINER_STYLE = `
 		display: block;
@@ -117,7 +117,6 @@
 		cacheProfile.radioList = [
 			{ id: String(Math.random()), label: 'Hidden', value: 0, isSelected: cacheProfile.mode <= 0, isHover: false },
 			{ id: String(Math.random()), label: 'Full Info', value: 1, isSelected: cacheProfile.mode === 1, isHover: false },
-			{ id: String(Math.random()), label: 'RAF & Memo', value: 2, isSelected: cacheProfile.mode === 2, isHover: false },
 		]
 		cacheProfile.radioRectList = []
 	}
@@ -134,10 +133,9 @@
 	}
 
 	const resetCanvasStatus = () => {
-		const ctx = cacheProfile.ctx
-		ctx.clearRect(0, 0, CANVAS_RECT[0], CANVAS_RECT[1])
-		ctx.lineWidth = 1
-		ctx.textBaseline = 'top'
+		cacheProfile.ctx.clearRect(0, 0, CANVAS_RECT[0], CANVAS_RECT[1])
+		cacheProfile.ctx.lineWidth = 1
+		cacheProfile.ctx.textBaseline = 'top'
 	}
 
 	const togglePanelShow = isShow => {
@@ -189,34 +187,32 @@
 	/****************************************************************************************************/
 
 	const drawRadioElement = optional => {
-		const ctx = cacheProfile.ctx
 		const { x = 0, y = 0, label = '', isHover = false, isSelected = false } = optional
 		const fontSize = 12
 		const [outerCircleRadius, centerCircleRadius] = [6, 2]
 		const outerCircle = [x + outerCircleRadius, y + outerCircleRadius, outerCircleRadius]
 		const centerCircle = [x + outerCircleRadius, y + outerCircleRadius, centerCircleRadius]
-		ctx.font = `${fontSize}px arial, sans-serif`
-		ctx.strokeStyle = ctx.fillStyle = isHover ? `#efefef` : isSelected ? `#dfdfdf` : `#cfcfcf`
-		ctx.lineWidth = 2
-		ctx.beginPath()
-		ctx.arc(outerCircle[0], outerCircle[1], outerCircle[2], 0, 2 * Math.PI)
-		ctx.stroke()
+		cacheProfile.ctx.font = `${fontSize}px arial, sans-serif`
+		cacheProfile.ctx.strokeStyle = cacheProfile.ctx.fillStyle = isHover ? `#efefef` : isSelected ? `#dfdfdf` : `#cfcfcf`
+		cacheProfile.ctx.lineWidth = 2
+		cacheProfile.ctx.beginPath()
+		cacheProfile.ctx.arc(outerCircle[0], outerCircle[1], outerCircle[2], 0, 2 * Math.PI)
+		cacheProfile.ctx.stroke()
 		if (isSelected) {
-			ctx.beginPath()
-			ctx.arc(centerCircle[0], centerCircle[1], centerCircle[2], 0, 2 * Math.PI)
-			ctx.stroke()
-			ctx.fill()
+			cacheProfile.ctx.beginPath()
+			cacheProfile.ctx.arc(centerCircle[0], centerCircle[1], centerCircle[2], 0, 2 * Math.PI)
+			cacheProfile.ctx.stroke()
+			cacheProfile.ctx.fill()
 		}
 		const labelDistRadio = 4
-		ctx.fillText(label, x + outerCircle[2] * 2 + labelDistRadio, y + 1)
-		return { sx: x, sy: y, w: outerCircleRadius * 2 + labelDistRadio + ctx.measureText(label).width, h: Math.max(outerCircleRadius * 2, fontSize) }
+		cacheProfile.ctx.fillText(label, x + outerCircle[2] * 2 + labelDistRadio, y + 1)
+		return { sx: x, sy: y, w: outerCircleRadius * 2 + labelDistRadio + cacheProfile.ctx.measureText(label).width, h: Math.max(outerCircleRadius * 2, fontSize) }
 	}
 	const drawRadioGroupElement = (title, optional) => {
-		const ctx = cacheProfile.ctx
 		const { x = 0, y = 0, radioList = [] } = optional
-		ctx.font = `14px arial, sans-serif`
-		ctx.fillStyle = '#ffffff'
-		ctx.fillText(title, x, y)
+		cacheProfile.ctx.font = `14px arial, sans-serif`
+		cacheProfile.ctx.fillStyle = '#ffffff'
+		cacheProfile.ctx.fillText(title, x, y)
 		const radioLineLeftPadding = 15
 		const radioRectList = []
 		for (let i = 0; i < radioList.length; i++) {
@@ -237,7 +233,7 @@
 		const rect1 = drawRadioGroupElement('Mode', {
 			x: 5,
 			y: 10,
-			radioList: [cacheProfile.radioList[0], cacheProfile.radioList[1], cacheProfile.radioList[2]],
+			radioList: [cacheProfile.radioList[0], cacheProfile.radioList[1]],
 		})
 		cacheProfile.radioRectList = [].concat(rect1)
 	}

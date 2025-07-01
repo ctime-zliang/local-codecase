@@ -1,245 +1,470 @@
-;(e => {
-	const t = [0, 1, 2],
-		a = [
-			[[0, 0, null, 0]],
-			[
-				[0, 0, null, 14],
-				[0, 14, null, 14],
-				[0, 28, null, 20],
-				[0, 48, null, 14],
-				[52, 48, null, 14],
-				[0, 62, null, 20],
-			],
-			[
-				[0, 0, null, 14],
-				[0, 14, null, 14],
-				[0, 28, null, 20],
-			],
+;(globalScope => {
+	/**
+	 * 模式
+	 * 		0 - 不显示
+	 * 		1 - 显示原生 JS 全量指标
+	 */
+	const MODES = [0, 1]
+	/**
+	 * 分割区域尺寸
+	 * 		[START_X, START_Y, WIDTH, HEIGHT]
+	 */
+	const ELEMENTS_RECT = [
+		[[0, 0, null, 0]],
+		[
+			[0, 0, null, 14], // 内存数值 配置项
+			[0, 14, null, 14], // RAF 文本数值 配置项
+			[0, 28, null, 20], // RAF 折线图示 配置项
+			[0, 48, null, 14], // RIC 文本数值 配置项
+			[64, 48, null, 14], // 刷新间隔文本数值 配置项
+			[0, 62, null, 20], // RIC 折线图示 配置项
 		],
-		i = []
-	let l = t[1],
-		o = 200
-	const n = [30, 3],
-		r = [(n[0] - 1) * n[1], 0],
-		s = [20, 30],
-		c = [0.6, 0.9],
-		m = ['rgba(255, 0, 0, 1)', 'rgba(255, 126, 82, 1)', 'rgba(0, 255, 0, 1)'],
-		d = 10,
-		A = '_performance-monitor-container',
-		y = {
-			cssText: `\n            .${A} {\n                \n\t\tdisplay: flex;\n\t\tposition: fixed; \n\t\ttop: 2px;\n\t\tleft: 2px;\n\t\tcursor: move;\n\t\tpadding: 3px 4px 4px 4px;\n\t\topacity: 1;\n\t\tborder: 1px solid rgba(50, 50, 50, 1);\n\t\tborder-radius: 2px;\n\t\tbackground-color: rgba(25, 25, 25, 0.85);\n\t\tbox-shadow: rgba(75, 75, 75, 0.35) 0 0 5px;\n\t\tz-index: 999999999;\n\t\t-webkit-transform: translate3d(0, 0, 1px) scale(1.0);\n\t\t-moz-transform: translate3d(0, 0, 1px) scale(1.0);\n\t\ttransform: translate3d(0, 0, 1px) scale(1.0);\n\t\n            }\n\t\t\t.${A}-hidden {\n                \n\t\tdisplay: none !important;\n\t\topacity: 0.35 !important;\n\t\tbackground-color: rgba(25, 25, 25, 0) !important;\n\t\n            }\n        `,
-		},
-		C = {},
-		R = {
-			setCommonProfile(e) {
-				;(o = o >= 1e3 ? 1e3 : o), (C.visibilityState = 'visible'), (C.panelRect = null), (C.ctx = null), C.mainCanvasElement && (C.ctx = C.mainCanvasElement.getContext('2d'))
-				const t = 1.5 * o
-				;(C.maxBlockInterval = t >= 1e3 ? 1e3 : t), (C.prevRefreshViewTimeStamp = C.prevRAFExecuteTimeStamp = e), (C.rafExecuteDiffTime = C.refreshViewDiffTime = 0)
-			},
-			setRAFCommonProfile(e) {
-				;(C.rAFIntervalCount = C.rAFRatioCycleAverage = C.rAFRatioInstant = 0), (C.rAFRatioCycleAverageYPositions = []), (C.maxRAFRatioCycleAverage = 60)
-			},
-			setRAFPolylineProfile(e, t, a, i, l) {
-				const o = C.ctx.createLinearGradient(t, a, i, l)
-				o.addColorStop(0, 'rgba(47, 224, 212, 0.9)'), o.addColorStop(0.6, 'rgba(2, 199, 252, 0.9)'), o.addColorStop(1, 'rgba(19, 135, 251, 0.9)'), (C.rAFLinearGradient = o)
-			},
-			setRICCommonProfile(e) {
-				;(C.rICIntervalCount = C.rdleRatioCycleAverage = 0), (C.rdleRatioCycleAverageYPositions = [])
-			},
-			setRdlePolylineProfile(e, t, a, i, l) {
-				const o = C.ctx.createLinearGradient(t, a, i, l)
-				o.addColorStop(0, 'rgba(47, 224, 212, 0.9)'), o.addColorStop(0.6, 'rgba(2, 199, 252, 0.9)'), o.addColorStop(1, 'rgba(19, 135, 251, 0.9)'), (C.rICLinearGradient = o)
-			},
-		},
-		f = a => {
-			t.slice(1).includes(l) ? (C.rICIntervalCount++, e.requestIdleCallback(f)) : e.requestIdleCallback(f)
-		},
-		v = {
-			fillRAFPolylineBlockData(e, t) {
-				C.rAFRatioCycleAverageYPositions = [].concat(C.rAFRatioCycleAverageYPositions, new Array(e).fill(t))
-			},
-			fillRdlePolylineBlockData(e, t) {
-				C.rdleRatioCycleAverageYPositions = [].concat(C.rdleRatioCycleAverageYPositions, new Array(e).fill(t))
-			},
-			calcRAFCommonData() {
-				;(C.rAFRatioCycleAverage = C.rAFIntervalCount / (C.refreshViewDiffTime / 1e3)),
-					C.maxRAFRatioCycleAverage <= C.rAFRatioCycleAverage && (C.maxRAFRatioCycleAverage = C.rAFRatioCycleAverage)
-			},
-			calcRAFPolylineData(e, t) {
-				C.rAFRatioCycleAverageYPositions.push(e + ((C.maxRAFRatioCycleAverage - C.rAFRatioCycleAverage) / C.maxRAFRatioCycleAverage) * t),
-					C.rAFRatioCycleAverageYPositions.length >= n[0] + 1 &&
-						(C.rAFRatioCycleAverageYPositions = C.rAFRatioCycleAverageYPositions.slice(C.rAFRatioCycleAverageYPositions.length - n[0], C.rAFRatioCycleAverageYPositions.length))
-			},
-			calcRdleCommonData() {
-				C.rdleRatioCycleAverage = C.rICIntervalCount / (C.maxRAFRatioCycleAverage * (C.refreshViewDiffTime / 1e3))
-			},
-			calcRdlePolylineData(e, t) {
-				C.rdleRatioCycleAverageYPositions.push(e + C.rdleRatioCycleAverage * t),
-					C.rdleRatioCycleAverageYPositions.length >= n[0] + 1 &&
-						(C.rdleRatioCycleAverageYPositions = C.rdleRatioCycleAverageYPositions.slice(C.rdleRatioCycleAverageYPositions.length - n[0], C.rdleRatioCycleAverageYPositions.length))
-			},
-		},
-		u = a => {
-			if (!t.slice(1).includes(l)) return void e.requestAnimationFrame(u)
-			;(C.refreshViewDiffTime = a - C.prevRefreshViewTimeStamp), (C.rafExecuteDiffTime = a - C.prevRAFExecuteTimeStamp), C.rAFIntervalCount++, (C.rAFRatioInstant = 1e3 / C.rafExecuteDiffTime)
-			let n = !1
-			if ('visible' === C.visibilityState && C.refreshViewDiffTime >= C.maxBlockInterval) {
-				const e = (C.refreshViewDiffTime / o) | 0
-				l === t[1] && (v.fillRAFPolylineBlockData(e, i[2][1] + i[2][3]), v.fillRdlePolylineBlockData(e, i[5][1])), l === t[2] && v.fillRAFPolylineBlockData(e, i[2][1] + i[2][3]), (n = !0)
+	]
+	let _V_MODE = MODES[1]
+	let _V_INTERVAL = 200
+	/**
+	 * 记录数据配置项
+	 * 		[DATA_SIZE, PIX_STEP]
+	 * |---|---|
+	 * 		即
+	 * 			RECORD_CONFIG[0] = 3
+	 * 			RECORD_CONFIG[1] = 3
+	 * 		则
+	 * 			POLY_WIDHT = (RECORD_CONFIG[0] - 1) * RECORD_CONFIG[1]
+	 */
+	const RECORD_CONFIG = [30, 3]
+	/**
+	 * 画布尺寸
+	 */
+	const CANVAS_RECT = [(RECORD_CONFIG[0] - 1) * RECORD_CONFIG[1], 82]
+	/* ... */
+	const FPS_THRESHOLD = [20, 30]
+	const MEMO_RATIO_THRESHOLD = [0.6, 0.9]
+	const TEXT_COLOR = ['rgba(255, 0, 0, 1)', 'rgba(255, 126, 82, 1)', 'rgba(0, 255, 0, 1)']
+	const FONT_SIZE = 10
+	const STYLE_CLASSNAME_PREFIEX = '_performance-monitor-container'
+	const CONTAINER_STYLE = `
+		display: flex;
+		position: fixed; 
+		top: 2px;
+		left: 2px;
+		padding: 3px 4px 4px 4px;
+		opacity: 1;
+		border: 1px solid rgba(50, 50, 50, 1);
+		border-radius: 2px;
+		background-color: rgba(25, 25, 25, 0.85);
+		box-shadow: rgba(75, 75, 75, 0.35) 0 0 5px;
+		z-index: 999999999;
+		-webkit-transform: translate3d(0, 0, 1px) scale(1.0);
+		-moz-transform: translate3d(0, 0, 1px) scale(1.0);
+		transform: translate3d(0, 0, 1px) scale(1.0);
+	`
+	const CONTAINER_HOVER_STYLE = `
+		display: none !important;
+		opacity: 0.35 !important;
+		background-color: rgba(25, 25, 25, 0) !important;
+	`
+	const styleProfile = {
+		cssText: `
+            .${STYLE_CLASSNAME_PREFIEX} {
+                ${CONTAINER_STYLE}
+            }
+			.${STYLE_CLASSNAME_PREFIEX}-hidden {
+                ${CONTAINER_HOVER_STYLE}
+            }
+        `,
+	}
+
+	const cacheProfile = {}
+
+	/****************************************************************************************************/
+	/****************************************************************************************************/
+	/****************************************************************************************************/
+	/****************************************************************************************************/
+
+	const createHtmlString = () => {
+		return `<div class="${STYLE_CLASSNAME_PREFIEX}"><canvas width="${CANVAS_RECT[0]}" height="${CANVAS_RECT[1]}" style="width: ${CANVAS_RECT[0]}px; height: ${CANVAS_RECT[1]}px"></canvas></div>`
+	}
+
+	const handleStorage = () => {
+		try {
+			const _performance_mode = globalScope.localStorage.getItem('_performance_mode')
+			if (_performance_mode === null || isNaN(+_performance_mode) || !MODES.includes(+_performance_mode)) {
+				globalScope.localStorage.setItem('_performance_mode', _V_MODE)
+				return
 			}
-			;(Math.abs(C.refreshViewDiffTime - o) <= 5 || C.refreshViewDiffTime >= o) &&
-				(l === t[1] && (v.calcRAFCommonData(), v.calcRAFPolylineData(i[2][1], i[2][3]), v.calcRdleCommonData(), v.calcRdlePolylineData(i[5][1], i[5][3])),
-				l === t[2] && (v.calcRAFCommonData(), v.calcRAFPolylineData(i[2][1], i[2][3])),
-				(n = !0)),
-				n && (x(), S(), (C.prevRefreshViewTimeStamp = a), (C.rICIntervalCount = C.rAFIntervalCount = 0)),
-				(C.prevRAFExecuteTimeStamp = a),
-				e.requestAnimationFrame(u)
-		},
-		g = {},
-		p = {
-			memoryDataSubmit() {
-				const e = performance.memory || {}
-				;(g.jsHeapSizeLimit = e.jsHeapSizeLimit || 0), (g.totalJSHeapSize = e.totalJSHeapSize || 0), (g.usedJSHeapSize = e.usedJSHeapSize || 0)
-			},
-			rafCommonDataSubmit() {
-				;(g.rAFRatioInstant = C.rAFRatioInstant.toFixed(2)), (g.rAFRatioCycleAverage = C.rAFRatioCycleAverage.toFixed(2)), (g.rAFIntervalCount = C.rAFIntervalCount)
-			},
-			rafPolylineDataSubmit() {
-				g.rAFRatioCycleAverageYPositions = [...C.rAFRatioCycleAverageYPositions]
-			},
-			rdleCommonDataSubmit() {
-				;(g.rdleRatioCycleAverage = C.rdleRatioCycleAverage.toFixed(4)), (g.rICIntervalCount = C.rICIntervalCount)
-			},
-			refreshTextDataSubmit() {
-				g.refreshViewDiffTime = C.refreshViewDiffTime.toFixed(2)
-			},
-			rdlePolylineDataSubmit() {
-				g.rdleRatioCycleAverageYPositions = [...C.rdleRatioCycleAverageYPositions]
-			},
-		},
-		x = () => {
-			l === t[1] && (p.memoryDataSubmit(), p.rafCommonDataSubmit(), p.rafPolylineDataSubmit(), p.rdleCommonDataSubmit(), p.refreshTextDataSubmit(), p.rdlePolylineDataSubmit()),
-				l === t[2] && (p.memoryDataSubmit(), p.rafCommonDataSubmit(), p.rafPolylineDataSubmit())
-		},
-		F = {
-			drawMemoryText(e, t) {
-				const a = `${(g.usedJSHeapSize / Math.pow(1024, 2)).toFixed(2)}/${(g.totalJSHeapSize / Math.pow(1024, 2)).toFixed(2)} M`
-				;(C.ctx.fillStyle = g.usedJSHeapSize >= g.jsHeapSizeLimit * c[1] ? m[0] : g.usedJSHeapSize >= g.jsHeapSizeLimit * c[0] && g.usedJSHeapSize < g.jsHeapSizeLimit * c[1] ? m[1] : m[2]),
-					C.ctx.fillText(a, e, t)
-			},
-			drawRAFRefreshText(e, t) {
-				const a = `${g.refreshViewDiffTime}`
-				;(C.ctx.fillStyle = m[2]), C.ctx.fillText(a, e, t)
-			},
-			drawRAFText(e, t) {
-				const a = `${g.rAFRatioCycleAverage}/${g.rAFRatioInstant}/${g.rAFIntervalCount}`,
-					i = 0 | g.rAFRatioInstant
-				;(C.ctx.fillStyle = i < s[0] ? m[0] : i >= s[0] && i < s[1] ? m[1] : m[2]), C.ctx.fillText(a, e, t)
-			},
-			drawRICText(e, t) {
-				const a = `${g.rICIntervalCount}/${(100 * Math.max(0, 1 - +g.rdleRatioCycleAverage)).toFixed(2)}%`
-				;(C.ctx.fillStyle = m[2]), C.ctx.fillText(a, e, t)
-			},
-			drawPolyline(e, t, a) {
-				const i = C.ctx
-				i.beginPath()
-				const l = (n[0] - e.length) * n[1]
-				i.moveTo(l, e[0])
-				let o = 0
-				for (o = 1; o < e.length; o++) i.lineTo(l + o * n[1], e[o])
-				i.stroke(), (i.strokeStyle = 'rgba(19, 98, 251, 1.0)'), e.length >= 2 && (i.lineTo(l + (o - 1) * n[1], t), i.lineTo(l, t), i.stroke()), (i.fillStyle = a), i.fill()
-			},
-		},
-		S = () => (
-			C.ctx.clearRect(0, 0, r[0], r[1]),
-			(C.ctx.lineWidth = 1),
-			(C.ctx.font = '10px arial, sans-serif'),
-			(C.ctx.textBaseline = 'top'),
-			l === t[1]
-				? (F.drawMemoryText(i[0][0], i[0][1] + (i[0][3] - d) / 2),
-				  F.drawRAFText(i[1][0], i[1][1] + (i[1][3] - d) / 2),
-				  F.drawPolyline(g.rAFRatioCycleAverageYPositions, i[2][1] + i[2][3], C.rAFLinearGradient),
-				  F.drawRICText(i[3][0], i[3][1] + (i[3][3] - d) / 2),
-				  F.drawRAFRefreshText(i[4][0], i[4][1] + (i[4][3] - d) / 2),
-				  void F.drawPolyline(g.rdleRatioCycleAverageYPositions, i[5][1] + i[5][3], C.rICLinearGradient))
-				: l === t[2]
-				? (F.drawMemoryText(i[0][0], i[0][1] + (i[0][3] - d) / 2),
-				  F.drawRAFText(i[1][0], i[1][1] + (i[1][3] - d) / 2),
-				  void F.drawPolyline(g.rAFRatioCycleAverageYPositions, i[2][1] + i[2][3], C.rAFLinearGradient))
-				: void 0
-		),
-		h = () => {
-			;(() => {
-				try {
-					const a = e.localStorage.getItem('_performance_mode')
-					if (null === a || isNaN(+a) || !t.includes(+a)) return void e.localStorage.setItem('_performance_mode', l)
-					l = +a
-				} catch (e) {}
-			})(),
-				i.splice(0),
-				a[l].forEach((e, t) => (i[t] = [...e])),
-				(r[1] = i[i.length - 1][1] + i[i.length - 1][3]),
-				(() => {
-					const e = performance.now()
-					R.setCommonProfile(e),
-						l === t[1] &&
-							(R.setRAFCommonProfile(e),
-							R.setRAFPolylineProfile(e, i[2][0], i[2][1], i[2][0], i[2][1] + i[2][3]),
-							R.setRICCommonProfile(e),
-							R.setRdlePolylineProfile(e, i[5][0], i[5][1], i[5][0], i[5][1] + i[5][3])),
-						l === t[2] && (R.setRAFCommonProfile(e), R.setRAFPolylineProfile(e, i[2][0], i[2][1], i[2][0], i[2][1] + i[2][3]))
-				})(),
-				(C.mainCanvasElement.width = r[0]),
-				(C.mainCanvasElement.height = r[1]),
-				t.slice(1).includes(l) ? (C.containerElement.style.display = 'flex') : (C.containerElement.style.display = 'none')
-		},
-		P = () => {
-			;(() => {
-				const e = document.createElement('style')
-				;(e.type = 'text/css'),
-					e.styleSheet ? (e.styleSheet.cssText = y.cssText) : e.appendChild(document.createTextNode(y.cssText)),
-					(document.head || document.getElementsByTagName('head')[0]).appendChild(e)
-			})(),
-				(document.body || document.getElementsByTagName('body')[0]).appendChild(
-					document.createRange().createContextualFragment(`<div class="${A}"><canvas width="${r[0]}" height="${r[1]}"></canvas></div>`)
-				),
-				(C.containerElement = document.querySelector(`.${A}`)),
-				(C.mainCanvasElement = C.containerElement.getElementsByTagName('canvas')[0]),
-				chrome.runtime.onMessage.addListener((a, i, o) => {
-					if ('USER_CHANGE_MODE' === a.action && t.includes(+a.data.modeValue)) {
-						try {
-							e.localStorage.setItem('_performance_mode', ((l = +a.data.modeValue), l))
-						} catch (e) {}
-						h()
-					}
-				}),
-				C.containerElement.addEventListener(
-					'mouseenter',
-					t => {
-						;(C.panelRect = C.containerElement.getBoundingClientRect()), e.setTimeout(() => C.containerElement.classList.add(`${A}-hidden`))
-					},
-					!0
-				),
-				document.addEventListener('visibilitychange', t => {
-					if ('hidden' === document.visibilityState) return e.clearTimeout(C.visiblityChangeTimer), void (C.visibilityState = document.visibilityState)
-					C.visiblityChangeTimer = e.setTimeout(e => (C.visibilityState = e), 300, document.visibilityState)
-				}),
-				document.addEventListener(
-					'mousemove',
-					e => {
-						t.slice(1).includes(l) &&
-							C.panelRect &&
-							(e.clientX >= C.panelRect.left && e.clientX <= C.panelRect.right && e.clientY >= C.panelRect.top && e.clientY <= C.panelRect.bottom
-								? C.containerElement.classList.add(`${A}-hidden`)
-								: C.containerElement.classList.remove(`${A}-hidden`))
-					},
-					!0
-				),
-				h(),
-				e.requestAnimationFrame(u),
-				e.requestAnimationFrame(f)
+			_V_MODE = +_performance_mode
+		} catch (e) {}
+	}
+
+	const initViewStyle = () => {
+		const styleElement = document.createElement('style')
+		styleElement.type = 'text/css'
+		if (styleElement.styleSheet) {
+			styleElement.styleSheet.cssText = styleProfile.cssText
+		} else {
+			styleElement.appendChild(document.createTextNode(styleProfile.cssText))
 		}
-	e.addEventListener('DOMContentLoaded', () => {
-		e.setTimeout(P)
+		;(document.head || document.getElementsByTagName('head')[0]).appendChild(styleElement)
+	}
+
+	const initViewElement = () => {
+		;(document.body || document.getElementsByTagName('body')[0]).appendChild(document.createRange().createContextualFragment(createHtmlString()))
+	}
+
+	const initDomElementHandler = () => {
+		cacheProfile.containerElement = document.querySelector(`.${STYLE_CLASSNAME_PREFIEX}`)
+		cacheProfile.mainCanvasElement = cacheProfile.containerElement.getElementsByTagName('canvas')[0]
+	}
+
+	/****************************************************************************************************/
+	/****************************************************************************************************/
+
+	const updateContainerVisible = () => {
+		if (!MODES.slice(1).includes(_V_MODE)) {
+			cacheProfile.containerElement.style.display = 'none'
+			return
+		}
+		cacheProfile.containerElement.style.display = 'flex'
+	}
+
+	const updateCanvasRect = () => {
+		cacheProfile.mainCanvasElement.width = CANVAS_RECT[0]
+		cacheProfile.mainCanvasElement.height = CANVAS_RECT[1]
+	}
+
+	const bindEvent = () => {
+		/****************************************************************************************************/
+		/****************************************************************************************************/
+		window.chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+			if (message.action === 'USER_CHANGE_MODE') {
+				if (MODES.includes(+message.data.modeValue)) {
+					try {
+						globalScope.localStorage.setItem('_performance_mode', ((_V_MODE = +message.data.modeValue), _V_MODE))
+					} catch (e) {}
+					setup()
+				}
+			}
+		})
+		/****************************************************************************************************/
+		/****************************************************************************************************/
+		const containerMouseEnterHandler = evte => {
+			cacheProfile.panelRect = cacheProfile.containerElement.getBoundingClientRect()
+			globalScope.setTimeout(() => cacheProfile.containerElement.classList.add(`${STYLE_CLASSNAME_PREFIEX}-hidden`))
+		}
+		const documentMouseMoveHandler = evte => {
+			if (!MODES.slice(1).includes(_V_MODE) || !cacheProfile.panelRect) {
+				return
+			}
+			if (
+				evte.clientX >= cacheProfile.panelRect.left &&
+				evte.clientX <= cacheProfile.panelRect.right &&
+				evte.clientY >= cacheProfile.panelRect.top &&
+				evte.clientY <= cacheProfile.panelRect.bottom
+			) {
+				cacheProfile.containerElement.classList.add(`${STYLE_CLASSNAME_PREFIEX}-hidden`)
+			} else {
+				cacheProfile.containerElement.classList.remove(`${STYLE_CLASSNAME_PREFIEX}-hidden`)
+			}
+		}
+		const documentVisiblityChangeHandler = evte => {
+			if (document.visibilityState === 'hidden') {
+				globalScope.clearTimeout(cacheProfile.visiblityChangeTimer)
+				cacheProfile.visibilityState = document.visibilityState
+				return
+			}
+			cacheProfile.visiblityChangeTimer = globalScope.setTimeout(statusText => (cacheProfile.visibilityState = statusText), 300, document.visibilityState)
+		}
+		cacheProfile.containerElement.addEventListener('mouseenter', containerMouseEnterHandler, true)
+		document.addEventListener('visibilitychange', documentVisiblityChangeHandler)
+		document.addEventListener('mousemove', documentMouseMoveHandler, true)
+	}
+
+	const profileManager = {
+		setCommonProfile(nowStamp) {
+			_V_INTERVAL = _V_INTERVAL >= 1000 ? 1000 : _V_INTERVAL
+			cacheProfile.visibilityState = 'visible'
+			cacheProfile.panelRect = null
+			cacheProfile.ctx = null
+			if (cacheProfile.mainCanvasElement) {
+				cacheProfile.ctx = cacheProfile.mainCanvasElement.getContext('2d')
+			}
+			const maxBlockIntervalThreshold = _V_INTERVAL * 1.5
+			cacheProfile.maxBlockInterval = maxBlockIntervalThreshold >= 1000 ? 1000 : maxBlockIntervalThreshold
+			/* ... */
+			cacheProfile.prevRefreshViewTimeStamp = cacheProfile.prevRAFExecuteTimeStamp = nowStamp
+			cacheProfile.rafExecuteDiffTime = cacheProfile.refreshViewDiffTime = 0
+		},
+		setRAFCommonProfile(nowStamp) {
+			cacheProfile.rAFIntervalCount = cacheProfile.rAFRatioCycleAverage = cacheProfile.rAFRatioInstant = 0
+			cacheProfile.rAFRatioCycleAverageYPositions = []
+			cacheProfile.maxRAFRatioCycleAverage = 60
+		},
+		setRAFPolylineProfile(nowStamp, startX, startY, endX, endY) {
+			const linearGradient = cacheProfile.ctx.createLinearGradient(startX, startY, endX, endY)
+			linearGradient.addColorStop(0, 'rgba(47, 224, 212, 0.9)')
+			linearGradient.addColorStop(0.6, 'rgba(2, 199, 252, 0.9)')
+			linearGradient.addColorStop(1, 'rgba(19, 135, 251, 0.9)')
+			cacheProfile.rAFLinearGradient = linearGradient
+		},
+		setRICCommonProfile(nowStamp) {
+			cacheProfile.rICIntervalCount = cacheProfile.rIdleRatioCycleAverage = 0
+			cacheProfile.rIdleRatioCycleAverageYPositions = []
+		},
+		setRIdlePolylineProfile(nowStamp, startX, startY, endX, endY) {
+			const linearGradient = cacheProfile.ctx.createLinearGradient(startX, startY, endX, endY)
+			linearGradient.addColorStop(0, 'rgba(47, 224, 212, 0.9)')
+			linearGradient.addColorStop(0.6, 'rgba(2, 199, 252, 0.9)')
+			linearGradient.addColorStop(1, 'rgba(19, 135, 251, 0.9)')
+			cacheProfile.rICLinearGradient = linearGradient
+		},
+	}
+	const setProfile = () => {
+		const nowStamp = performance.now()
+		profileManager.setCommonProfile(nowStamp)
+		if (_V_MODE === MODES[1]) {
+			const I_ELEMENTS_RECT = ELEMENTS_RECT[_V_MODE]
+			profileManager.setRAFCommonProfile(nowStamp)
+			profileManager.setRAFPolylineProfile(nowStamp, I_ELEMENTS_RECT[2][0], I_ELEMENTS_RECT[2][1], I_ELEMENTS_RECT[2][0], I_ELEMENTS_RECT[2][1] + I_ELEMENTS_RECT[2][3])
+			profileManager.setRICCommonProfile(nowStamp)
+			profileManager.setRIdlePolylineProfile(nowStamp, I_ELEMENTS_RECT[5][0], I_ELEMENTS_RECT[5][1], I_ELEMENTS_RECT[5][0], I_ELEMENTS_RECT[5][1] + I_ELEMENTS_RECT[5][3])
+		}
+	}
+
+	/****************************************************************************************************/
+	/****************************************************************************************************/
+	/****************************************************************************************************/
+	/****************************************************************************************************/
+
+	const requestIdleCallbackHandler = deadline => {
+		if (!MODES.slice(1).includes(_V_MODE)) {
+			globalScope.requestIdleCallback(requestIdleCallbackHandler)
+			return
+		}
+		cacheProfile.rICIntervalCount++
+		globalScope.requestIdleCallback(requestIdleCallbackHandler)
+	}
+
+	const frameCallbackManager = {
+		fillRAFPolylineBlockData(size, polylineBottomY) {
+			cacheProfile.rAFRatioCycleAverageYPositions = [].concat(cacheProfile.rAFRatioCycleAverageYPositions, new Array(size).fill(polylineBottomY))
+		},
+		fillRIdlePolylineBlockData(size, polylineTopY) {
+			cacheProfile.rIdleRatioCycleAverageYPositions = [].concat(cacheProfile.rIdleRatioCycleAverageYPositions, new Array(size).fill(polylineTopY))
+		},
+		calcRAFCommonData() {
+			cacheProfile.rAFRatioCycleAverage = cacheProfile.rAFIntervalCount / (cacheProfile.refreshViewDiffTime / 1000)
+			if (cacheProfile.maxRAFRatioCycleAverage <= cacheProfile.rAFRatioCycleAverage) {
+				cacheProfile.maxRAFRatioCycleAverage = cacheProfile.rAFRatioCycleAverage
+			}
+		},
+		calcRAFPolylineData(polylineTopY, polylineHeight) {
+			cacheProfile.rAFRatioCycleAverageYPositions.push(
+				polylineTopY + ((cacheProfile.maxRAFRatioCycleAverage - cacheProfile.rAFRatioCycleAverage) / cacheProfile.maxRAFRatioCycleAverage) * polylineHeight
+			)
+			if (cacheProfile.rAFRatioCycleAverageYPositions.length >= RECORD_CONFIG[0] + 1) {
+				cacheProfile.rAFRatioCycleAverageYPositions = cacheProfile.rAFRatioCycleAverageYPositions.slice(
+					cacheProfile.rAFRatioCycleAverageYPositions.length - RECORD_CONFIG[0],
+					cacheProfile.rAFRatioCycleAverageYPositions.length
+				)
+			}
+		},
+		calcRIdleCommonData() {
+			cacheProfile.rIdleRatioCycleAverage = cacheProfile.rICIntervalCount / (cacheProfile.maxRAFRatioCycleAverage * (cacheProfile.refreshViewDiffTime / 1000))
+		},
+		calcRIdlePolylineData(polylineTopY, polylineHeight) {
+			cacheProfile.rIdleRatioCycleAverageYPositions.push(polylineTopY + cacheProfile.rIdleRatioCycleAverage * polylineHeight)
+			if (cacheProfile.rIdleRatioCycleAverageYPositions.length >= RECORD_CONFIG[0] + 1) {
+				cacheProfile.rIdleRatioCycleAverageYPositions = cacheProfile.rIdleRatioCycleAverageYPositions.slice(
+					cacheProfile.rIdleRatioCycleAverageYPositions.length - RECORD_CONFIG[0],
+					cacheProfile.rIdleRatioCycleAverageYPositions.length
+				)
+			}
+		},
+	}
+	const requestAnimationFrameHandler = nowStamp => {
+		if (!MODES.slice(1).includes(_V_MODE)) {
+			globalScope.requestAnimationFrame(requestAnimationFrameHandler)
+			return
+		}
+		/**
+		 * 记录 实际的面板视图刷新间隔时间
+		 */
+		cacheProfile.refreshViewDiffTime = nowStamp - cacheProfile.prevRefreshViewTimeStamp
+		/**
+		 * 记录 两次相邻的 RAF 的实际运行间隔时间
+		 */
+		cacheProfile.rafExecuteDiffTime = nowStamp - cacheProfile.prevRAFExecuteTimeStamp
+		/**
+		 * 记录 一轮实际的面板视图刷新间隔时间内 RAF 的执行次数
+		 */
+		cacheProfile.rAFIntervalCount++
+		/**
+		 * 记录 由两次相邻的 RAF 的实际运行时间计算出的瞬时 RAF 执行频率
+		 */
+		cacheProfile.rAFRatioInstant = 1000 / cacheProfile.rafExecuteDiffTime
+		let needRfreshView = false
+		if (cacheProfile.visibilityState === 'visible' && cacheProfile.refreshViewDiffTime >= cacheProfile.maxBlockInterval) {
+			const si = (cacheProfile.refreshViewDiffTime / _V_INTERVAL) >> 0
+			if (_V_MODE === MODES[1]) {
+				const I_ELEMENTS_RECT = ELEMENTS_RECT[_V_MODE]
+				frameCallbackManager.fillRAFPolylineBlockData(si, I_ELEMENTS_RECT[2][1] + I_ELEMENTS_RECT[2][3])
+				frameCallbackManager.fillRIdlePolylineBlockData(si, I_ELEMENTS_RECT[5][1])
+			}
+			needRfreshView = true
+		}
+		if (Math.abs(cacheProfile.refreshViewDiffTime - _V_INTERVAL) <= 5 || cacheProfile.refreshViewDiffTime >= _V_INTERVAL) {
+			if (_V_MODE === MODES[1]) {
+				const I_ELEMENTS_RECT = ELEMENTS_RECT[_V_MODE]
+				frameCallbackManager.calcRAFCommonData()
+				frameCallbackManager.calcRAFPolylineData(I_ELEMENTS_RECT[2][1], I_ELEMENTS_RECT[2][3])
+				frameCallbackManager.calcRIdleCommonData()
+				frameCallbackManager.calcRIdlePolylineData(I_ELEMENTS_RECT[5][1], I_ELEMENTS_RECT[5][3])
+			}
+			needRfreshView = true
+		}
+		if (needRfreshView) {
+			updateViewProfile()
+			renderViewCanvas()
+			cacheProfile.prevRefreshViewTimeStamp = nowStamp
+			cacheProfile.rICIntervalCount = cacheProfile.rAFIntervalCount = 0
+		}
+		cacheProfile.prevRAFExecuteTimeStamp = nowStamp
+		globalScope.requestAnimationFrame(requestAnimationFrameHandler)
+	}
+
+	/****************************************************************************************************/
+	/****************************************************************************************************/
+	/****************************************************************************************************/
+
+	const viewProfile = {}
+	const updateManager = {
+		memoryDataSubmit() {
+			const memoryInfo = performance.memory || {}
+			viewProfile.jsHeapSizeLimit = memoryInfo.jsHeapSizeLimit || 0
+			viewProfile.totalJSHeapSize = memoryInfo.totalJSHeapSize || 0
+			viewProfile.usedJSHeapSize = memoryInfo.usedJSHeapSize || 0
+		},
+		rAfCommonDataSubmit() {
+			viewProfile.rAFRatioInstant = cacheProfile.rAFRatioInstant.toFixed(2)
+			viewProfile.rAFRatioCycleAverage = cacheProfile.rAFRatioCycleAverage.toFixed(2)
+			viewProfile.rAFIntervalCount = cacheProfile.rAFIntervalCount
+		},
+		rAfPolylineDataSubmit() {
+			viewProfile.rAFRatioCycleAverageYPositions = [...cacheProfile.rAFRatioCycleAverageYPositions]
+		},
+		rIdleCommonDataSubmit() {
+			viewProfile.rIdleRatioCycleAverage = cacheProfile.rIdleRatioCycleAverage.toFixed(4)
+			viewProfile.rICIntervalCount = cacheProfile.rICIntervalCount
+		},
+		refreshTextDataSubmit() {
+			viewProfile.refreshViewDiffTime = cacheProfile.refreshViewDiffTime >> 0
+		},
+		rIdlePolylineDataSubmit() {
+			viewProfile.rIdleRatioCycleAverageYPositions = [...cacheProfile.rIdleRatioCycleAverageYPositions]
+		},
+	}
+	const updateViewProfile = () => {
+		if (_V_MODE === MODES[1]) {
+			updateManager.memoryDataSubmit()
+			updateManager.rAfCommonDataSubmit()
+			updateManager.rAfPolylineDataSubmit()
+			updateManager.rIdleCommonDataSubmit()
+			updateManager.refreshTextDataSubmit()
+			updateManager.rIdlePolylineDataSubmit()
+		}
+	}
+
+	const resetCanvasStatus = () => {
+		cacheProfile.ctx.clearRect(0, 0, CANVAS_RECT[0], CANVAS_RECT[1])
+		cacheProfile.ctx.lineWidth = 1
+		cacheProfile.ctx.font = `${FONT_SIZE}px arial, sans-serif`
+		cacheProfile.ctx.textBaseline = 'top'
+	}
+
+	const drawManager = {
+		drawMemoryText(fillStartX, fillStartY) {
+			const textContent = `${(viewProfile.usedJSHeapSize / Math.pow(1024.0, 2)).toFixed(2)}/${(viewProfile.totalJSHeapSize / Math.pow(1024.0, 2)).toFixed(2)} M`
+			cacheProfile.ctx.fillStyle =
+				viewProfile.usedJSHeapSize >= viewProfile.jsHeapSizeLimit * MEMO_RATIO_THRESHOLD[1]
+					? TEXT_COLOR[0]
+					: viewProfile.usedJSHeapSize >= viewProfile.jsHeapSizeLimit * MEMO_RATIO_THRESHOLD[0] && viewProfile.usedJSHeapSize < viewProfile.jsHeapSizeLimit * MEMO_RATIO_THRESHOLD[1]
+					? TEXT_COLOR[1]
+					: TEXT_COLOR[2]
+			cacheProfile.ctx.fillText(textContent, fillStartX, fillStartY)
+		},
+		drawRAFRefreshText(fillStartX, fillStartY) {
+			const textContent = `${viewProfile.refreshViewDiffTime}`
+			cacheProfile.ctx.fillStyle = TEXT_COLOR[2]
+			cacheProfile.ctx.fillText(textContent, fillStartX, fillStartY)
+		},
+		drawRAFText(fillStartX, fillStartY) {
+			const textContent = `${viewProfile.rAFRatioCycleAverage}/${viewProfile.rAFRatioInstant}/${viewProfile.rAFIntervalCount}`
+			const refValue = viewProfile.rAFRatioInstant >> 0
+			cacheProfile.ctx.fillStyle = refValue < FPS_THRESHOLD[0] ? TEXT_COLOR[0] : refValue >= FPS_THRESHOLD[0] && refValue < FPS_THRESHOLD[1] ? TEXT_COLOR[1] : TEXT_COLOR[2]
+			cacheProfile.ctx.fillText(textContent, fillStartX, fillStartY)
+		},
+		drawRICText(fillStartX, fillStartY) {
+			const textContent = `${(Math.max(0, 1 - +viewProfile.rIdleRatioCycleAverage) * 100).toFixed(2)}%/${viewProfile.rICIntervalCount}`
+			cacheProfile.ctx.fillStyle = TEXT_COLOR[2]
+			cacheProfile.ctx.fillText(textContent, fillStartX, fillStartY)
+		},
+		drawPolyline(positions, polylineBottomY, linearGradient) {
+			cacheProfile.ctx.beginPath()
+			const sx = (RECORD_CONFIG[0] - positions.length) * RECORD_CONFIG[1]
+			cacheProfile.ctx.moveTo(sx, positions[0])
+			let i = 0
+			for (i = 1; i < positions.length; i++) {
+				cacheProfile.ctx.lineTo(sx + i * RECORD_CONFIG[1], positions[i])
+			}
+			cacheProfile.ctx.stroke()
+			cacheProfile.ctx.strokeStyle = 'rgba(19, 98, 251, 1.0)'
+			if (positions.length >= 2) {
+				cacheProfile.ctx.lineTo(sx + (i - 1) * RECORD_CONFIG[1], polylineBottomY)
+				cacheProfile.ctx.lineTo(sx, polylineBottomY)
+				cacheProfile.ctx.stroke()
+			}
+			cacheProfile.ctx.fillStyle = linearGradient
+			cacheProfile.ctx.fill()
+		},
+	}
+	const renderViewCanvas = () => {
+		resetCanvasStatus()
+		if (_V_MODE === MODES[1]) {
+			const I_ELEMENTS_RECT = ELEMENTS_RECT[_V_MODE]
+			drawManager.drawMemoryText(I_ELEMENTS_RECT[0][0], I_ELEMENTS_RECT[0][1] + (I_ELEMENTS_RECT[0][3] - FONT_SIZE) / 2)
+			drawManager.drawRAFText(I_ELEMENTS_RECT[1][0], I_ELEMENTS_RECT[1][1] + (I_ELEMENTS_RECT[1][3] - FONT_SIZE) / 2)
+			drawManager.drawPolyline(viewProfile.rAFRatioCycleAverageYPositions, I_ELEMENTS_RECT[2][1] + I_ELEMENTS_RECT[2][3], cacheProfile.rAFLinearGradient)
+			drawManager.drawRICText(I_ELEMENTS_RECT[3][0], I_ELEMENTS_RECT[3][1] + (I_ELEMENTS_RECT[3][3] - FONT_SIZE) / 2)
+			drawManager.drawRAFRefreshText(I_ELEMENTS_RECT[4][0], I_ELEMENTS_RECT[4][1] + (I_ELEMENTS_RECT[4][3] - FONT_SIZE) / 2)
+			drawManager.drawPolyline(viewProfile.rIdleRatioCycleAverageYPositions, I_ELEMENTS_RECT[5][1] + I_ELEMENTS_RECT[5][3], cacheProfile.rICLinearGradient)
+			return
+		}
+	}
+
+	/****************************************************************************************************/
+	/****************************************************************************************************/
+	/****************************************************************************************************/
+	/****************************************************************************************************/
+
+	const setup = () => {
+		handleStorage()
+		setProfile()
+		updateCanvasRect()
+		updateContainerVisible()
+	}
+
+	const main = () => {
+		initViewStyle()
+		initViewElement()
+		initDomElementHandler()
+		bindEvent()
+		setup()
+		globalScope.requestAnimationFrame(requestAnimationFrameHandler)
+		globalScope.requestAnimationFrame(requestIdleCallbackHandler)
+	}
+
+	globalScope.addEventListener('DOMContentLoaded', () => {
+		globalScope.setTimeout(main)
 	})
 })(window)
