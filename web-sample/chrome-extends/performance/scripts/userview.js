@@ -2,7 +2,7 @@
 	/**
 	 * 画布尺寸
 	 */
-	const CANVAS_RECT = [125, 75]
+	const CANVAS_RECT = [125, 100]
 	const STYLE_CLASSNAME_PREFIEX = '_performance-userview-container'
 	const CONTAINER_STYLE = `
 		display: block;
@@ -73,6 +73,7 @@
 			cacheProfile.radioList = [
 				{ id: String(Math.random()), label: 'Hidden', value: 0, isSelected: cacheProfile.mode <= 0, isHover: false },
 				{ id: String(Math.random()), label: 'Standard Info', value: 1, isSelected: cacheProfile.mode === 1, isHover: false },
+				{ id: String(Math.random()), label: 'Extend Info', value: 2, isSelected: cacheProfile.mode === 2, isHover: false },
 			]
 			cacheProfile.radioRectList = []
 		},

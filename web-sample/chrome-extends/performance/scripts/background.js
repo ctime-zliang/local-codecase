@@ -41,7 +41,7 @@ const cpuUsageManager = {
 		for (let i = 0; i < oldProcessors.length; i++) {
 			totalUsage += cpuUsageManager.calculateCoreUsage(oldProcessors[i].usage, newProcessors[i].usage)
 		}
-		return totalUsage / oldProcessors.length
+		return totalUsage / oldProcessors.length / 100
 	},
 }
 
@@ -55,7 +55,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 	if (message.action === 'USR_GET_CPUINFO') {
 		chromOpearManager.getCurrentTab(tab => {
 			chromOpearManager.getCPUInfo(cpuInfo => {
-				chrome.tabs.sendMessage(tab.id, { ...message, cpuUsage: cpuUsageManager.update(cpuInfo) })
+				chrome.tabs.sendMessage(tab.id, { ...message, data: { cpuUsage: cpuUsageManager.update(cpuInfo) } })
 			})
 		})
 	}
