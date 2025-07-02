@@ -6,22 +6,24 @@
 	 */
 	const MODES = [0, 1]
 	/**
-	 * 分割区域尺寸
+	 * 画布尺寸
+	 */
+	const CANVAS_RECT = [73, 78]
+	/**
+	 * 区域尺寸
 	 * 		[START_X, START_Y, WIDTH, HEIGHT]
 	 */
 	const ELEMENTS_RECT = [
 		[[0, 0, null, 0]],
 		[
-			[0, 0, null, 14], // 内存数值 配置项
-			[0, 14, null, 14], // RAF 文本数值 配置项
-			[0, 28, null, 20], // RAF 折线图示 配置项
-			[0, 48, null, 14], // RIC 文本数值 配置项
-			[64, 48, null, 14], // 刷新间隔文本数值 配置项
-			[0, 62, null, 20], // RIC 折线图示 配置项
+			[0, 0, null, 14], // 内存数值
+			[0, 14, null, 14], // RAF 文本数值
+			[0, 28, null, 18], // RAF 折线图示
+			[0, 46, null, 14], // RIC 文本数值
+			[50, 46, null, 14], // 刷新间隔文本数值
+			[0, 60, null, 18], // RIC 折线图示
 		],
 	]
-	let _V_MODE = MODES[1]
-	let _V_INTERVAL = 200
 	/**
 	 * 记录数据配置项
 	 * 		[DATA_SIZE, PIX_STEP]
@@ -32,16 +34,37 @@
 	 * 		则
 	 * 			POLY_WIDHT = (RECORD_CONFIG[0] - 1) * RECORD_CONFIG[1]
 	 */
-	const RECORD_CONFIG = [30, 3]
+	const RECORD_CONFIG = [25, 3]
 	/**
-	 * 画布尺寸
+	 * FPS 阶段告警阈值(数值)
 	 */
-	const CANVAS_RECT = [(RECORD_CONFIG[0] - 1) * RECORD_CONFIG[1], 82]
-	/* ... */
 	const FPS_THRESHOLD = [20, 30]
+	/**
+	 * 内存占用阶段告警阈值(百分比)
+	 */
 	const MEMO_RATIO_THRESHOLD = [0.6, 0.9]
-	const TEXT_COLOR = ['rgba(255, 0, 0, 1)', 'rgba(255, 126, 82, 1)', 'rgba(0, 255, 0, 1)']
+	/**
+	 * 告警提示文本颜色
+	 */
+	const TEXT_COLOR = ['rgba(255, 0, 0, 1.0)', 'rgba(255, 126, 82, 1.0)', 'rgba(0, 255, 0, 1.0)']
+	/**
+	 * 折线图颜色
+	 */
+	const POLYLINE_STROKE_COLOR = 'rgba(17, 125, 187, 1.0)'
+	const POLYLINE_FILL_COLOR = 'rgba(120, 233, 232, 0.85)'
+	/**
+	 * 文本显示字体大小
+	 */
 	const FONT_SIZE = 10
+	/**
+	 * 显示运行模式
+	 */
+	let _V_MODE = MODES[1]
+	/**
+	 * 常规项刷新间隔
+	 */
+	let _V_STARDARD_INTERVAL = 200
+	/* ... */
 	const STYLE_CLASSNAME_PREFIEX = '_performance-monitor-container'
 	const CONTAINER_STYLE = `
 		display: flex;
@@ -82,67 +105,63 @@
 	/****************************************************************************************************/
 	/****************************************************************************************************/
 
-	const createHtmlString = () => {
-		return `<div class="${STYLE_CLASSNAME_PREFIEX}"><canvas width="${CANVAS_RECT[0]}" height="${CANVAS_RECT[1]}" style="width: ${CANVAS_RECT[0]}px; height: ${CANVAS_RECT[1]}px"></canvas></div>`
+	const initManager = {
+		createHtmlString() {
+			return `<div class="${STYLE_CLASSNAME_PREFIEX}"><canvas></canvas></div>`
+		},
+		handleStorage() {
+			try {
+				const _performance_mode = globalScope.localStorage.getItem('_performance_mode')
+				if (_performance_mode === null || isNaN(+_performance_mode) || !MODES.includes(+_performance_mode)) {
+					globalScope.localStorage.setItem('_performance_mode', _V_MODE)
+					return
+				}
+				_V_MODE = +_performance_mode
+			} catch (e) {}
+		},
+		initViewStyle() {
+			const styleElement = document.createElement('style')
+			styleElement.type = 'text/css'
+			if (styleElement.styleSheet) {
+				styleElement.styleSheet.cssText = styleProfile.cssText
+			} else {
+				styleElement.appendChild(document.createTextNode(styleProfile.cssText))
+			}
+			;(document.head || document.getElementsByTagName('head')[0]).appendChild(styleElement)
+		},
+		initViewElement() {
+			;(document.body || document.getElementsByTagName('body')[0]).appendChild(document.createRange().createContextualFragment(initManager.createHtmlString()))
+		},
+		initDomElementHandler() {
+			cacheProfile.containerElement = document.querySelector(`.${STYLE_CLASSNAME_PREFIEX}`)
+			cacheProfile.mainCanvasElement = cacheProfile.containerElement.getElementsByTagName('canvas')[0]
+		},
 	}
 
-	const handleStorage = () => {
-		try {
-			const _performance_mode = globalScope.localStorage.getItem('_performance_mode')
-			if (_performance_mode === null || isNaN(+_performance_mode) || !MODES.includes(+_performance_mode)) {
-				globalScope.localStorage.setItem('_performance_mode', _V_MODE)
+	const operaManager = {
+		updateContainerVisible() {
+			if (!MODES.slice(1).includes(_V_MODE)) {
+				cacheProfile.containerElement.style.display = 'none'
 				return
 			}
-			_V_MODE = +_performance_mode
-		} catch (e) {}
-	}
-
-	const initViewStyle = () => {
-		const styleElement = document.createElement('style')
-		styleElement.type = 'text/css'
-		if (styleElement.styleSheet) {
-			styleElement.styleSheet.cssText = styleProfile.cssText
-		} else {
-			styleElement.appendChild(document.createTextNode(styleProfile.cssText))
-		}
-		;(document.head || document.getElementsByTagName('head')[0]).appendChild(styleElement)
-	}
-
-	const initViewElement = () => {
-		;(document.body || document.getElementsByTagName('body')[0]).appendChild(document.createRange().createContextualFragment(createHtmlString()))
-	}
-
-	const initDomElementHandler = () => {
-		cacheProfile.containerElement = document.querySelector(`.${STYLE_CLASSNAME_PREFIEX}`)
-		cacheProfile.mainCanvasElement = cacheProfile.containerElement.getElementsByTagName('canvas')[0]
-	}
-
-	/****************************************************************************************************/
-	/****************************************************************************************************/
-
-	const updateContainerVisible = () => {
-		if (!MODES.slice(1).includes(_V_MODE)) {
-			cacheProfile.containerElement.style.display = 'none'
-			return
-		}
-		cacheProfile.containerElement.style.display = 'flex'
-	}
-
-	const updateCanvasRect = () => {
-		cacheProfile.mainCanvasElement.width = CANVAS_RECT[0]
-		cacheProfile.mainCanvasElement.height = CANVAS_RECT[1]
+			cacheProfile.containerElement.style.display = 'flex'
+		},
+		updateCanvasRect() {
+			cacheProfile.mainCanvasElement.width = CANVAS_RECT[0]
+			cacheProfile.mainCanvasElement.height = CANVAS_RECT[1]
+			cacheProfile.mainCanvasElement.style.width = `${CANVAS_RECT[0]}px`
+			cacheProfile.mainCanvasElement.style.height = `${CANVAS_RECT[1]}px`
+		},
 	}
 
 	const bindEvent = () => {
-		/****************************************************************************************************/
-		/****************************************************************************************************/
 		window.chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 			if (message.action === 'USR_CHANGE_MODE') {
 				if (MODES.includes(+message.data.modeValue)) {
 					try {
 						globalScope.localStorage.setItem('_performance_mode', ((_V_MODE = +message.data.modeValue), _V_MODE))
 					} catch (e) {}
-					setup()
+					refresh()
 				}
 				return
 			}
@@ -168,9 +187,9 @@
 				evte.clientY <= cacheProfile.panelRect.bottom
 			) {
 				cacheProfile.containerElement.classList.add(`${STYLE_CLASSNAME_PREFIEX}-hidden`)
-			} else {
-				cacheProfile.containerElement.classList.remove(`${STYLE_CLASSNAME_PREFIEX}-hidden`)
+				return
 			}
+			cacheProfile.containerElement.classList.remove(`${STYLE_CLASSNAME_PREFIEX}-hidden`)
 		}
 		const documentVisiblityChangeHandler = evte => {
 			if (document.visibilityState === 'hidden') {
@@ -186,15 +205,25 @@
 	}
 
 	const profileManager = {
+		update() {
+			const nowStamp = performance.now()
+			profileManager.setCommonProfile(nowStamp)
+			if (_V_MODE === MODES[1]) {
+				profileManager.setRAFCommonProfile(nowStamp)
+				profileManager.setRICCommonProfile(nowStamp)
+			}
+		},
+		/****************************************************************************************************/
+		/****************************************************************************************************/
 		setCommonProfile(nowStamp) {
-			_V_INTERVAL = _V_INTERVAL >= 1000 ? 1000 : _V_INTERVAL
+			_V_STARDARD_INTERVAL = _V_STARDARD_INTERVAL >= 1000 ? 1000 : _V_STARDARD_INTERVAL
 			cacheProfile.visibilityState = 'visible'
 			cacheProfile.panelRect = null
 			cacheProfile.ctx = null
 			if (cacheProfile.mainCanvasElement) {
 				cacheProfile.ctx = cacheProfile.mainCanvasElement.getContext('2d')
 			}
-			const maxBlockIntervalThreshold = _V_INTERVAL * 1.5
+			const maxBlockIntervalThreshold = _V_STARDARD_INTERVAL * 1.5
 			cacheProfile.maxBlockInterval = maxBlockIntervalThreshold >= 1000 ? 1000 : maxBlockIntervalThreshold
 			/* ... */
 			cacheProfile.prevRefreshViewTimeStamp = cacheProfile.prevRAFExecuteTimeStamp = nowStamp
@@ -205,52 +234,73 @@
 			cacheProfile.rAFRatioCycleAverageYPositions = []
 			cacheProfile.maxRAFRatioCycleAverage = 60
 		},
-		setRAFPolylineProfile(nowStamp, startX, startY, endX, endY) {
-			const linearGradient = cacheProfile.ctx.createLinearGradient(startX, startY, endX, endY)
-			linearGradient.addColorStop(0, 'rgba(47, 224, 212, 0.9)')
-			linearGradient.addColorStop(0.6, 'rgba(2, 199, 252, 0.9)')
-			linearGradient.addColorStop(1, 'rgba(19, 135, 251, 0.9)')
-			cacheProfile.rAFLinearGradient = linearGradient
-		},
 		setRICCommonProfile(nowStamp) {
 			cacheProfile.rICIntervalCount = cacheProfile.rIdleRatioCycleAverage = 0
 			cacheProfile.rIdleRatioCycleAverageYPositions = []
 		},
-		setRIdlePolylineProfile(nowStamp, startX, startY, endX, endY) {
-			const linearGradient = cacheProfile.ctx.createLinearGradient(startX, startY, endX, endY)
-			linearGradient.addColorStop(0, 'rgba(47, 224, 212, 0.9)')
-			linearGradient.addColorStop(0.6, 'rgba(2, 199, 252, 0.9)')
-			linearGradient.addColorStop(1, 'rgba(19, 135, 251, 0.9)')
-			cacheProfile.rICLinearGradient = linearGradient
+	}
+
+	const samplingCallbackManager = {
+		requestIdleCallbackHandler(deadline) {
+			if (!MODES.slice(1).includes(_V_MODE)) {
+				globalScope.requestIdleCallback(samplingCallbackManager.requestIdleCallbackHandler)
+				return
+			}
+			cacheProfile.rICIntervalCount++
+			globalScope.requestIdleCallback(samplingCallbackManager.requestIdleCallbackHandler)
 		},
-	}
-	const setProfile = () => {
-		const nowStamp = performance.now()
-		profileManager.setCommonProfile(nowStamp)
-		if (_V_MODE === MODES[1]) {
-			const I_ELEMENTS_RECT = ELEMENTS_RECT[_V_MODE]
-			profileManager.setRAFCommonProfile(nowStamp)
-			profileManager.setRAFPolylineProfile(nowStamp, I_ELEMENTS_RECT[2][0], I_ELEMENTS_RECT[2][1], I_ELEMENTS_RECT[2][0], I_ELEMENTS_RECT[2][1] + I_ELEMENTS_RECT[2][3])
-			profileManager.setRICCommonProfile(nowStamp)
-			profileManager.setRIdlePolylineProfile(nowStamp, I_ELEMENTS_RECT[5][0], I_ELEMENTS_RECT[5][1], I_ELEMENTS_RECT[5][0], I_ELEMENTS_RECT[5][1] + I_ELEMENTS_RECT[5][3])
-		}
-	}
-
-	/****************************************************************************************************/
-	/****************************************************************************************************/
-	/****************************************************************************************************/
-	/****************************************************************************************************/
-
-	const requestIdleCallbackHandler = deadline => {
-		if (!MODES.slice(1).includes(_V_MODE)) {
-			globalScope.requestIdleCallback(requestIdleCallbackHandler)
-			return
-		}
-		cacheProfile.rICIntervalCount++
-		globalScope.requestIdleCallback(requestIdleCallbackHandler)
-	}
-
-	const frameCallbackManager = {
+		requestAnimationFrameHandler(nowStamp) {
+			if (!MODES.slice(1).includes(_V_MODE)) {
+				globalScope.requestAnimationFrame(samplingCallbackManager.requestAnimationFrameHandler)
+				return
+			}
+			/**
+			 * 记录 实际的面板视图刷新间隔时间
+			 */
+			cacheProfile.refreshViewDiffTime = nowStamp - cacheProfile.prevRefreshViewTimeStamp
+			/**
+			 * 记录 两次相邻的 RAF 的实际运行间隔时间
+			 */
+			cacheProfile.rafExecuteDiffTime = nowStamp - cacheProfile.prevRAFExecuteTimeStamp
+			/**
+			 * 记录 一轮实际的面板视图刷新间隔时间内 RAF 的执行次数
+			 */
+			cacheProfile.rAFIntervalCount++
+			/**
+			 * 记录 由两次相邻的 RAF 的实际运行时间计算出的瞬时 RAF 执行频率
+			 */
+			cacheProfile.rAFRatioInstant = 1000 / cacheProfile.rafExecuteDiffTime
+			let needRfreshView = false
+			if (cacheProfile.visibilityState === 'visible' && cacheProfile.refreshViewDiffTime >= cacheProfile.maxBlockInterval) {
+				const si = (cacheProfile.refreshViewDiffTime / _V_STARDARD_INTERVAL) >> 0
+				if (_V_MODE === MODES[1]) {
+					const AREA_RECT = ELEMENTS_RECT[_V_MODE]
+					samplingCallbackManager.fillRAFPolylineBlockData(si, AREA_RECT[2][1] + AREA_RECT[2][3])
+					samplingCallbackManager.fillRIdlePolylineBlockData(si, AREA_RECT[5][1])
+				}
+				needRfreshView = true
+			}
+			if (Math.abs(cacheProfile.refreshViewDiffTime - _V_STARDARD_INTERVAL) <= 5 || cacheProfile.refreshViewDiffTime >= _V_STARDARD_INTERVAL) {
+				if (_V_MODE === MODES[1]) {
+					const AREA_RECT = ELEMENTS_RECT[_V_MODE]
+					samplingCallbackManager.calcRAFCommonData()
+					samplingCallbackManager.calcRAFPolylineData(AREA_RECT[2][1], AREA_RECT[2][3])
+					samplingCallbackManager.calcRIdleCommonData()
+					samplingCallbackManager.calcRIdlePolylineData(AREA_RECT[5][1], AREA_RECT[5][3])
+				}
+				needRfreshView = true
+			}
+			if (needRfreshView) {
+				viewDataManager.update()
+				drawManager.update()
+				cacheProfile.prevRefreshViewTimeStamp = nowStamp
+				cacheProfile.rICIntervalCount = cacheProfile.rAFIntervalCount = 0
+			}
+			cacheProfile.prevRAFExecuteTimeStamp = nowStamp
+			globalScope.requestAnimationFrame(samplingCallbackManager.requestAnimationFrameHandler)
+		},
+		/****************************************************************************************************/
+		/****************************************************************************************************/
 		fillRAFPolylineBlockData(size, polylineBottomY) {
 			cacheProfile.rAFRatioCycleAverageYPositions = [].concat(cacheProfile.rAFRatioCycleAverageYPositions, new Array(size).fill(polylineBottomY))
 		},
@@ -287,134 +337,94 @@
 			}
 		},
 	}
-	const requestAnimationFrameHandler = nowStamp => {
-		if (!MODES.slice(1).includes(_V_MODE)) {
-			globalScope.requestAnimationFrame(requestAnimationFrameHandler)
-			return
-		}
-		/**
-		 * 记录 实际的面板视图刷新间隔时间
-		 */
-		cacheProfile.refreshViewDiffTime = nowStamp - cacheProfile.prevRefreshViewTimeStamp
-		/**
-		 * 记录 两次相邻的 RAF 的实际运行间隔时间
-		 */
-		cacheProfile.rafExecuteDiffTime = nowStamp - cacheProfile.prevRAFExecuteTimeStamp
-		/**
-		 * 记录 一轮实际的面板视图刷新间隔时间内 RAF 的执行次数
-		 */
-		cacheProfile.rAFIntervalCount++
-		/**
-		 * 记录 由两次相邻的 RAF 的实际运行时间计算出的瞬时 RAF 执行频率
-		 */
-		cacheProfile.rAFRatioInstant = 1000 / cacheProfile.rafExecuteDiffTime
-		let needRfreshView = false
-		if (cacheProfile.visibilityState === 'visible' && cacheProfile.refreshViewDiffTime >= cacheProfile.maxBlockInterval) {
-			const si = (cacheProfile.refreshViewDiffTime / _V_INTERVAL) >> 0
-			if (_V_MODE === MODES[1]) {
-				const I_ELEMENTS_RECT = ELEMENTS_RECT[_V_MODE]
-				frameCallbackManager.fillRAFPolylineBlockData(si, I_ELEMENTS_RECT[2][1] + I_ELEMENTS_RECT[2][3])
-				frameCallbackManager.fillRIdlePolylineBlockData(si, I_ELEMENTS_RECT[5][1])
-			}
-			needRfreshView = true
-		}
-		if (Math.abs(cacheProfile.refreshViewDiffTime - _V_INTERVAL) <= 5 || cacheProfile.refreshViewDiffTime >= _V_INTERVAL) {
-			if (_V_MODE === MODES[1]) {
-				const I_ELEMENTS_RECT = ELEMENTS_RECT[_V_MODE]
-				frameCallbackManager.calcRAFCommonData()
-				frameCallbackManager.calcRAFPolylineData(I_ELEMENTS_RECT[2][1], I_ELEMENTS_RECT[2][3])
-				frameCallbackManager.calcRIdleCommonData()
-				frameCallbackManager.calcRIdlePolylineData(I_ELEMENTS_RECT[5][1], I_ELEMENTS_RECT[5][3])
-			}
-			needRfreshView = true
-		}
-		if (needRfreshView) {
-			updateViewProfile()
-			renderViewCanvas()
-			cacheProfile.prevRefreshViewTimeStamp = nowStamp
-			cacheProfile.rICIntervalCount = cacheProfile.rAFIntervalCount = 0
-		}
-		cacheProfile.prevRAFExecuteTimeStamp = nowStamp
-		globalScope.requestAnimationFrame(requestAnimationFrameHandler)
-	}
 
-	/****************************************************************************************************/
-	/****************************************************************************************************/
-	/****************************************************************************************************/
-
-	const viewProfile = {}
-	const updateManager = {
+	const viewDataManager = {
+		data: {},
+		update() {
+			if (_V_MODE === MODES[1]) {
+				viewDataManager.memoryDataSubmit()
+				viewDataManager.rAfCommonDataSubmit()
+				viewDataManager.rAfPolylineDataSubmit()
+				viewDataManager.rIdleCommonDataSubmit()
+				viewDataManager.refreshTextDataSubmit()
+				viewDataManager.rIdlePolylineDataSubmit()
+			}
+		},
+		/****************************************************************************************************/
+		/****************************************************************************************************/
 		memoryDataSubmit() {
 			const memoryInfo = performance.memory || {}
-			viewProfile.jsHeapSizeLimit = memoryInfo.jsHeapSizeLimit || 0
-			viewProfile.totalJSHeapSize = memoryInfo.totalJSHeapSize || 0
-			viewProfile.usedJSHeapSize = memoryInfo.usedJSHeapSize || 0
+			viewDataManager.data.jsHeapSizeLimit = memoryInfo.jsHeapSizeLimit || 0
+			viewDataManager.data.totalJSHeapSize = memoryInfo.totalJSHeapSize || 0
+			viewDataManager.data.usedJSHeapSize = memoryInfo.usedJSHeapSize || 0
 		},
 		rAfCommonDataSubmit() {
-			viewProfile.rAFRatioInstant = cacheProfile.rAFRatioInstant.toFixed(2)
-			viewProfile.rAFRatioCycleAverage = cacheProfile.rAFRatioCycleAverage.toFixed(2)
-			viewProfile.rAFIntervalCount = cacheProfile.rAFIntervalCount
+			viewDataManager.data.rAFRatioInstant = cacheProfile.rAFRatioInstant.toFixed(2)
+			viewDataManager.data.rAFRatioCycleAverage = cacheProfile.rAFRatioCycleAverage.toFixed(2)
+			viewDataManager.data.rAFIntervalCount = cacheProfile.rAFIntervalCount
 		},
 		rAfPolylineDataSubmit() {
-			viewProfile.rAFRatioCycleAverageYPositions = [...cacheProfile.rAFRatioCycleAverageYPositions]
+			viewDataManager.data.rAFRatioCycleAverageYPositions = [...cacheProfile.rAFRatioCycleAverageYPositions]
 		},
 		rIdleCommonDataSubmit() {
-			viewProfile.rIdleRatioCycleAverage = cacheProfile.rIdleRatioCycleAverage.toFixed(4)
-			viewProfile.rICIntervalCount = cacheProfile.rICIntervalCount
+			viewDataManager.data.rIdleRatioCycleAverage = cacheProfile.rIdleRatioCycleAverage.toFixed(4)
+			viewDataManager.data.rICIntervalCount = cacheProfile.rICIntervalCount
 		},
 		refreshTextDataSubmit() {
-			viewProfile.refreshViewDiffTime = cacheProfile.refreshViewDiffTime >> 0
+			viewDataManager.data.refreshViewDiffTime = cacheProfile.refreshViewDiffTime >> 0
 		},
 		rIdlePolylineDataSubmit() {
-			viewProfile.rIdleRatioCycleAverageYPositions = [...cacheProfile.rIdleRatioCycleAverageYPositions]
+			viewDataManager.data.rIdleRatioCycleAverageYPositions = [...cacheProfile.rIdleRatioCycleAverageYPositions]
 		},
-	}
-	const updateViewProfile = () => {
-		if (_V_MODE === MODES[1]) {
-			updateManager.memoryDataSubmit()
-			updateManager.rAfCommonDataSubmit()
-			updateManager.rAfPolylineDataSubmit()
-			updateManager.rIdleCommonDataSubmit()
-			updateManager.refreshTextDataSubmit()
-			updateManager.rIdlePolylineDataSubmit()
-		}
-	}
-
-	const resetCanvasStatus = () => {
-		cacheProfile.ctx.clearRect(0, 0, CANVAS_RECT[0], CANVAS_RECT[1])
-		cacheProfile.ctx.lineWidth = 1
-		cacheProfile.ctx.font = `${FONT_SIZE}px arial, sans-serif`
-		cacheProfile.ctx.textBaseline = 'top'
 	}
 
 	const drawManager = {
+		update() {
+			cacheProfile.ctx.clearRect(0, 0, CANVAS_RECT[0], CANVAS_RECT[1])
+			cacheProfile.ctx.lineWidth = 1
+			cacheProfile.ctx.font = `${FONT_SIZE}px arial, sans-serif`
+			cacheProfile.ctx.textBaseline = 'top'
+			if (_V_MODE === MODES[1]) {
+				const AREA_RECT = ELEMENTS_RECT[_V_MODE]
+				drawManager.drawMemoryText(AREA_RECT[0][0], AREA_RECT[0][1] + (AREA_RECT[0][3] - FONT_SIZE) / 2)
+				drawManager.drawRAFText(AREA_RECT[1][0], AREA_RECT[1][1] + (AREA_RECT[1][3] - FONT_SIZE) / 2)
+				drawManager.drawPolyline(viewDataManager.data.rAFRatioCycleAverageYPositions, AREA_RECT[2][1] + AREA_RECT[2][3])
+				drawManager.drawRICText(AREA_RECT[3][0], AREA_RECT[3][1] + (AREA_RECT[3][3] - FONT_SIZE) / 2)
+				drawManager.drawRAFRefreshText(AREA_RECT[4][0], AREA_RECT[4][1] + (AREA_RECT[4][3] - FONT_SIZE) / 2)
+				drawManager.drawPolyline(viewDataManager.data.rIdleRatioCycleAverageYPositions, AREA_RECT[5][1] + AREA_RECT[5][3])
+				return
+			}
+		},
+		/****************************************************************************************************/
+		/****************************************************************************************************/
 		drawMemoryText(fillStartX, fillStartY) {
-			const textContent = `${(viewProfile.usedJSHeapSize / Math.pow(1024.0, 2)).toFixed(2)}/${(viewProfile.totalJSHeapSize / Math.pow(1024.0, 2)).toFixed(2)} M`
+			const textContent = `${(viewDataManager.data.usedJSHeapSize / Math.pow(1024.0, 2)).toFixed(2)}/${(viewDataManager.data.totalJSHeapSize / Math.pow(1024.0, 2)).toFixed(2)}`
 			cacheProfile.ctx.fillStyle =
-				viewProfile.usedJSHeapSize >= viewProfile.jsHeapSizeLimit * MEMO_RATIO_THRESHOLD[1]
+				viewDataManager.data.usedJSHeapSize >= viewDataManager.data.jsHeapSizeLimit * MEMO_RATIO_THRESHOLD[1]
 					? TEXT_COLOR[0]
-					: viewProfile.usedJSHeapSize >= viewProfile.jsHeapSizeLimit * MEMO_RATIO_THRESHOLD[0] && viewProfile.usedJSHeapSize < viewProfile.jsHeapSizeLimit * MEMO_RATIO_THRESHOLD[1]
+					: viewDataManager.data.usedJSHeapSize >= viewDataManager.data.jsHeapSizeLimit * MEMO_RATIO_THRESHOLD[0] &&
+					  viewDataManager.data.usedJSHeapSize < viewDataManager.data.jsHeapSizeLimit * MEMO_RATIO_THRESHOLD[1]
 					? TEXT_COLOR[1]
 					: TEXT_COLOR[2]
 			cacheProfile.ctx.fillText(textContent, fillStartX, fillStartY)
 		},
 		drawRAFRefreshText(fillStartX, fillStartY) {
-			const textContent = `${viewProfile.refreshViewDiffTime}`
+			const textContent = `${viewDataManager.data.refreshViewDiffTime}`
 			cacheProfile.ctx.fillStyle = TEXT_COLOR[2]
 			cacheProfile.ctx.fillText(textContent, fillStartX, fillStartY)
 		},
 		drawRAFText(fillStartX, fillStartY) {
-			const textContent = `${viewProfile.rAFRatioCycleAverage}/${viewProfile.rAFRatioInstant}/${viewProfile.rAFIntervalCount}`
-			const refValue = viewProfile.rAFRatioInstant >> 0
+			const textContent = `${viewDataManager.data.rAFRatioCycleAverage}/${viewDataManager.data.rAFRatioInstant}`
+			const refValue = viewDataManager.data.rAFRatioInstant >> 0
 			cacheProfile.ctx.fillStyle = refValue < FPS_THRESHOLD[0] ? TEXT_COLOR[0] : refValue >= FPS_THRESHOLD[0] && refValue < FPS_THRESHOLD[1] ? TEXT_COLOR[1] : TEXT_COLOR[2]
 			cacheProfile.ctx.fillText(textContent, fillStartX, fillStartY)
 		},
 		drawRICText(fillStartX, fillStartY) {
-			const textContent = `${(Math.max(0, 1 - +viewProfile.rIdleRatioCycleAverage) * 100).toFixed(2)}%/${viewProfile.rICIntervalCount}`
+			const textContent = `${(Math.max(0, 1 - +viewDataManager.data.rIdleRatioCycleAverage) * 100).toFixed(2)}%`
 			cacheProfile.ctx.fillStyle = TEXT_COLOR[2]
 			cacheProfile.ctx.fillText(textContent, fillStartX, fillStartY)
 		},
-		drawPolyline(positions, polylineBottomY, linearGradient) {
+		drawPolyline(positions, polylineBottomY) {
 			cacheProfile.ctx.beginPath()
 			const sx = (RECORD_CONFIG[0] - positions.length) * RECORD_CONFIG[1]
 			cacheProfile.ctx.moveTo(sx, positions[0])
@@ -423,50 +433,37 @@
 				cacheProfile.ctx.lineTo(sx + i * RECORD_CONFIG[1], positions[i])
 			}
 			cacheProfile.ctx.stroke()
-			cacheProfile.ctx.strokeStyle = 'rgba(19, 98, 251, 1.0)'
+			cacheProfile.ctx.strokeStyle = POLYLINE_STROKE_COLOR
 			if (positions.length >= 2) {
 				cacheProfile.ctx.lineTo(sx + (i - 1) * RECORD_CONFIG[1], polylineBottomY)
 				cacheProfile.ctx.lineTo(sx, polylineBottomY)
 				cacheProfile.ctx.stroke()
 			}
-			cacheProfile.ctx.fillStyle = linearGradient
+			cacheProfile.ctx.fillStyle = POLYLINE_FILL_COLOR
 			cacheProfile.ctx.fill()
 		},
 	}
-	const renderViewCanvas = () => {
-		resetCanvasStatus()
-		if (_V_MODE === MODES[1]) {
-			const I_ELEMENTS_RECT = ELEMENTS_RECT[_V_MODE]
-			drawManager.drawMemoryText(I_ELEMENTS_RECT[0][0], I_ELEMENTS_RECT[0][1] + (I_ELEMENTS_RECT[0][3] - FONT_SIZE) / 2)
-			drawManager.drawRAFText(I_ELEMENTS_RECT[1][0], I_ELEMENTS_RECT[1][1] + (I_ELEMENTS_RECT[1][3] - FONT_SIZE) / 2)
-			drawManager.drawPolyline(viewProfile.rAFRatioCycleAverageYPositions, I_ELEMENTS_RECT[2][1] + I_ELEMENTS_RECT[2][3], cacheProfile.rAFLinearGradient)
-			drawManager.drawRICText(I_ELEMENTS_RECT[3][0], I_ELEMENTS_RECT[3][1] + (I_ELEMENTS_RECT[3][3] - FONT_SIZE) / 2)
-			drawManager.drawRAFRefreshText(I_ELEMENTS_RECT[4][0], I_ELEMENTS_RECT[4][1] + (I_ELEMENTS_RECT[4][3] - FONT_SIZE) / 2)
-			drawManager.drawPolyline(viewProfile.rIdleRatioCycleAverageYPositions, I_ELEMENTS_RECT[5][1] + I_ELEMENTS_RECT[5][3], cacheProfile.rICLinearGradient)
-			return
-		}
-	}
 
 	/****************************************************************************************************/
 	/****************************************************************************************************/
 	/****************************************************************************************************/
 	/****************************************************************************************************/
 
-	const setup = () => {
-		handleStorage()
-		setProfile()
-		updateCanvasRect()
-		updateContainerVisible()
+	const refresh = () => {
+		initManager.handleStorage()
+		profileManager.update()
+		operaManager.updateCanvasRect()
+		operaManager.updateContainerVisible()
 	}
 
 	const main = () => {
-		initViewStyle()
-		initViewElement()
-		initDomElementHandler()
+		initManager.initViewStyle()
+		initManager.initViewElement()
+		initManager.initDomElementHandler()
 		bindEvent()
-		setup()
-		globalScope.requestAnimationFrame(requestAnimationFrameHandler)
-		globalScope.requestAnimationFrame(requestIdleCallbackHandler)
+		refresh()
+		globalScope.requestAnimationFrame(samplingCallbackManager.requestAnimationFrameHandler)
+		globalScope.requestAnimationFrame(samplingCallbackManager.requestIdleCallbackHandler)
 	}
 
 	globalScope.addEventListener('DOMContentLoaded', () => {
