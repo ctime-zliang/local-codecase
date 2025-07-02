@@ -8,7 +8,7 @@
 	/**
 	 * 画布尺寸
 	 */
-	const CANVAS_RECT = [73, 78]
+	const CANVAS_RECT = [79, 78]
 	/**
 	 * 区域尺寸
 	 * 		[START_X, START_Y, WIDTH, HEIGHT]
@@ -16,12 +16,12 @@
 	const ELEMENTS_RECT = [
 		[[0, 0, null, 0]],
 		[
-			[0, 0, null, 14], // 内存数值
-			[0, 14, null, 14], // RAF 文本数值
-			[0, 28, null, 18], // RAF 折线图示
-			[0, 46, null, 14], // RIC 文本数值
-			[50, 46, null, 14], // 刷新间隔文本数值
-			[0, 60, null, 18], // RIC 折线图示
+			[0, 0, null, 14], // RAF 文本数值
+			[0, 14, null, 18], // RAF 折线图示
+			[0, 32, null, 14], // RIC 文本数值
+			[50, 32, null, 14], // 刷新间隔文本数值
+			[0, 46, null, 18], // RIC 折线图示
+			[0, 64 + 1, null, 14], // 统计内存数值
 		],
 	]
 	/**
@@ -34,7 +34,7 @@
 	 * 		则
 	 * 			POLY_WIDHT = (RECORD_CONFIG[0] - 1) * RECORD_CONFIG[1]
 	 */
-	const RECORD_CONFIG = [25, 3]
+	const RECORD_CONFIG = [27, 3]
 	/**
 	 * FPS 阶段告警阈值(数值)
 	 */
@@ -275,8 +275,8 @@
 				const si = (cacheProfile.refreshViewDiffTime / _V_STARDARD_INTERVAL) >> 0
 				if (_V_MODE === MODES[1]) {
 					const AREA_RECT = ELEMENTS_RECT[_V_MODE]
-					samplingCallbackManager.fillRAFPolylineBlockData(si, AREA_RECT[2][1] + AREA_RECT[2][3])
-					samplingCallbackManager.fillRIdlePolylineBlockData(si, AREA_RECT[5][1])
+					samplingCallbackManager.fillRAFPolylineBlockData(si, AREA_RECT[1][1] + AREA_RECT[1][3])
+					samplingCallbackManager.fillRIdlePolylineBlockData(si, AREA_RECT[4][1])
 				}
 				needRfreshView = true
 			}
@@ -284,9 +284,9 @@
 				if (_V_MODE === MODES[1]) {
 					const AREA_RECT = ELEMENTS_RECT[_V_MODE]
 					samplingCallbackManager.calcRAFCommonData()
-					samplingCallbackManager.calcRAFPolylineData(AREA_RECT[2][1], AREA_RECT[2][3])
+					samplingCallbackManager.calcRAFPolylineData(AREA_RECT[1][1], AREA_RECT[1][3])
 					samplingCallbackManager.calcRIdleCommonData()
-					samplingCallbackManager.calcRIdlePolylineData(AREA_RECT[5][1], AREA_RECT[5][3])
+					samplingCallbackManager.calcRIdlePolylineData(AREA_RECT[4][1], AREA_RECT[4][3])
 				}
 				needRfreshView = true
 			}
@@ -386,12 +386,12 @@
 			cacheProfile.ctx.textBaseline = 'top'
 			if (_V_MODE === MODES[1]) {
 				const AREA_RECT = ELEMENTS_RECT[_V_MODE]
-				drawManager.drawMemoryText(AREA_RECT[0][0], AREA_RECT[0][1] + (AREA_RECT[0][3] - FONT_SIZE) / 2)
-				drawManager.drawRAFText(AREA_RECT[1][0], AREA_RECT[1][1] + (AREA_RECT[1][3] - FONT_SIZE) / 2)
-				drawManager.drawPolyline(viewDataManager.data.rAFRatioCycleAverageYPositions, AREA_RECT[2][1] + AREA_RECT[2][3])
-				drawManager.drawRICText(AREA_RECT[3][0], AREA_RECT[3][1] + (AREA_RECT[3][3] - FONT_SIZE) / 2)
-				drawManager.drawRAFRefreshText(AREA_RECT[4][0], AREA_RECT[4][1] + (AREA_RECT[4][3] - FONT_SIZE) / 2)
-				drawManager.drawPolyline(viewDataManager.data.rIdleRatioCycleAverageYPositions, AREA_RECT[5][1] + AREA_RECT[5][3])
+				drawManager.drawRAFText(AREA_RECT[0][0], AREA_RECT[0][1] + (AREA_RECT[0][3] - FONT_SIZE) / 2)
+				drawManager.drawPolyline(viewDataManager.data.rAFRatioCycleAverageYPositions, AREA_RECT[1][1] + AREA_RECT[1][3])
+				drawManager.drawRICText(AREA_RECT[2][0], AREA_RECT[2][1] + (AREA_RECT[2][3] - FONT_SIZE) / 2)
+				drawManager.drawRAFRefreshText(AREA_RECT[3][0], AREA_RECT[3][1] + (AREA_RECT[3][3] - FONT_SIZE) / 2)
+				drawManager.drawPolyline(viewDataManager.data.rIdleRatioCycleAverageYPositions, AREA_RECT[4][1] + AREA_RECT[4][3])
+				drawManager.drawMemoryText(AREA_RECT[5][0], AREA_RECT[5][1] + (AREA_RECT[5][3] - FONT_SIZE) / 2)
 				return
 			}
 		},
