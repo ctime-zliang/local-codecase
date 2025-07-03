@@ -179,7 +179,7 @@
 	}
 
 	const bindEvent = () => {
-		window.chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+		chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 			if (message.action === 'USR_CHANGE_MODE') {
 				if (MODES.includes(+message.data.modeValue)) {
 					try {
