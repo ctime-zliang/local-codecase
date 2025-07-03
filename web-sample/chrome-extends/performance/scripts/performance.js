@@ -11,8 +11,8 @@
 	 */
 	const CANVAS_RECTS = [
 		[0, 0],
-		[79, 78],
-		[158, 78],
+		[70, 78],
+		[141, 78],
 	]
 	/**
 	 * 区域尺寸
@@ -24,7 +24,7 @@
 			[0, 0, null, 14], // RAF 数值文本
 			[0, 14, null, 18], // RAF 折线图示
 			[0, 32, null, 14], // RIC 数值文本
-			[50, 32, null, 14], // 刷新间隔数值文本
+			[42, 32, null, 14], // 刷新间隔数值文本
 			[0, 46, null, 18], // RIC 折线图示
 			[0, 64 + 1, null, 14], // 统计内存数值文本
 		],
@@ -32,13 +32,13 @@
 			[0, 0, null, 14], // RAF 数值文本
 			[0, 14, null, 18], // RAF 折线图示
 			[0, 32, null, 14], // RIC 数值文本
-			[50, 32, null, 14], // 刷新间隔数值文本
+			[42, 32, null, 14], // 刷新间隔数值文本
 			[0, 46, null, 18], // RIC 折线图示
 			[0, 64 + 1, null, 14], // 统计内存数值文本
-			[80, 0, null, 14], // CPU USAGE 数值文本
-			[80, 14, null, 18], // CPU USAGE 折线图示
-			[80, 32, null, 14], // MEMORY 数值文本
-			[80, 46, null, 18], // MEMORY 折线图示
+			[71, 0, null, 14], // CPU USAGE 数值文本
+			[71, 14, null, 18], // CPU USAGE 折线图示
+			[71, 32, null, 14], // MEMORY 数值文本
+			[71, 46, null, 18], // MEMORY 折线图示
 		],
 	]
 	/**
@@ -51,12 +51,11 @@
 	 * 		则
 	 * 			POLY_WIDHT = (RECORD_CONFIG[0] - 1) * RECORD_CONFIG[1]
 	 */
-	const RECORD_CONFIG = [27, 3]
+	const RECORD_CONFIG = [24, 3]
 	/**
 	 * 阶段告警阈值(数值)
 	 */
 	const FPS_THRESHOLD = [20, 30] // 数值
-	const PERFORMANCE_MEMORY_THRESHOLD = [0.6, 0.9] // 比率
 	const SYS_CPUUSAGE_THRESHOLD = [0.8, 0.9] // 比率
 	const SYS_MEMORYUSAGE_THRESHOLD = [0.8, 0.9] // 比率
 	/**
@@ -420,7 +419,7 @@
 		/****************************************************************************************************/
 		/****************************************************************************************************/
 		rAfCommonDataSubmit() {
-			viewDataManager.data.rAFRatioInstant = cacheProfile.rAFRatioInstant
+			viewDataManager.data.rAFRatioInstant = cacheProfile.rAFRatioInstant >> 0
 			viewDataManager.data.rAFRatioCycleAverage = cacheProfile.rAFRatioCycleAverage
 			viewDataManager.data.rAFIntervalCount = cacheProfile.rAFIntervalCount
 		},
@@ -442,6 +441,15 @@
 			viewDataManager.data.jsHeapSizeLimit = (memoryInfo.jsHeapSizeLimit || 0) / Math.pow(1024, 2)
 			viewDataManager.data.totalJSHeapSize = (memoryInfo.totalJSHeapSize || 0) / Math.pow(1024, 2)
 			viewDataManager.data.usedJSHeapSize = (memoryInfo.usedJSHeapSize || 0) / Math.pow(1024, 2)
+			if (viewDataManager.data.jsHeapSizeLimit >= 1000) {
+				viewDataManager.data.jsHeapSizeLimit /= 1024
+			}
+			if (viewDataManager.data.totalJSHeapSize >= 1000) {
+				viewDataManager.data.totalJSHeapSize /= 1024
+			}
+			if (viewDataManager.data.usedJSHeapSize >= 1000) {
+				viewDataManager.data.usedJSHeapSize /= 1024
+			}
 		},
 		systemInfoCommonDataSubmit() {
 			viewDataManager.data.cpuUsageCycleAverage = cacheProfile.cpuUsageCycleAverage
@@ -488,7 +496,7 @@
 		/****************************************************************************************************/
 		/****************************************************************************************************/
 		drawRAFText(fillStartX, fillStartY) {
-			const textContent = `${viewDataManager.data.rAFRatioCycleAverage.toFixed(2)}/${viewDataManager.data.rAFRatioInstant.toFixed(2)}`
+			const textContent = `${viewDataManager.data.rAFRatioCycleAverage.toFixed(2)}/${viewDataManager.data.rAFRatioInstant}`
 			cacheProfile.ctx.fillStyle = operaManager.calcMatchColor(viewDataManager.data.rAFRatioInstant >> 0, FPS_THRESHOLD, false, undefined, false)
 			cacheProfile.ctx.fillText(textContent, fillStartX, fillStartY)
 		},
@@ -504,7 +512,7 @@
 		},
 		drawPerformanceMemoryText(fillStartX, fillStartY) {
 			const textContent = `${viewDataManager.data.usedJSHeapSize.toFixed(2)}/${viewDataManager.data.totalJSHeapSize.toFixed(2)}`
-			cacheProfile.ctx.fillStyle = operaManager.calcMatchColor(viewDataManager.data.usedJSHeapSize, PERFORMANCE_MEMORY_THRESHOLD, true, viewDataManager.data.jsHeapSizeLimit, true)
+			cacheProfile.ctx.fillStyle = TEXT_COLOR[0]
 			cacheProfile.ctx.fillText(textContent, fillStartX, fillStartY)
 		},
 		drawSystemCpuUsageText(fillStartX, fillStartY) {
