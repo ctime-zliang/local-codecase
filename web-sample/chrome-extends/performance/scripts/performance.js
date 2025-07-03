@@ -383,7 +383,7 @@
 			}
 		},
 		calcSystemMemoryUsagePolylineData(polylineRectAreaTop, polylineRectAreaHeight) {
-			cacheProfile.memoryUsageCycleAverageYPositions.push(polylineRectAreaTop + cacheProfile.memoryUsageCycleAverage * polylineRectAreaHeight)
+			cacheProfile.memoryUsageCycleAverageYPositions.push(polylineRectAreaTop + (1 - cacheProfile.memoryUsageCycleAverage) * polylineRectAreaHeight)
 			if (cacheProfile.memoryUsageCycleAverageYPositions.length >= RECORD_CONFIG[0] + 1) {
 				cacheProfile.memoryUsageCycleAverageYPositions = cacheProfile.memoryUsageCycleAverageYPositions.slice(
 					cacheProfile.memoryUsageCycleAverageYPositions.length - RECORD_CONFIG[0],
