@@ -26,5 +26,5 @@
 	"host_permissions": ["http://*/*", "https://*/*"],
 	"web_accessible_resources": [],
 	"default_locale": "zh_CN",
-	"permissions": ["storage", "activeTab", "scripting", "tabs", "system.cpu"]
+	"permissions": ["storage", "activeTab", "scripting", "tabs", "system.cpu", "system.memory"]
 }

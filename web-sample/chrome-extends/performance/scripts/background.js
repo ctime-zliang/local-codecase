@@ -12,6 +12,11 @@ const chromOpearManager = {
 			callback(cpuInfo)
 		})
 	},
+	getMemoryInfo(callback) {
+		chrome.system.memory.getInfo(function (memoryInfo) {
+			callback(memoryInfo)
+		})
+	},
 }
 
 const cpuUsageManager = {
@@ -52,10 +57,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 		})
 		return
 	}
-	if (message.action === 'USR_GET_CPUINFO') {
+	if (message.action === 'USR_GET_SYSINFO') {
 		chromOpearManager.getCurrentTab(tab => {
 			chromOpearManager.getCPUInfo(cpuInfo => {
-				chrome.tabs.sendMessage(tab.id, { ...message, data: { cpuUsage: cpuUsageManager.update(cpuInfo) } })
+				chromOpearManager.getMemoryInfo(memoryInfo => {
+					chrome.tabs.sendMessage(tab.id, { ...message, data: { cpuUsage: cpuUsageManager.update(cpuInfo), ...memoryInfo } })
+				})
 			})
 		})
 	}

@@ -37,6 +37,8 @@
 			[0, 64 + 1, null, 14], // 统计内存数值文本
 			[80, 0, null, 14], // CPU USAGE 数值文本
 			[80, 14, null, 18], // CPU USAGE 折线图示
+			[80, 32, null, 14], // MEMORY 数值文本
+			[80, 46, null, 18], // MEMORY 折线图示
 		],
 	]
 	/**
@@ -51,22 +53,22 @@
 	 */
 	const RECORD_CONFIG = [27, 3]
 	/**
-	 * FPS 阶段告警阈值(数值)
+	 * 阶段告警阈值(数值)
 	 */
-	const FPS_THRESHOLD = [20, 30]
-	/**
-	 * 内存占用阶段告警阈值(百分比)
-	 */
-	const MEMO_RATIO_THRESHOLD = [0.6, 0.9]
+	const FPS_THRESHOLD = [20, 30] // 数值
+	const PERFORMANCE_MEMORY_THRESHOLD = [0.6, 0.9] // 比率
+	const SYS_CPUUSAGE_THRESHOLD = [0.8, 0.9] // 比率
+	const SYS_MEMORYUSAGE_THRESHOLD = [0.8, 0.9] // 比率
 	/**
 	 * 文本颜色
+	 * 		[正常 - 告警 - 严重]
 	 */
-	const TEXT_COLOR = ['rgba(255, 0, 0, 1.0)', 'rgba(255, 126, 82, 1.0)', 'rgba(0, 255, 0, 1.0)']
+	const TEXT_COLOR = ['rgba(0, 255, 0, 1.0)', 'rgba(255, 126, 82, 1.0)', 'rgba(255, 0, 0, 1.0)']
 	/**
 	 * 折线图颜色
+	 * 		[描边 - 填充]
 	 */
-	const POLYLINE_STROKE_COLOR = 'rgba(17, 125, 187, 1.0)'
-	const POLYLINE_FILL_COLOR = 'rgba(120, 233, 232, 0.85)'
+	const POLYLINE_COLOR = ['rgba(17, 125, 187, 1.0)', 'rgba(120, 233, 232, 0.85)']
 	/**
 	 * 文本显示字体大小
 	 */
@@ -168,6 +170,13 @@
 			cacheProfile.mainCanvasElement.style.width = `${CANVAS_RECTS[_V_MODE][0]}px`
 			cacheProfile.mainCanvasElement.style.height = `${CANVAS_RECTS[_V_MODE][1]}px`
 		},
+		calcMatchColor(nowValue, steps, isRatio, refValue, isPositive) {
+			const [s0, s1] = [isRatio ? refValue * steps[0] : steps[0], isRatio ? refValue * steps[1] : steps[1]]
+			if (isPositive) {
+				return nowValue >= s1 ? TEXT_COLOR[2] : nowValue >= s0 && nowValue < s1 ? TEXT_COLOR[1] : TEXT_COLOR[0]
+			}
+			return nowValue < s0 ? TEXT_COLOR[2] : nowValue >= s0 && nowValue < s1 ? TEXT_COLOR[1] : TEXT_COLOR[0]
+		},
 	}
 
 	const bindEvent = () => {
@@ -181,10 +190,11 @@
 				}
 				return
 			}
-			if (message.action === 'USR_GET_CPUINFO') {
+			if (message.action === 'USR_GET_SYSINFO') {
 				const AREA_RECT = ELEMENTS_RECT[_V_MODE]
-				samplingCallbackManager.calcCpuUsageCommonData(1 - message.data.cpuUsage)
-				samplingCallbackManager.calcCpuUsagePolylineData(AREA_RECT[7][1], AREA_RECT[7][3])
+				samplingCallbackManager.calcSystemInfoCommonData(message.data)
+				samplingCallbackManager.calcSystemCpuUsagePolylineData(AREA_RECT[7][1], AREA_RECT[7][3])
+				samplingCallbackManager.calcSystemMemoryUsagePolylineData(AREA_RECT[9][1], AREA_RECT[9][3])
 				return
 			}
 		})
@@ -198,12 +208,8 @@
 			if (!MODES.slice(1).includes(_V_MODE) || !cacheProfile.panelRect) {
 				return
 			}
-			if (
-				evte.clientX >= cacheProfile.panelRect.left &&
-				evte.clientX <= cacheProfile.panelRect.right &&
-				evte.clientY >= cacheProfile.panelRect.top &&
-				evte.clientY <= cacheProfile.panelRect.bottom
-			) {
+			const { panelRect } = cacheProfile
+			if (evte.clientX >= panelRect.left && evte.clientX <= panelRect.right && evte.clientY >= panelRect.top && evte.clientY <= panelRect.bottom) {
 				cacheProfile.containerElement.classList.add(`${STYLE_CLASSNAME_PREFIEX}-hidden`)
 				return
 			}
@@ -226,15 +232,9 @@
 		update() {
 			const nowStamp = performance.now()
 			profileManager.setCommonProfile(nowStamp)
-			if (_V_MODE === MODES[1]) {
-				profileManager.setRAFCommonProfile(nowStamp)
-				profileManager.setRICCommonProfile(nowStamp)
-			}
-			if (_V_MODE === MODES[2]) {
-				profileManager.setRAFCommonProfile(nowStamp)
-				profileManager.setRICCommonProfile(nowStamp)
-				profileManager.setCpuCommonProfile()
-			}
+			profileManager.setRAFCommonProfile()
+			profileManager.setRICCommonProfile()
+			profileManager.setSystemInfoCommonProfile()
 		},
 		/****************************************************************************************************/
 		/****************************************************************************************************/
@@ -252,18 +252,21 @@
 			cacheProfile.prevRefreshViewTimeStampExtend = cacheProfile.prevRefreshViewTimeStamp = cacheProfile.prevRAFExecuteTimeStamp = nowStamp
 			cacheProfile.refreshViewDiffTimeExtend = cacheProfile.refreshViewDiffTime = cacheProfile.rafExecuteDiffTime = 0
 		},
-		setRAFCommonProfile(nowStamp) {
+		setRAFCommonProfile() {
 			cacheProfile.rAFIntervalCount = cacheProfile.rAFRatioCycleAverage = cacheProfile.rAFRatioInstant = 0
 			cacheProfile.rAFRatioCycleAverageYPositions = []
 			cacheProfile.maxRAFRatioCycleAverage = 60
 		},
-		setRICCommonProfile(nowStamp) {
+		setRICCommonProfile() {
 			cacheProfile.rICIntervalCount = cacheProfile.rIdleRatioCycleAverage = 0
 			cacheProfile.rIdleRatioCycleAverageYPositions = []
 		},
-		setCpuCommonProfile() {
+		setSystemInfoCommonProfile() {
 			cacheProfile.cpuUsageCycleAverage = 0
 			cacheProfile.cpuUsageCycleAverageYPositions = []
+			/* ... */
+			cacheProfile.memoryUsageCycleAverage = cacheProfile.memoryTotalSize = cacheProfile.memoryUsageSize = 0
+			cacheProfile.memoryUsageCycleAverageYPositions = []
 		},
 	}
 
@@ -301,39 +304,22 @@
 			let needRfreshView = false
 			if (cacheProfile.visibilityState === 'visible' && cacheProfile.refreshViewDiffTime >= cacheProfile.maxBlockInterval) {
 				const si = (cacheProfile.refreshViewDiffTime / _V_STARDARD_INTERVAL) >> 0
-				if (_V_MODE === MODES[1]) {
-					const AREA_RECT = ELEMENTS_RECT[_V_MODE]
-					samplingCallbackManager.fillRAFPolylineBlockData(si, AREA_RECT[1][1] + AREA_RECT[1][3])
-					samplingCallbackManager.fillRIdlePolylineBlockData(si, AREA_RECT[4][1])
-				}
-				if (_V_MODE === MODES[2]) {
-					const AREA_RECT = ELEMENTS_RECT[_V_MODE]
-					samplingCallbackManager.fillRAFPolylineBlockData(si, AREA_RECT[1][1] + AREA_RECT[1][3])
-					samplingCallbackManager.fillRIdlePolylineBlockData(si, AREA_RECT[4][1])
-					samplingCallbackManager.fillCpuUsagePolylineBlockData(si, AREA_RECT[7][1])
-				}
+				const AREA_RECT = ELEMENTS_RECT[_V_MODE]
+				samplingCallbackManager.fillRAFPolylineBlockData(si, AREA_RECT[1][1] + AREA_RECT[1][3])
+				samplingCallbackManager.fillRIdlePolylineBlockData(si, AREA_RECT[4][1])
 				needRfreshView = true
 			}
 			if (Math.abs(cacheProfile.refreshViewDiffTime - _V_STARDARD_INTERVAL) <= 5 || cacheProfile.refreshViewDiffTime >= _V_STARDARD_INTERVAL) {
-				if (_V_MODE === MODES[1]) {
-					const AREA_RECT = ELEMENTS_RECT[_V_MODE]
-					samplingCallbackManager.calcRAFCommonData()
-					samplingCallbackManager.calcRAFPolylineData(AREA_RECT[1][1], AREA_RECT[1][3])
-					samplingCallbackManager.calcRIdleCommonData()
-					samplingCallbackManager.calcRIdlePolylineData(AREA_RECT[4][1], AREA_RECT[4][3])
-				}
-				if (_V_MODE === MODES[2]) {
-					const AREA_RECT = ELEMENTS_RECT[_V_MODE]
-					samplingCallbackManager.calcRAFCommonData()
-					samplingCallbackManager.calcRAFPolylineData(AREA_RECT[1][1], AREA_RECT[1][3])
-					samplingCallbackManager.calcRIdleCommonData()
-					samplingCallbackManager.calcRIdlePolylineData(AREA_RECT[4][1], AREA_RECT[4][3])
-				}
+				const AREA_RECT = ELEMENTS_RECT[_V_MODE]
+				samplingCallbackManager.calcRAFCommonData()
+				samplingCallbackManager.calcRAFPolylineData(AREA_RECT[1][1], AREA_RECT[1][3])
+				samplingCallbackManager.calcRIdleCommonData()
+				samplingCallbackManager.calcRIdlePolylineData(AREA_RECT[4][1], AREA_RECT[4][3])
 				needRfreshView = true
 			}
 			if (needRfreshView) {
 				if (_V_MODE === MODES[2] && cacheProfile.refreshViewDiffTimeExtend >= _V_EXTEND_INTERVAL) {
-					chrome.runtime.sendMessage({ action: 'USR_GET_CPUINFO' })
+					chrome.runtime.sendMessage({ action: 'USR_GET_SYSINFO' })
 					cacheProfile.prevRefreshViewTimeStampExtend = nowStamp
 				}
 				viewDataManager.update()
@@ -381,18 +367,27 @@
 				)
 			}
 		},
-		calcCpuUsageCommonData(cpuUsageCycleAverage) {
-			cacheProfile.cpuUsageCycleAverage = cpuUsageCycleAverage
+		calcSystemInfoCommonData(messageData) {
+			cacheProfile.cpuUsageCycleAverage = messageData.cpuUsage
+			cacheProfile.memoryTotalSize = messageData.capacity
+			cacheProfile.memoryUsageSize = cacheProfile.memoryTotalSize - messageData.availableCapacity
+			cacheProfile.memoryUsageCycleAverage = cacheProfile.memoryUsageSize / cacheProfile.memoryTotalSize
 		},
-		fillCpuUsagePolylineBlockData(size, polylineRectAreaTop) {
-			cacheProfile.cpuUsageCycleAverageYPositions = [].concat(cacheProfile.cpuUsageCycleAverageYPositions, new Array(size).fill(polylineRectAreaTop))
-		},
-		calcCpuUsagePolylineData(polylineRectAreaTop, polylineRectAreaHeight) {
-			cacheProfile.cpuUsageCycleAverageYPositions.push(polylineRectAreaTop + cacheProfile.cpuUsageCycleAverage * polylineRectAreaHeight)
+		calcSystemCpuUsagePolylineData(polylineRectAreaTop, polylineRectAreaHeight) {
+			cacheProfile.cpuUsageCycleAverageYPositions.push(polylineRectAreaTop + (1 - cacheProfile.cpuUsageCycleAverage) * polylineRectAreaHeight)
 			if (cacheProfile.cpuUsageCycleAverageYPositions.length >= RECORD_CONFIG[0] + 1) {
 				cacheProfile.cpuUsageCycleAverageYPositions = cacheProfile.cpuUsageCycleAverageYPositions.slice(
 					cacheProfile.cpuUsageCycleAverageYPositions.length - RECORD_CONFIG[0],
 					cacheProfile.cpuUsageCycleAverageYPositions.length
+				)
+			}
+		},
+		calcSystemMemoryUsagePolylineData(polylineRectAreaTop, polylineRectAreaHeight) {
+			cacheProfile.memoryUsageCycleAverageYPositions.push(polylineRectAreaTop + cacheProfile.memoryUsageCycleAverage * polylineRectAreaHeight)
+			if (cacheProfile.memoryUsageCycleAverageYPositions.length >= RECORD_CONFIG[0] + 1) {
+				cacheProfile.memoryUsageCycleAverageYPositions = cacheProfile.memoryUsageCycleAverageYPositions.slice(
+					cacheProfile.memoryUsageCycleAverageYPositions.length - RECORD_CONFIG[0],
+					cacheProfile.memoryUsageCycleAverageYPositions.length
 				)
 			}
 		},
@@ -407,7 +402,8 @@
 				viewDataManager.rIdleCommonDataSubmit()
 				viewDataManager.refreshTextDataSubmit()
 				viewDataManager.rIdlePolylineDataSubmit()
-				viewDataManager.memoryDataSubmit()
+				viewDataManager.performanceMemoryDataSubmit()
+				return
 			}
 			if (_V_MODE === MODES[2]) {
 				viewDataManager.rAfCommonDataSubmit()
@@ -415,9 +411,10 @@
 				viewDataManager.rIdleCommonDataSubmit()
 				viewDataManager.refreshTextDataSubmit()
 				viewDataManager.rIdlePolylineDataSubmit()
-				viewDataManager.memoryDataSubmit()
-				viewDataManager.cpuUsageCommonDataSubmit()
-				viewDataManager.cpuUsagePolylineDataSubmit()
+				viewDataManager.performanceMemoryDataSubmit()
+				viewDataManager.systemInfoCommonDataSubmit()
+				viewDataManager.systemInfoPolylineDataSubmit()
+				return
 			}
 		},
 		/****************************************************************************************************/
@@ -440,17 +437,20 @@
 		rIdlePolylineDataSubmit() {
 			viewDataManager.data.rIdleRatioCycleAverageYPositions = [...cacheProfile.rIdleRatioCycleAverageYPositions]
 		},
-		memoryDataSubmit() {
+		performanceMemoryDataSubmit() {
 			const memoryInfo = performance.memory || {}
-			viewDataManager.data.jsHeapSizeLimit = memoryInfo.jsHeapSizeLimit || 0
-			viewDataManager.data.totalJSHeapSize = memoryInfo.totalJSHeapSize || 0
-			viewDataManager.data.usedJSHeapSize = memoryInfo.usedJSHeapSize || 0
+			viewDataManager.data.jsHeapSizeLimit = (memoryInfo.jsHeapSizeLimit || 0) / Math.pow(1024, 2)
+			viewDataManager.data.totalJSHeapSize = (memoryInfo.totalJSHeapSize || 0) / Math.pow(1024, 2)
+			viewDataManager.data.usedJSHeapSize = (memoryInfo.usedJSHeapSize || 0) / Math.pow(1024, 2)
 		},
-		cpuUsageCommonDataSubmit() {
+		systemInfoCommonDataSubmit() {
 			viewDataManager.data.cpuUsageCycleAverage = cacheProfile.cpuUsageCycleAverage
+			viewDataManager.data.memoryTotalSize = cacheProfile.memoryTotalSize / Math.pow(1024, 3)
+			viewDataManager.data.memoryUsageSize = cacheProfile.memoryUsageSize / Math.pow(1024, 3)
 		},
-		cpuUsagePolylineDataSubmit() {
+		systemInfoPolylineDataSubmit() {
 			viewDataManager.data.cpuUsageCycleAverageYPositions = [...cacheProfile.cpuUsageCycleAverageYPositions]
+			viewDataManager.data.memoryUsageCycleAverageYPositions = [...cacheProfile.memoryUsageCycleAverageYPositions]
 		},
 	}
 
@@ -467,7 +467,8 @@
 				drawManager.drawRICText(AREA_RECT[2][0], AREA_RECT[2][1] + (AREA_RECT[2][3] - FONT_SIZE) / 2)
 				drawManager.drawRAFRefreshText(AREA_RECT[3][0], AREA_RECT[3][1] + (AREA_RECT[3][3] - FONT_SIZE) / 2)
 				drawManager.drawPolyline(viewDataManager.data.rIdleRatioCycleAverageYPositions, AREA_RECT[4][1] + AREA_RECT[4][3], AREA_RECT[4][0])
-				drawManager.drawMemoryText(AREA_RECT[5][0], AREA_RECT[5][1] + (AREA_RECT[5][3] - FONT_SIZE) / 2)
+				drawManager.drawPerformanceMemoryText(AREA_RECT[5][0], AREA_RECT[5][1] + (AREA_RECT[5][3] - FONT_SIZE) / 2)
+				return
 			}
 			if (_V_MODE === MODES[2]) {
 				const AREA_RECT = ELEMENTS_RECT[_V_MODE]
@@ -476,43 +477,44 @@
 				drawManager.drawRICText(AREA_RECT[2][0], AREA_RECT[2][1] + (AREA_RECT[2][3] - FONT_SIZE) / 2)
 				drawManager.drawRAFRefreshText(AREA_RECT[3][0], AREA_RECT[3][1] + (AREA_RECT[3][3] - FONT_SIZE) / 2)
 				drawManager.drawPolyline(viewDataManager.data.rIdleRatioCycleAverageYPositions, AREA_RECT[4][1] + AREA_RECT[4][3], AREA_RECT[4][0])
-				drawManager.drawMemoryText(AREA_RECT[5][0], AREA_RECT[5][1] + (AREA_RECT[5][3] - FONT_SIZE) / 2)
-				drawManager.drawCpuUsageText(AREA_RECT[6][0], AREA_RECT[6][1] + (AREA_RECT[6][3] - FONT_SIZE) / 2)
+				drawManager.drawPerformanceMemoryText(AREA_RECT[5][0], AREA_RECT[5][1] + (AREA_RECT[5][3] - FONT_SIZE) / 2)
+				drawManager.drawSystemCpuUsageText(AREA_RECT[6][0], AREA_RECT[6][1] + (AREA_RECT[6][3] - FONT_SIZE) / 2)
 				drawManager.drawPolyline(viewDataManager.data.cpuUsageCycleAverageYPositions, AREA_RECT[7][1] + AREA_RECT[7][3], AREA_RECT[7][0])
+				drawManager.drawSystemMemoryUsageText(AREA_RECT[8][0], AREA_RECT[8][1] + (AREA_RECT[8][3] - FONT_SIZE) / 2)
+				drawManager.drawPolyline(viewDataManager.data.memoryUsageCycleAverageYPositions, AREA_RECT[9][1] + AREA_RECT[9][3], AREA_RECT[9][0])
+				return
 			}
 		},
 		/****************************************************************************************************/
 		/****************************************************************************************************/
-		drawMemoryText(fillStartX, fillStartY) {
-			const textContent = `${(viewDataManager.data.usedJSHeapSize / Math.pow(1024.0, 2)).toFixed(2)}/${(viewDataManager.data.totalJSHeapSize / Math.pow(1024.0, 2)).toFixed(2)}`
-			cacheProfile.ctx.fillStyle =
-				viewDataManager.data.usedJSHeapSize >= viewDataManager.data.jsHeapSizeLimit * MEMO_RATIO_THRESHOLD[1]
-					? TEXT_COLOR[0]
-					: viewDataManager.data.usedJSHeapSize >= viewDataManager.data.jsHeapSizeLimit * MEMO_RATIO_THRESHOLD[0] &&
-					  viewDataManager.data.usedJSHeapSize < viewDataManager.data.jsHeapSizeLimit * MEMO_RATIO_THRESHOLD[1]
-					? TEXT_COLOR[1]
-					: TEXT_COLOR[2]
-			cacheProfile.ctx.fillText(textContent, fillStartX, fillStartY)
-		},
 		drawRAFText(fillStartX, fillStartY) {
 			const textContent = `${viewDataManager.data.rAFRatioCycleAverage.toFixed(2)}/${viewDataManager.data.rAFRatioInstant.toFixed(2)}`
-			const refValue = viewDataManager.data.rAFRatioInstant >> 0
-			cacheProfile.ctx.fillStyle = refValue < FPS_THRESHOLD[0] ? TEXT_COLOR[0] : refValue >= FPS_THRESHOLD[0] && refValue < FPS_THRESHOLD[1] ? TEXT_COLOR[1] : TEXT_COLOR[2]
+			cacheProfile.ctx.fillStyle = operaManager.calcMatchColor(viewDataManager.data.rAFRatioInstant >> 0, FPS_THRESHOLD, false, undefined, false)
 			cacheProfile.ctx.fillText(textContent, fillStartX, fillStartY)
 		},
 		drawRAFRefreshText(fillStartX, fillStartY) {
 			const textContent = `${viewDataManager.data.refreshViewDiffTime}`
-			cacheProfile.ctx.fillStyle = TEXT_COLOR[2]
+			cacheProfile.ctx.fillStyle = TEXT_COLOR[0]
 			cacheProfile.ctx.fillText(textContent, fillStartX, fillStartY)
 		},
 		drawRICText(fillStartX, fillStartY) {
-			const textContent = `${(Math.max(0, 1 - +viewDataManager.data.rIdleRatioCycleAverage) * 100).toFixed(2)}%`
-			cacheProfile.ctx.fillStyle = TEXT_COLOR[2]
+			const textContent = `${(Math.max(0, 1 - viewDataManager.data.rIdleRatioCycleAverage) * 100).toFixed(2)}%`
+			cacheProfile.ctx.fillStyle = TEXT_COLOR[0]
 			cacheProfile.ctx.fillText(textContent, fillStartX, fillStartY)
 		},
-		drawCpuUsageText(fillStartX, fillStartY) {
-			const textContent = `${(Math.max(0, 1 - +viewDataManager.data.cpuUsageCycleAverage) * 100).toFixed(2)}%`
-			cacheProfile.ctx.fillStyle = TEXT_COLOR[2]
+		drawPerformanceMemoryText(fillStartX, fillStartY) {
+			const textContent = `${viewDataManager.data.usedJSHeapSize.toFixed(2)}/${viewDataManager.data.totalJSHeapSize.toFixed(2)}`
+			cacheProfile.ctx.fillStyle = operaManager.calcMatchColor(viewDataManager.data.usedJSHeapSize, PERFORMANCE_MEMORY_THRESHOLD, true, viewDataManager.data.jsHeapSizeLimit, true)
+			cacheProfile.ctx.fillText(textContent, fillStartX, fillStartY)
+		},
+		drawSystemCpuUsageText(fillStartX, fillStartY) {
+			const textContent = `${(Math.max(0, viewDataManager.data.cpuUsageCycleAverage) * 100).toFixed(2)}%`
+			cacheProfile.ctx.fillStyle = operaManager.calcMatchColor(viewDataManager.data.cpuUsageCycleAverage, SYS_CPUUSAGE_THRESHOLD, false, undefined, true)
+			cacheProfile.ctx.fillText(textContent, fillStartX, fillStartY)
+		},
+		drawSystemMemoryUsageText(fillStartX, fillStartY) {
+			const textContent = `${viewDataManager.data.memoryUsageSize.toFixed(2)}/${viewDataManager.data.memoryTotalSize.toFixed(2)}`
+			cacheProfile.ctx.fillStyle = operaManager.calcMatchColor(viewDataManager.data.memoryUsageSize, SYS_MEMORYUSAGE_THRESHOLD, true, viewDataManager.data.memoryTotalSize, true)
 			cacheProfile.ctx.fillText(textContent, fillStartX, fillStartY)
 		},
 		drawPolyline(positions, polylineRectAreaBottomY, polylineRectAreaLeftX) {
@@ -527,13 +529,13 @@
 				cacheProfile.ctx.lineTo(polylineRectAreaLeftX + sx + i * RECORD_CONFIG[1], positions[i])
 			}
 			cacheProfile.ctx.stroke()
-			cacheProfile.ctx.strokeStyle = POLYLINE_STROKE_COLOR
+			cacheProfile.ctx.strokeStyle = POLYLINE_COLOR[0]
 			if (positions.length >= 2) {
 				cacheProfile.ctx.lineTo(polylineRectAreaLeftX + sx + (i - 1) * RECORD_CONFIG[1], polylineRectAreaBottomY)
 				cacheProfile.ctx.lineTo(polylineRectAreaLeftX + sx, polylineRectAreaBottomY)
 				cacheProfile.ctx.stroke()
 			}
-			cacheProfile.ctx.fillStyle = POLYLINE_FILL_COLOR
+			cacheProfile.ctx.fillStyle = POLYLINE_COLOR[1]
 			cacheProfile.ctx.fill()
 		},
 	}
