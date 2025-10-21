@@ -187,7 +187,7 @@ class Ven$SchedulerSlice {
 		if (!generator || typeof generator.next !== 'function') {
 			return
 		}
-		return function next() {
+		const next = () => {
 			_chunkStartCallback && _chunkStartCallback(refConfig.chunkCount, refConfig.taskIndex)
 			refConfig.chunkCount++
 			const start = performance.now()
@@ -205,5 +205,6 @@ class Ven$SchedulerSlice {
 			_chunkEndCallback && _chunkEndCallback(refConfig.chunkCount - 1, refConfig.taskIndex)
 			_scheduler(next)
 		}
+		return next
 	}
 }
