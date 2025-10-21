@@ -32,7 +32,7 @@ function ven$blocking(delay = 1000) {
  * @return {promise<undefined>}
  */
 async function ven$sleep(delay = 1000) {
-	return Promise(_ => {
+	return new Promise(_ => {
 		window.setTimeout(_, delay)
 	})
 }
