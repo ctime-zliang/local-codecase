@@ -2,7 +2,7 @@ function draw1Renderer(type, glControl, callback) {
 	let program = null
 	let commonWebGLVariableLocation = null
 	switch (type) {
-        case 'st01': {
+		case 'st01': {
 			const COMMON_VERTEX_SHADER = `
                 precision mediump float;
                 varying vec4 v_Color;
