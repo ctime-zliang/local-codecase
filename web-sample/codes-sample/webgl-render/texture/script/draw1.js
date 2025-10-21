@@ -117,7 +117,7 @@ class Program1 {
 	static isRender = true
 	static containerElement
 	static profile = {
-		renderStyle: 'st02',
+		renderStyle: 'st01',
 		/**
 		 * 视图矩阵参数
 		 */

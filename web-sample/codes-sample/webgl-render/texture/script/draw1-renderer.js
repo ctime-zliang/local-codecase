@@ -2,7 +2,44 @@ function draw1Renderer(type, glControl, callback) {
 	let program = null
 	let commonWebGLVariableLocation = null
 	switch (type) {
-		case 'st01': {
+        case 'st01': {
+			const COMMON_VERTEX_SHADER = `
+                precision mediump float;
+                varying vec4 v_Color;
+                varying vec2 v_textureCoord;
+                // 顶点配置(组)
+                attribute vec3 a_ObjPosition;
+                attribute vec4 a_Color;
+                attribute vec2 a_textureCoord;
+                // 变换矩阵(组)
+                uniform mat4 u_ModelMatrix;
+                uniform mat4 u_ViewMatrix;
+                uniform mat4 u_ProjMatrix;
+                void main() {
+                    gl_Position = u_ProjMatrix * u_ViewMatrix * u_ModelMatrix * vec4(a_ObjPosition, 1.0);
+                    v_Color = a_Color;
+                    v_textureCoord = a_textureCoord;
+                }
+            `
+			const COMMON_FRAGMENT_SHADER = `
+                precision mediump float;
+                varying vec4 v_Color;
+                varying vec2 v_textureCoord;
+                // 纹理参数(组)
+                uniform sampler2D u_texture;
+                void main() {
+                    gl_FragColor = v_Color;
+                    gl_FragColor = texture2D(u_texture, v_textureCoord);
+                }
+            `
+			program = ven$createProgram(glControl.gl, COMMON_VERTEX_SHADER, COMMON_FRAGMENT_SHADER)
+			commonWebGLVariableLocation = ven$getWebGLVariableLocation(glControl.gl, program, {
+				glAttributes: ['a_ObjPosition', 'a_Color', 'a_textureCoord'],
+				glUniforms: ['u_ModelMatrix', 'u_ViewMatrix', 'u_ProjMatrix', 'u_texture'],
+			})
+			break
+		}
+		case 'st02': {
 			const COMMON_VERTEX_SHADER = `
                 precision mediump float;
                 varying vec4 v_Color;
@@ -67,7 +104,7 @@ function draw1Renderer(type, glControl, callback) {
 			})
 			break
 		}
-		case 'st02': {
+		case 'st03': {
 			const COMMON_VERTEX_SHADER = `
                 precision mediump float;
                 varying vec4 v_Color;

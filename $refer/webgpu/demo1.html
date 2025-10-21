@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>WebGPU Rectangle</title>
+		<style>
+			.canvas {
+				width: 640px;
+				height: 480px;
+				display: block;
+				margin: 0 auto;
+				background-color: #000;
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id="webgpuCanvas" class="canvas" width="640" height="480"></canvas>
+		<script>
+			async function initWebGPU() {
+				// 检查浏览器是否支持 WebGPU
+				if (!navigator.gpu) {
+					throw new Error('WebGPU not supported on this browser.')
+				}
+
+				// 请求适配器
+				const adapter = await navigator.gpu.requestAdapter()
+				if (!adapter) {
+					throw new Error('No appropriate GPUAdapter found.')
+				}
+
+				// 请求设备
+				const device = await adapter.requestDevice()
+
+				// 获取画布并配置
+				const canvas = document.querySelector('#webgpuCanvas')
+				const context = canvas.getContext('webgpu')
+
+				// 获取首选画布格式
+				const format = navigator.gpu.getPreferredCanvasFormat()
+
+				// 配置画布
+				context.configure({
+					device: device,
+					format: format,
+					alphaMode: 'opaque',
+				})
+
+				return { device, canvas, format, context }
+			}
+
+			function createVertexData(device) {
+				// 顶点数据 (两个三角形组成一个矩形)
+				const vertices = new Float32Array([
+					// 第一个三角形
+					-0.5,
+					-0.5, // 左下
+					0.5,
+					-0.5, // 右下
+					-0.5,
+					0.5, // 左上
+
+					// 第二个三角形
+					-0.5,
+					0.5, // 左上
+					0.5,
+					-0.5, // 右下
+					0.5,
+					0.5, // 右上
+				])
+
+				// 为每个顶点创建颜色数据 (RGBA)
+				const colors = new Float32Array([
+					// 第一个三角形顶点颜色
+					1,
+					0,
+					0,
+					1, // 左下红
+					0,
+					1,
+					0,
+					1, // 右下绿
+					0,
+					0,
+					1,
+					1, // 左上蓝
+
+					// 第二个三角形顶点颜色
+					0,
+					0,
+					1,
+					1, // 左上蓝
+					0,
+					1,
+					0,
+					1, // 右下绿
+					1,
+					1,
+					0,
+					1, // 右上黄
+				])
+
+				// 创建顶点缓冲区
+				const vertexBuffer = device.createBuffer({
+					size: vertices.byteLength,
+					usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
+					mappedAtCreation: true,
+				})
+				new Float32Array(vertexBuffer.getMappedRange()).set(vertices)
+				vertexBuffer.unmap()
+
+				// 创建颜色缓冲区
+				const colorBuffer = device.createBuffer({
+					size: colors.byteLength,
+					usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
+					mappedAtCreation: true,
+				})
+				new Float32Array(colorBuffer.getMappedRange()).set(colors)
+				colorBuffer.unmap()
+
+				return { vertexBuffer, colorBuffer, vertexCount: vertices.length / 2 }
+			}
+
+			function createShaders(device) {
+				const shaderModule = device.createShaderModule({
+					code: `
+						// 顶点着色器输入
+						struct VertexInput {
+							@location(0) position: vec2f,
+							@location(1) color: vec4f
+						};
+
+						// 顶点着色器输出/片段着色器输入
+						struct VertexOutput {
+							@builtin(position) position: vec4f,
+							@location(0) color: vec4f
+						};
+
+						// 顶点着色器
+						@vertex
+						fn vertexMain(input: VertexInput) -> VertexOutput {
+							var output: VertexOutput;
+							output.position = vec4f(input.position, 0.0, 1.0);
+							output.color = input.color;
+							return output;
+						}
+
+						// 片段着色器
+						@fragment
+						fn fragmentMain(input: VertexOutput) -> @location(0) vec4f {
+							return input.color;
+						}
+					`,
+				})
+
+				return shaderModule
+			}
+
+			function createRenderPipeline(device, shaderModule, format) {
+				const pipeline = device.createRenderPipeline({
+					layout: 'auto',
+					vertex: {
+						module: shaderModule,
+						entryPoint: 'vertexMain',
+						buffers: [
+							{
+								// 顶点位置缓冲区布局
+								arrayStride: 2 * 4, // 每个顶点2个float32 (x,y)
+								attributes: [
+									{
+										shaderLocation: 0,
+										offset: 0,
+										format: 'float32x2',
+									},
+								],
+							},
+							{
+								// 顶点颜色缓冲区布局
+								arrayStride: 4 * 4, // 每个颜色4个float32 (r,g,b,a)
+								attributes: [
+									{
+										shaderLocation: 1,
+										offset: 0,
+										format: 'float32x4',
+									},
+								],
+							},
+						],
+					},
+					fragment: {
+						module: shaderModule,
+						entryPoint: 'fragmentMain',
+						targets: [
+							{
+								format: format,
+							},
+						],
+					},
+					primitive: {
+						topology: 'triangle-list',
+					},
+				})
+
+				return pipeline
+			}
+
+			function render(device, context, pipeline, vertexData) {
+				// 创建命令编码器
+				const commandEncoder = device.createCommandEncoder()
+
+				// 开始渲染通道
+				const renderPass = commandEncoder.beginRenderPass({
+					colorAttachments: [
+						{
+							view: context.getCurrentTexture().createView(),
+							clearValue: { r: 0.0, g: 0.0, b: 0.0, a: 1.0 },
+							loadOp: 'clear',
+							storeOp: 'store',
+						},
+					],
+				})
+
+				// 设置渲染管线
+				renderPass.setPipeline(pipeline)
+
+				// 设置顶点缓冲区
+				renderPass.setVertexBuffer(0, vertexData.vertexBuffer)
+				renderPass.setVertexBuffer(1, vertexData.colorBuffer)
+
+				// 绘制命令
+				renderPass.draw(vertexData.vertexCount)
+
+				// 结束渲染通道
+				renderPass.end()
+
+				// 提交命令到GPU队列
+				device.queue.submit([commandEncoder.finish()])
+			}
+
+			async function run() {
+				try {
+					// 初始化WebGPU
+					const { device, context, format } = await initWebGPU()
+
+					// 创建顶点数据
+					const vertexData = createVertexData(device)
+
+					// 创建着色器
+					const shaderModule = createShaders(device)
+
+					// 创建渲染管线
+					const pipeline = createRenderPipeline(device, shaderModule, format)
+
+					// 渲染
+					render(device, context, pipeline, vertexData)
+				} catch (error) {
+					console.error('Error:', error)
+				}
+			}
+
+			// 启动应用
+			window.addEventListener('DOMContentLoaded', function () {
+				run()
+			})
+		</script>
+	</body>
+</html>

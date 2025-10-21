@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>WebGL SSAA 抗锯齿三角形</title>
+		<style>
+			body {
+				margin: 0;
+				padding: 20px;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				background-color: #1a1a1a;
+				color: #fff;
+				font-family: Arial, sans-serif;
+			}
+			canvas {
+				border: 1px solid #444;
+				margin-bottom: 20px;
+			}
+			.controls {
+				margin-bottom: 20px;
+			}
+			button {
+				background-color: #4caf50;
+				border: none;
+				color: white;
+				padding: 10px 15px;
+				text-align: center;
+				text-decoration: none;
+				display: inline-block;
+				font-size: 16px;
+				margin: 4px 2px;
+				cursor: pointer;
+				border-radius: 4px;
+			}
+			button.active {
+				background-color: #2e7d32;
+				box-shadow: 0 0 8px rgba(46, 125, 50, 0.8);
+			}
+			.info {
+				background-color: #333;
+				padding: 15px;
+				border-radius: 5px;
+				max-width: 600px;
+				line-height: 1.5;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>WebGL SSAA 抗锯齿实现</h1>
+		<div class="controls">
+			<button id="noAA" class="active">无抗锯齿</button>
+			<button id="ssaa2x">SSAA 2x</button>
+			<button id="ssaa4x">SSAA 4x</button>
+		</div>
+		<canvas id="glCanvas" width="400" height="400"></canvas>
+
+		<div class="info">
+			<h3>SSAA (超采样抗锯齿) 原理:</h3>
+			<p>SSAA 通过以更高分辨率渲染场景，然后下采样到目标分辨率来实现抗锯齿。</p>
+			<p>例如，4x SSAA 使用4倍于屏幕分辨率的缓冲区渲染场景，然后平均4个像素的颜色值来生成最终输出。</p>
+			<p>这种方法能有效减少锯齿，但会增加4倍的计算和内存开销。</p>
+		</div>
+
+		<script>
+			// 初始化WebGL上下文
+			const canvas = document.getElementById('glCanvas')
+			const gl = canvas.getContext('webgl')
+
+			if (!gl) {
+				alert('您的浏览器不支持WebGL')
+			}
+
+			// 顶点着色器源码
+			const vsSource = `
+            attribute vec4 aVertexPosition;
+            void main() {
+                gl_Position = aVertexPosition;
+            }
+        `
+
+			// 片段着色器源码
+			const fsSource = `
+            precision mediump float;
+            uniform vec4 uColor;
+            void main() {
+                gl_FragColor = uColor;
+            }
+        `
+
+			// 编译着色器程序
+			function initShaderProgram(gl, vsSource, fsSource) {
+				const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vsSource)
+				const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fsSource)
+
+				const shaderProgram = gl.createProgram()
+				gl.attachShader(shaderProgram, vertexShader)
+				gl.attachShader(shaderProgram, fragmentShader)
+				gl.linkProgram(shaderProgram)
+
+				if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+					alert('无法初始化着色器程序: ' + gl.getProgramInfoLog(shaderProgram))
+					return null
+				}
+
+				return shaderProgram
+			}
+
+			// 创建指定类型的着色器
+			function loadShader(gl, type, source) {
+				const shader = gl.createShader(type)
+				gl.shaderSource(shader, source)
+				gl.compileShader(shader)
+
+				if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+					alert('编译着色器时出错: ' + gl.getShaderInfoLog(shader))
+					gl.deleteShader(shader)
+					return null
+				}
+
+				return shader
+			}
+
+			// 初始化缓冲区
+			function initBuffers(gl) {
+				// 创建三角形的顶点缓冲区
+				const positionBuffer = gl.createBuffer()
+				gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer)
+
+				// 定义三角形的三个顶点
+				const positions = [
+					0.0,
+					0.5,
+					0.0, // 上顶点
+					-0.5,
+					-0.5,
+					0.0, // 左下顶点
+					0.5,
+					-0.5,
+					0.0, // 右下顶点
+				]
+
+				gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW)
+
+				return {
+					position: positionBuffer,
+				}
+			}
+
+			// 绘制场景
+			function drawScene(gl, programInfo, buffers, useSSAA, scale) {
+				if (useSSAA) {
+					// 使用SSAA
+					const ssaaBuffer = initSSAABuffer(gl, scale)
+
+					// 绑定SSAA帧缓冲区
+					gl.bindFramebuffer(gl.FRAMEBUFFER, ssaaBuffer.framebuffer)
+
+					// 设置SSAA缓冲区视口
+					gl.viewport(0, 0, gl.drawingBufferWidth * scale, gl.drawingBufferHeight * scale)
+
+					// 清除SSAA缓冲区
+					gl.clearColor(0.0, 0.0, 0.0, 1.0)
+					gl.clear(gl.COLOR_BUFFER_BIT)
+
+					// 绘制三角形到SSAA缓冲区
+					drawTriangle(gl, programInfo, buffers)
+
+					// 切换回默认帧缓冲区
+					gl.bindFramebuffer(gl.FRAMEBUFFER, null)
+
+					// 恢复原始视口
+					gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight)
+
+					// 清除主画布
+					gl.clearColor(0.0, 0.0, 0.0, 1.0)
+					gl.clear(gl.COLOR_BUFFER_BIT)
+
+					// 将SSAA缓冲区内容绘制到主画布
+					drawTexture(gl, ssaaBuffer.texture, scale)
+
+					// 清理SSAA资源
+					gl.deleteFramebuffer(ssaaBuffer.framebuffer)
+					gl.deleteTexture(ssaaBuffer.texture)
+					gl.deleteRenderbuffer(ssaaBuffer.renderbuffer)
+				} else {
+					// 不使用SSAA，直接绘制
+					gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight)
+					gl.clearColor(0.0, 0.0, 0.0, 1.0)
+					gl.clear(gl.COLOR_BUFFER_BIT)
+
+					drawTriangle(gl, programInfo, buffers)
+				}
+			}
+
+			// 绘制三角形
+			function drawTriangle(gl, programInfo, buffers) {
+				// 告诉WebGL如何使用位置数据
+				{
+					const numComponents = 3
+					const type = gl.FLOAT
+					const normalize = false
+					const stride = 0
+					const offset = 0
+					gl.bindBuffer(gl.ARRAY_BUFFER, buffers.position)
+					gl.vertexAttribPointer(programInfo.attribLocations.vertexPosition, numComponents, type, normalize, stride, offset)
+					gl.enableVertexAttribArray(programInfo.attribLocations.vertexPosition)
+				}
+
+				// 使用着色器程序
+				gl.useProgram(programInfo.program)
+
+				// 设置颜色
+				gl.uniform4fv(programInfo.uniformLocations.color, [0.0, 0.7, 1.0, 1.0])
+
+				// 绘制三角形
+				{
+					const offset = 0
+					const vertexCount = 3
+					gl.drawArrays(gl.TRIANGLES, offset, vertexCount)
+				}
+			}
+
+			// 初始化SSAA帧缓冲区
+			function initSSAABuffer(gl, scale) {
+				const width = gl.drawingBufferWidth * scale
+				const height = gl.drawingBufferHeight * scale
+
+				// 创建纹理
+				const texture = gl.createTexture()
+				gl.bindTexture(gl.TEXTURE_2D, texture)
+				gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null)
+				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
+				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
+				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
+
+				// 创建渲染缓冲区
+				const renderbuffer = gl.createRenderbuffer()
+				gl.bindRenderbuffer(gl.RENDERBUFFER, renderbuffer)
+				gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, width, height)
+
+				// 创建帧缓冲区
+				const framebuffer = gl.createFramebuffer()
+				gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer)
+				gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0)
+				gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, renderbuffer)
+
+				// 检查帧缓冲区状态
+				if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) !== gl.FRAMEBUFFER_COMPLETE) {
+					alert('帧缓冲区不完整')
+				}
+
+				return {
+					texture: texture,
+					renderbuffer: renderbuffer,
+					framebuffer: framebuffer,
+				}
+			}
+
+			// 绘制纹理到画布
+			function drawTexture(gl, texture, scale) {
+				// 创建着色器程序
+				const vsSource = `
+                attribute vec2 a_position;
+                varying vec2 v_texCoord;
+                void main() {
+                    gl_Position = vec4(a_position, 0.0, 1.0);
+                    v_texCoord = (a_position + 1.0) / 2.0;
+                }
+            `
+
+				const fsSource = `
+                precision mediump float;
+                uniform sampler2D u_texture;
+                uniform float u_scale;
+                varying vec2 v_texCoord;
+                
+                void main() {
+                    // 简单平均下采样
+                    vec4 color = vec4(0.0);
+                    float step = 1.0 / u_scale;
+                    
+                    for(float i = 0.0; i < u_scale; i += 1.0) {
+                        for(float j = 0.0; j < u_scale; j += 1.0) {
+                            vec2 offset = vec2(i * step, j * step) / u_scale;
+                            color += texture2D(u_texture, v_texCoord + offset);
+                        }
+                    }
+                    
+                    gl_FragColor = color / (u_scale * u_scale);
+                }
+            `
+
+				const shaderProgram = initShaderProgram(gl, vsSource, fsSource)
+				const programInfo = {
+					program: shaderProgram,
+					attribLocations: {
+						vertexPosition: gl.getAttribLocation(shaderProgram, 'a_position'),
+					},
+					uniformLocations: {
+						texture: gl.getUniformLocation(shaderProgram, 'u_texture'),
+						scale: gl.getUniformLocation(shaderProgram, 'u_scale'),
+					},
+				}
+
+				// 创建缓冲区
+				const positionBuffer = gl.createBuffer()
+				gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer)
+
+				// 定义矩形的两个三角形
+				const positions = [-1.0, -1.0, 1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0]
+
+				gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW)
+
+				// 告诉WebGL如何使用位置数据
+				const numComponents = 2
+				const type = gl.FLOAT
+				const normalize = false
+				const stride = 0
+				const offset = 0
+				gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer)
+				gl.vertexAttribPointer(programInfo.attribLocations.vertexPosition, numComponents, type, normalize, stride, offset)
+				gl.enableVertexAttribArray(programInfo.attribLocations.vertexPosition)
+
+				// 使用着色器程序
+				gl.useProgram(programInfo.program)
+
+				// 设置纹理
+				gl.activeTexture(gl.TEXTURE0)
+				gl.bindTexture(gl.TEXTURE_2D, texture)
+				gl.uniform1i(programInfo.uniformLocations.texture, 0)
+
+				// 设置缩放比例
+				gl.uniform1f(programInfo.uniformLocations.scale, scale)
+
+				// 绘制矩形
+				gl.drawArrays(gl.TRIANGLES, 0, 6)
+			}
+
+			// 初始化WebGL场景
+			function init() {
+				const shaderProgram = initShaderProgram(gl, vsSource, fsSource)
+
+				const programInfo = {
+					program: shaderProgram,
+					attribLocations: {
+						vertexPosition: gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
+					},
+					uniformLocations: {
+						color: gl.getUniformLocation(shaderProgram, 'uColor'),
+					},
+				}
+
+				const buffers = initBuffers(gl)
+
+				// 初始绘制
+				drawScene(gl, programInfo, buffers, false, 1)
+
+				// 添加按钮事件监听
+				document.getElementById('noAA').addEventListener('click', function () {
+					setActiveButton(this)
+					drawScene(gl, programInfo, buffers, false, 1)
+				})
+
+				document.getElementById('ssaa2x').addEventListener('click', function () {
+					setActiveButton(this)
+					drawScene(gl, programInfo, buffers, true, 2)
+				})
+
+				document.getElementById('ssaa4x').addEventListener('click', function () {
+					setActiveButton(this)
+					drawScene(gl, programInfo, buffers, true, 4)
+				})
+			}
+
+			// 设置活动按钮样式
+			function setActiveButton(button) {
+				// 移除所有按钮的活动类
+				document.querySelectorAll('button').forEach(btn => {
+					btn.classList.remove('active')
+				})
+
+				// 为当前按钮添加活动类
+				button.classList.add('active')
+			}
+
+			// 启动应用
+			init()
+		</script>
+	</body>
+</html>

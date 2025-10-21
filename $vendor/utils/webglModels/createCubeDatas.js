@@ -29,7 +29,7 @@
  * 		- 由于采用 gl.drawArrays: gl.TRIANGLES 方式绘制, 需要将方体每个面拆分成三角形
  * 		- 以面 A0(底面) 为例, 按照正面三角形顶点顺序, 可将其拆分成 [0, 3, 2] 和 [0, 2, 1] 两组顶点索引
  * 		- 求前面(0-1-5-4)的顶点索引组成
- * 				- 将 A0(底面) 围绕 X 轴旋转到该面所在的方位, 按照 A0(底面) 的构建规则构建定点索引 [[4, 0, 1] 和 [4, 1, 5]
+ * 				- 将 A0(底面) 围绕 X 轴旋转到该面所在的方位, 按照 A0(底面) 的构建规则构建定点索引 [4, 0, 1] 和 [4, 1, 5]
  * 		- 依次构建其他面的三角形顶点索引
  * 		- 即生成: 定义构成每个方体面的两个三角形的 2 * 3 = 6 份顶点坐标在原始顶点坐标数据 ORIGIN_POSITIONS 中的索引 CUBE_FACE_INDICES
  * 		- 此时, 每个方体面将包含 2 * 3 = 6 份顶点数据, 方体总体将由 6 * 6 = 36 份顶点坐标
@@ -129,8 +129,6 @@ function createCubeDatas(width, height, depth, colorSetting = {}, offsetX = 0, o
 				_arrIndexStart: vertexFeature.length - 3,
 			}
 		}
-		vertexCoordinate.push(0, 0, 0, 1, 1, 1)
-		vertexCoordinate.push(0, 0, 1, 1, 1, 0)
 	}
 	// prettier-ignore
 	const CUBE_NORMALS = [

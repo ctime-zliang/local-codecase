@@ -31,10 +31,10 @@ function drawCanvas(containerElement) {
 	 * 		环境光反射颜色
 	 * 			= 入射光颜色 x 物体表面基底色
 	 * 光源漫反射
-	 * 		θ 即 表面法线向量与入射光反方向向量的夹角
+	 * 		θ 即表面法线向量与入射光反方向向量的夹角
 	 * 		光源漫反射颜色
 	 * 			= 入射光颜色 x 物体表面基底色 x cos(θ)
-	 * 			= 入射光颜色 x 物体表面基底色 x (表面法线向量 {点乘} 入射光反方向向量)
+	 * 			= 入射光颜色 x 物体表面基底色 x (表面法线向量 <点乘> 入射光反方向向量)
 	 */
 	const COMMON_VERTEX_SHADER = `
 		precision mediump float;
@@ -42,10 +42,12 @@ function drawCanvas(containerElement) {
 		varying vec3 v_Normal;
 		varying vec3 v_ObjPosition;
 		varying float v_Dist;
+		varying vec2 v_textureCoord;
 		// 顶点配置(组)
 		attribute vec3 a_ObjPosition;
 		attribute vec4 a_Color;
 		attribute vec3 a_Normal;
+		attribute vec2 a_textureCoord;
 		// 变换矩阵(组)
 		uniform mat4 u_NormalMatrix;
 		uniform mat4 u_ModelMatrix;
@@ -64,6 +66,7 @@ function drawCanvas(containerElement) {
 			// 计算顶点(世界坐标系)到视点的距离
 			// v_Dist = distance(u_ModelMatrix * vec4(a_ObjPosition, 1.0), vec4(u_EyePosition, 1.0));
 			v_Dist = gl_Position.w;
+			v_textureCoord = a_textureCoord;
 		}
 	`
 	const COMMON_FRAGMENT_SHADER = `
@@ -72,6 +75,7 @@ function drawCanvas(containerElement) {
 		varying vec3 v_Normal;
 		varying vec3 v_ObjPosition;
 		varying float v_Dist;
+		varying vec2 v_textureCoord;
 		// 参数(组)
 		uniform float u_lightIntensityGain;
 		uniform float u_illuType;
@@ -83,7 +87,10 @@ function drawCanvas(containerElement) {
 		uniform vec3 u_LightDirection;
 		uniform vec3 u_LightColor;
 		uniform vec3 u_AmbientLightColor;
+		// 纹理参数(组)
+        uniform sampler2D u_Sampler;
 		void main() {
+			gl_FragColor = texture2D(u_Sampler, v_textureCoord);
 			if (u_Clicked) {
 				gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
 			} else {
@@ -135,7 +142,7 @@ function drawCanvas(containerElement) {
 	}
 	Program.glControl.commonLight.program = ven$createProgram(Program.glControl.gl, COMMON_VERTEX_SHADER, COMMON_FRAGMENT_SHADER)
 	const commonWebGLVariableLocation = ven$getWebGLVariableLocation(Program.glControl.gl, Program.glControl.commonLight.program, {
-		glAttributes: ['a_Normal', 'a_ObjPosition', 'a_Color'],
+		glAttributes: ['a_Normal', 'a_ObjPosition', 'a_Color', 'a_textureCoord'],
 		glUniforms: [
 			'u_illuType',
 			'u_LightColor',
@@ -151,6 +158,7 @@ function drawCanvas(containerElement) {
 			'u_EyePosition',
 			'u_FogColor',
 			'u_FogDist',
+			'u_Sampler',
 		],
 	})
 	Program.glControl.commonLight.glAttributes = commonWebGLVariableLocation.glAttributes
@@ -160,6 +168,8 @@ function drawCanvas(containerElement) {
 	const setWebGLRenderNormalStatus = () => {}
 	Program.glControl.setWebGLRenderClickedStatus = setWebGLRenderClickedStatus
 	Program.glControl.setWebGLRenderNormalStatus = setWebGLRenderNormalStatus
+
+	Program.loadImageTexture(Program.glControl)
 
 	const canvas = {
 		status: null,
@@ -266,6 +276,17 @@ function drawCanvas(containerElement) {
 					stride: 28,
 					offset: 12,
 				})
+				// ven$initAttributeVariable(
+				// 	gl,
+				// 	glAttributes.a_textureCoord,
+				// 	texCoordBuffer,
+				// 	{
+				// 		size: 2,
+				// 	},
+				// 	{
+				// 		data: texCoordData,
+				// 	}
+				// )
 				gl.bufferData(gl.ARRAY_BUFFER, featureData, gl.STATIC_DRAW)
 				gl.drawArrays(gl.TRIANGLES, 0, vertexFeatureSize / 7)
 			}

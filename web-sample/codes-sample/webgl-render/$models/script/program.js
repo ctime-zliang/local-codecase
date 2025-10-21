@@ -985,6 +985,11 @@ class Program {
 				this.glControl.modelInstances = [...zplaneModelDatas1.modelInstances]
 				break
 			}
+			case 'model4': {
+				const zplaneModelDatas1 = this.createZPlaneModelDatas(50, 50, 0)
+				this.glControl.modelInstances = [...zplaneModelDatas1.modelInstances]
+				break
+			}
 		}
 		this.glControl.modelInstances.forEach(modelInstanceItem => {
 			modelInstanceItem.normalBuffer = ven$initArrayBufferForLaterUse(this.glControl.gl)
@@ -1118,5 +1123,23 @@ class Program {
 			}
 		})
 		this.isRender = true
+	}
+
+	static loadImageTexture(glControl) {
+		ven$loadImageResourceTexture(
+			glControl.gl,
+			0,
+			'../common/images/frog-256x256.jpg',
+			(gl, index, texture) => {
+				/**
+				 * 将 0 号纹理单元传送给取样器变量
+				 */
+				gl.uniform1i(glControl.commonLight.glUniforms.u_Sampler, index)
+				// this.isRender = true
+			},
+			{
+				isFlipY: false,
+			}
+		)
 	}
 }
