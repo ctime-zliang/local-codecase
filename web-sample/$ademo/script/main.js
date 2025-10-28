@@ -6,5 +6,5 @@ function main() {
 }
 
 window.addEventListener('DOMContentLoaded', function (e) {
-	main()
+	// main()
 })
